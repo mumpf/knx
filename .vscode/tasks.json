@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "c:\\windows\\sysnative\\bash.exe",
+                "args": [
+                    "-c"
+                ]
+            }
+        }
+    },
+    "tasks": [
+        {
+            "label": "CMAKE on WSL",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "knx-linux"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "g++-6 build active file",
+            "command": "/usr/bin/g++-6",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            }
+        }
+    ]
+}
