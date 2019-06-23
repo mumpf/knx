@@ -1,0 +1,40 @@
+using System;
+using System.Xml;
+using CommonLib;
+ 
+namespace Run
+{
+  class Class1
+  {
+    [STAThread]
+    static void Main(string[] args)
+    {
+      CommonLib.Suite s = new CommonLib.Suite();
+ 
+      XmlDocument xd = new XmlDocument();
+      xd.Load("..\\..\\..\\..\\testCases.xml");
+       
+      XmlNodeList nodelist = xd.SelectNodes("/suite/testcase"); // get all <testcase> nodes
+ 
+      foreach (XmlNode node in nodelist) // for each <testcase> node
+      {
+        CommonLib.TestCase tc = new CommonLib.TestCase();
+         
+        tc.id = node.Attributes.GetNamedItem("id").Value;
+        tc.kind = node.Attributes.GetNamedItem("kind").Value;
+ 
+        XmlNode n = node.SelectSingleNode("inputs"); // get the one <input> node
+        tc.arg1 = n.ChildNodes.Item(0).InnerText;
+        tc.arg2 = n.ChildNodes.Item(1).InnerText;
+ 
+        tc.expected = node.ChildNodes.Item(1).InnerText;
+ 
+        s.items.Add(tc);
+      } // foreach <testcase> node
+       
+      s.Display();
+ 
+    } // Main()
+  } // class Class1
+ 
+} // ns Run
