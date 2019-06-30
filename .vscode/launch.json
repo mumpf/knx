@@ -5,36 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "WSL Launch",
+            "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/d019748/knx/knx-linux/knx-linux",
-            "args": ["-fThreading"],
+            "program": "${workspaceFolder}/knx-linux/knx-linux",
+            "args": [],
             "stopAtEntry": true,
-            "cwd": "/home/d019748/knx/knx-linux/",
+            "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
-            "windows": {
-                "MIMode": "gdb",
-                "miDebuggerPath": "/usr/bin/gdb",
-                "setupCommands": [
-                    {
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-            "pipeTransport": {
-                "pipeCwd": "",
-                "pipeProgram": "bash.exe",
-                "pipeArgs": ["-c"],
-                "debuggerPath": "/usr/bin/gdb"
-            },
-            "sourceFileMap": {
-                "/mnt/c": "${env:systemdrive}/",
-                "/usr": "C:\\Users\\d019748\\AppData\\Local\\Packages\\TheDebianProject.DebianGNULinux_76v4gfsz19hv4\\LocalState\\rootfs\\usr"
-            }
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }

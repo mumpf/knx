@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.7)
 project(knx-linux)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(LIBRARIES_FROM_REFERENCES "")
 add_executable(knx-linux 
 	../src/knx/address_table_object.cpp 
@@ -29,6 +30,7 @@ add_executable(knx-linux
 	../src/knx/transport_layer.cpp 
 	../src/knx/platform.cpp 
 	main.cpp 
+	../examples/knx-logik/Logikmodul.cpp 
 	../src/linux_platform.cpp 
 	../src/knx_facade.cpp 
 	../src/knx/dptconvert.cpp
@@ -38,3 +40,6 @@ target_link_libraries(knx-linux  "${LIBRARIES_FROM_REFERENCES}")
 include_directories(../src)
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wno-unknown-pragmas -Wno-switch -g -O0")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-unknown-pragmas -Wno-switch -g -O0")
+if(NOT CMAKE_BUILD_TYPE)
+    SET(CMAKE_BUILD_TYPE "Debug")
+endif()

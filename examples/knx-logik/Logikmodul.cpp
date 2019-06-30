@@ -78,7 +78,9 @@
 #define PIP_OFF_REPEAT 2048   // repeat off signal
 
 extern KnxFacade *KNX;
-extern uint32_t milliSec();
+extern Platform *platform;
+
+uint32_t milliSec();
 void DbgWrite(const char *fmt, ...);
 
 unsigned long sTimeFactors[] = {100, 1000, 60000, 3600000};

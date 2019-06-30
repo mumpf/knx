@@ -1,4 +1,4 @@
-#include "Logikmodul.h"
+#include "../examples/knx-logik/Logikmodul.h"
 #include "knx/bau57B0.h"
 #include "knx_facade.h"
 #include <stdarg.h>
