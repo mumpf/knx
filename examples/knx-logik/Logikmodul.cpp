@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "LogikTest.h"
+// #include "LogikTest.h"
 #include "Logikmodul.h"
 
 // number of supported channels
@@ -173,36 +173,36 @@ int calcKoNumber(uint8_t iIOIndex, uint8_t iChannel) {
 /* calculates correct KO for given I/O index and Channel
  * iIOIndex - 0=Output, 1=External input 1, 2=External input 2
  */
-GroupObject &getKoForChannel(uint8_t iIOIndex, uint8_t iChannel) {
-    return KNX->getGroupObject(calcKoNumber(iIOIndex, iChannel));
+GroupObject* getKoForChannel(uint8_t iIOIndex, uint8_t iChannel) {
+    return &KNX->getGroupObject(calcKoNumber(iIOIndex, iChannel));
 }
 
 // write value to bus
 void knxWrite(uint8_t iIOIndex, uint8_t iChannel, bool iValue) {
     DbgWrite("knxWrite KO %d bool value %d", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
-    getKoForChannel(iIOIndex, iChannel).value(iValue);
+    getKoForChannel(iIOIndex, iChannel)->value(iValue);
 #endif
 }
 
 void knxWrite(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
     DbgWrite("knxWrite KO %d int value %d", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
-    getKoForChannel(iIOIndex, iChannel).value((int32_t)iValue);
+    getKoForChannel(iIOIndex, iChannel)->value((int32_t)iValue);
 #endif
 }
 
 void knxWrite(uint8_t iIOIndex, uint8_t iChannel, float iValue) {
     DbgWrite("knxWrite KO %d float value %f", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
-    getKoForChannel(iIOIndex, iChannel).value(iValue);
+    getKoForChannel(iIOIndex, iChannel)->value(iValue);
 #endif
 }
 
 void knxWrite(uint8_t iIOIndex, uint8_t iChannel, char *iValue) {
     DbgWrite("knxWrite KO %d string value %s", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
-    getKoForChannel(iIOIndex, iChannel).value(iValue);
+    getKoForChannel(iIOIndex, iChannel)->value(iValue);
 #endif
 }
 
@@ -210,7 +210,7 @@ void knxWrite(uint8_t iIOIndex, uint8_t iChannel, char *iValue) {
 void knxRead(uint8_t iIOIndex, uint8_t iChannel) {
     DbgWrite("knxReadRequest end from KO %d", calcKoNumber(iIOIndex, iChannel));
 #ifndef LOGIKTEST
-    getKoForChannel(iIOIndex, iChannel).requestObjectRead();
+    getKoForChannel(iIOIndex, iChannel)->requestObjectRead();
 #endif
 }
 
@@ -220,7 +220,7 @@ bool knxGetBool(uint8_t iIOIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sKoData.data[calcKoNumber(iIOIndex, iChannel) - 1];
 #else
-    return getKoForChannel(iIOIndex, iChannel).value();
+    return getKoForChannel(iIOIndex, iChannel)->value();
 #endif
 }
 
@@ -229,7 +229,7 @@ uint8_t knxGetByte(uint8_t iIOIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sKoData.data[calcKoNumber(iIOIndex, iChannel) - 1];
 #else
-    return getKoForChannel(iIOIndex, iChannel).valueRef()[0];
+    return getKoForChannel(iIOIndex, iChannel)->valueRef()[0];
 #endif
 }
 
@@ -323,30 +323,30 @@ int getInputValueKnx(uint8_t iIOIndex, uint8_t iChannel) {
 
     int lValue = 0;
     int lParamIndex = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
-    GroupObject &lKo = getKoForChannel(iIOIndex, iChannel);
+    GroupObject* lKo = getKoForChannel(iIOIndex, iChannel);
     // based on dpt, we read the correct c type.
     switch (getByteParam(lParamIndex, iChannel)) {
         case VAL_DPT_1:
-            lValue = lKo.value();
+            lValue = lKo->value();
             break;
         case VAL_DPT_5:
-            lValue = ((int)lKo.value() * 100 / 255);
+            lValue = ((int)lKo->value() * 100 / 255);
             break;
         case VAL_DPT_2:
         case VAL_DPT_6:
         case VAL_DPT_17:
-            lValue = lKo.valueRef()[0];
+            lValue = lKo->valueRef()[0];
             break;
         case VAL_DPT_7:
         case VAL_DPT_8:
-            lValue = lKo.valueRef()[0] + 256 * lKo.valueRef()[1];
+            lValue = lKo->valueRef()[0] + 256 * lKo->valueRef()[1];
             break;
         case VAL_DPT_232:
             lValue =
-                lKo.valueRef()[0] + 256 * lKo.valueRef()[1] + 65536 * lKo.valueRef()[2];
+                lKo->valueRef()[0] + 256 * lKo->valueRef()[1] + 65536 * lKo->valueRef()[2];
             break;
         case VAL_DPT_9:
-            lValue = ((double)lKo.value() * 100.0);
+            lValue = ((double)lKo->value() * 100.0);
             break;
         default:
             break;
@@ -529,7 +529,7 @@ void ProcessOutput(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
 
 void StartStartup(sChannelInfo *cData, uint8_t iChannel) {
     cData->onDelay = getIntParam(PAR_f1StartupDelay, iChannel) * 1000 + pStartupDelay;
-    cData->currentPipeline = PIP_STARTUP;
+    cData->currentPipeline |= PIP_STARTUP;
 }
 
 // channel startup delay
@@ -589,6 +589,7 @@ void ProcessConvertInput(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex
     switch (lDpt) {
         case VAL_DPT_1:
             lValueOut = lValue1In;
+            break;
         case VAL_DPT_17:
             // there might be 8 possible scenes to check
             lUpperBound = 9; // we start with 2
@@ -835,7 +836,7 @@ void StartStairlight(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
 
     if (getByteParam(PAR_f1OStair, iChannel)) {
         if (iOutput) {
-            // if stairlight in not on yet, we switch first the output to on
+            // if stairlight is not running yet, we switch first the output to on
             if ((cData->currentPipeline & PIP_STAIRLIGHT) == 0)
                 StartOnDelay(cData, iChannel);
             // stairlight should also be switched on
@@ -848,7 +849,7 @@ void StartStairlight(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
                 StartBlink(cData, iChannel);
             }
         } else {
-            // if stairlight in not on yet, we switch the output to off
+            // if stairlight is not running yet, we switch the output to off
             if ((cData->currentPipeline & PIP_STAIRLIGHT) == 0)
                 StartOffDelay(cData, iChannel);
             // stairlight should be switched off
@@ -880,8 +881,7 @@ void ProcessLogic(sChannelInfo *cData, uint8_t iChannel) {
     cData->currentPipeline &= ~PIP_LOGIC_EXECUTE;
     // we have to delete all trigger if output pipeline is not started
     bool lOutputSent = false;
-    if (getByteParam(PAR_f1Calculate, iChannel) == 0 ||
-        lValidInputs == lActiveInputs) {
+    if (getByteParam(PAR_f1Calculate, iChannel) == 0 || lValidInputs == lActiveInputs) {
         // we process only if all inputs are valid or the user requested invalid evaluation
         uint8_t lLogic = getByteParam(PAR_f1Logic, iChannel);
         uint8_t lOnes = 0;
@@ -901,7 +901,7 @@ void ProcessLogic(sChannelInfo *cData, uint8_t iChannel) {
                 // OR handles invalid inputs as 0
                 //			lCurrentInputs &= lValidInputs;  //Add invalid
                 //bits to current input
-                lNewOutput = (lValidInputs > 0); // Check if any bit is set -> logical OR of all input bits
+                lNewOutput = (lCurrentInputs > 0); // Check if any bit is set -> logical OR of all input bits
                 lValidOutput = true;
                 break;
 
@@ -909,9 +909,9 @@ void ProcessLogic(sChannelInfo *cData, uint8_t iChannel) {
                 // EXOR handles invalid inputs as non existig
                 // count valid bits in input mask
                 for (size_t lBit = 1; lBit < BIT_INPUT_MASK; lBit <<= 1) {
-                    lOnes += (lCurrentInputs & lBit);
+                    lOnes += (lCurrentInputs & lBit) > 0;
                 }
-                lNewOutput = (lOnes % 2 == 0); // Check if we have an even number of bits
+                lNewOutput = (lOnes % 2 == 1); // Check if we have an odd number of bits
                                                // -> logical EXOR of all input bits
                 lValidOutput = true;
                 break;
@@ -1079,9 +1079,11 @@ void appLoop() {
             }
             // convert input pipeline
             if (lData->currentPipeline & PIP_CONVERT_INPUT1) {
+                lData->currentPipeline &= ~PIP_CONVERT_INPUT1;
                 ProcessConvertInput(lData, lChannel, BIT_EXT_INPUT_1);
             }
             if (lData->currentPipeline & PIP_CONVERT_INPUT2) {
+                lData->currentPipeline &= ~PIP_CONVERT_INPUT2;
                 ProcessConvertInput(lData, lChannel, BIT_EXT_INPUT_2);
             }
             // Logic execution pipeline
@@ -1151,41 +1153,41 @@ void processInputTest(uint8_t iKoIndex) {
  * Setup processing
  *
  *******************/
-void setDPT(GroupObject &iKo, uint8_t iChannel, uint8_t iParamDpt) {
+void setDPT(GroupObject *iKo, uint8_t iChannel, uint8_t iParamDpt) {
     uint8_t lDpt = getByteParam(iParamDpt, iChannel);
     switch (lDpt) {
         case VAL_DPT_1:
-            iKo.dataPointType(Dpt(1, 1));
+            iKo->dataPointType(Dpt(1, 1));
             break;
         case VAL_DPT_2:
-            iKo.dataPointType(Dpt(2, 1));
+            iKo->dataPointType(Dpt(2, 1));
             break;
         case VAL_DPT_5:
-            iKo.dataPointType(Dpt(5, 10));
+            iKo->dataPointType(Dpt(5, 10));
             break;
         case VAL_DPT_5001:
-            iKo.dataPointType(Dpt(5, 1));
+            iKo->dataPointType(Dpt(5, 1));
             break;
         case VAL_DPT_6:
-            iKo.dataPointType(Dpt(6, 1));
+            iKo->dataPointType(Dpt(6, 1));
             break;
         case VAL_DPT_7:
-            iKo.dataPointType(Dpt(7, 1));
+            iKo->dataPointType(Dpt(7, 1));
             break;
         case VAL_DPT_8:
-            iKo.dataPointType(Dpt(8, 1));
+            iKo->dataPointType(Dpt(8, 1));
             break;
         case VAL_DPT_9:
-            iKo.dataPointType(Dpt(9, 1));
+            iKo->dataPointType(Dpt(9, 1));
             break;
         case VAL_DPT_16:
-            iKo.dataPointType(Dpt(16, 1));
+            iKo->dataPointType(Dpt(16, 1));
             break;
         case VAL_DPT_17:
-            iKo.dataPointType(Dpt(17, 1));
+            iKo->dataPointType(Dpt(17, 1));
             break;
         case VAL_DPT_232:
-            iKo.dataPointType(Dpt(232, 600));
+            iKo->dataPointType(Dpt(232, 600));
             break;
         default:
             break;
@@ -1201,16 +1203,16 @@ void appSetup() {
     if (KNX->configured()) {
         for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
             // we initialize DPT for output ko
-            GroupObject &lKo = getKoForChannel(0, lChannel);
+            GroupObject* lKo = getKoForChannel(0, lChannel);
             setDPT(lKo, lChannel, PAR_f1ODpt);
             // we initialize DPT and callback for input1 ko
             lKo = getKoForChannel(BIT_EXT_INPUT_1, lChannel);
             setDPT(lKo, lChannel, PAR_f1E1Dpt);
-            lKo.callback(processInputKo);
+            lKo->callback(processInputKo);
             // we initialize DPT and callback for input1 ko
             lKo = getKoForChannel(BIT_EXT_INPUT_2, lChannel);
             setDPT(lKo, lChannel, PAR_f1E2Dpt);
-            lKo.callback(processInputKo);
+            lKo->callback(processInputKo);
         }
         pStartupDelay = KNX->paramInt(PAR_startupDelay) * 1000;
         gStartupDelay = milliSec();

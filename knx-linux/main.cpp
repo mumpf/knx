@@ -34,6 +34,6 @@ int main(int argc, char **argv) {
         KNX->loop();
         if (KNX->configured())
             appLoop();
-        platform->mdelay(100);
+        platform->mdelay(10);
     }
 }
