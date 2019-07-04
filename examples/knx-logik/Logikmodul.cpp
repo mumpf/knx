@@ -122,6 +122,15 @@ uint8_t getByteParam(int iParamIndex, uint8_t iChannel) {
 #endif
 }
 
+int8_t getSByteParam(int iParamIndex, uint8_t iChannel) {
+#ifdef LOGIKTEST
+    return sParamData.data[iParamIndex];
+#else
+    uint8_t* lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
+    return lRef[0];
+#endif
+}
+
 uint32_t getIntParam(int iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1] + 256 * 256 * sParamData.data[iParamIndex + 2] + 256 * 256 * 256 * sParamData.data[iParamIndex + 3];
@@ -192,6 +201,17 @@ void knxWrite(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
 #endif
 }
 
+void knxWriteDPT2(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
+    DbgWrite("knxWrite KO %d int value %d", calcKoNumber(iIOIndex, iChannel), iValue);
+#ifndef LOGIKTEST
+    GroupObject *lKo = getKoForChannel(iIOIndex, iChannel);
+    uint8_t *lValueRef = lKo->valueRef();
+    *lValueRef = iValue;
+    lKo->objectWritten();
+
+#endif
+}
+
 void knxWrite(uint8_t iIOIndex, uint8_t iChannel, float iValue) {
     DbgWrite("knxWrite KO %d float value %f", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
@@ -256,13 +276,13 @@ int getParamByDpt(int iDpt, uint8_t iParam, uint8_t iChannel) {
             lValue = getByteParam(iParam, iChannel) != 0;
             break;
         case VAL_DPT_2:
+        case VAL_DPT_5:
         case VAL_DPT_17:
             lValue = getByteParam(iParam, iChannel);
             break;
         case VAL_DPT_5001:
-            lValue = getIntParam(iParam, iChannel) * 100 / 255;
+            lValue = getByteParam(iParam, iChannel) * 100 / 255;
             break;
-        case VAL_DPT_5:
         case VAL_DPT_6:
         case VAL_DPT_7:
         case VAL_DPT_8:
@@ -376,24 +396,29 @@ void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
             knxWrite(0, iChannel, lValueBool);
             break;
         case VAL_DPT_2:
+            lValueByte = getByteParam(iParam, iChannel);
+            knxWriteDPT2(0, iChannel, lValueByte);
+            break;
         case VAL_DPT_5:
-        case VAL_DPT_6:
+        case VAL_DPT_5001: // correct value is calculated by dpt handling
         case VAL_DPT_17:
             lValueByte = getByteParam(iParam, iChannel);
             knxWrite(0, iChannel, lValueByte);
             break;
-        case VAL_DPT_5001:
-            lValueByte = getByteParam(iParam, iChannel);
-            // DPT5 means, that input value range is [0..100], output value range is
-            // [0..255]
-            lValueByte = (lValueByte / 100.0) * 255.0;
-            knxWrite(0, iChannel, lValueByte);
+        case VAL_DPT_6:
+            int8_t lValueInt;
+            lValueInt = getSByteParam(iParam, iChannel);
+            knxWriteDPT2(0, iChannel, lValueInt);
             break;
         case VAL_DPT_7:
+            uint16_t lValueUWord;
+            lValueUWord = getIntParam(iParam, iChannel);
+            knxWrite(0, iChannel, lValueUWord);
+            break;
         case VAL_DPT_8:
-            uint16_t lValueWord;
-            lValueWord = getIntParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueWord);
+            int16_t lValueSWord;
+            lValueSWord = getIntParam(iParam, iChannel);
+            knxWrite(0, iChannel, lValueSWord);
             break;
         case VAL_DPT_9:
             float lValueFloat;
@@ -406,9 +431,9 @@ void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
             knxWrite(0, iChannel, lValueStr);
             break;
         case VAL_DPT_232:
-            int lValueInt;
-            lValueInt = getIntParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueInt);
+            int lValueRGB;
+            lValueRGB = getIntParam(iParam, iChannel);
+            knxWrite(0, iChannel, lValueRGB);
             break;
         default:
             break;
@@ -567,7 +592,7 @@ void ProcessRepeatInput2(sChannelInfo *cData, uint8_t iChannel) {
 }
 
 void StartConvert(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex) {
-    cData->currentPipeline = (iIOIndex == 1) ? PIP_CONVERT_INPUT1 : PIP_CONVERT_INPUT2;
+    cData->currentPipeline |= (iIOIndex == 1) ? PIP_CONVERT_INPUT1 : PIP_CONVERT_INPUT2;
 }
 
 // we convert according ext. input value to bool
@@ -671,11 +696,11 @@ void ProcessOnOffRepeat(sChannelInfo *cData, uint8_t iChannel) {
     bool lValue;
 
     if (cData->currentPipeline & PIP_ON_REPEAT) {
-        lRepeat = getIntParam(PAR_f1ORepeatOn, iChannel) * 1000;
+        lRepeat = getIntParam(PAR_f1ORepeatOn, iChannel) * 100;
         lValue = true;
     }
     if (cData->currentPipeline & PIP_OFF_REPEAT) {
-        lRepeat = getIntParam(PAR_f1ORepeatOff, iChannel) * 1000;
+        lRepeat = getIntParam(PAR_f1ORepeatOff, iChannel) * 100;
         lValue = false;
     }
 
@@ -694,7 +719,7 @@ void StartOnDelay(sChannelInfo *cData, uint8_t iChannel) {
     //    2. second on restarts delay time
     //    3. an off stops on delay
     uint8_t lOnDelay = getByteParam(PAR_f1ODelay, iChannel);
-    uint8_t lOnDelayRepeat = (lOnDelay & 6) >> 1;
+    uint8_t lOnDelayRepeat = (lOnDelay & 96) >> 5;
     if ((cData->currentPipeline & PIP_ON_DELAY) == 0) {
         cData->onDelay = milliSec();
         cData->currentPipeline |= PIP_ON_DELAY;
@@ -714,7 +739,7 @@ void StartOnDelay(sChannelInfo *cData, uint8_t iChannel) {
                 break;
         }
     }
-    uint8_t lOnDelayReset = (lOnDelay & 8) >> 3;
+    uint8_t lOnDelayReset = (lOnDelay & 16) >> 4;
     // if requested, this on stops an off delay
     if ((lOnDelayReset > 0) && (cData->currentPipeline & PIP_OFF_DELAY) > 0) {
         cData->currentPipeline &= ~PIP_OFF_DELAY;
@@ -722,7 +747,7 @@ void StartOnDelay(sChannelInfo *cData, uint8_t iChannel) {
 }
 
 void ProcessOnDelay(sChannelInfo *cData, uint8_t iChannel) {
-    unsigned long lOnDelay = getIntParam(PAR_f1ODelayOn, iChannel) * 1000;
+    unsigned long lOnDelay = getIntParam(PAR_f1ODelayOn, iChannel) * 100;
     if (milliSec() - cData->onDelay > lOnDelay) {
         // delay time is over, we turn off pipeline
         cData->currentPipeline &= ~PIP_ON_DELAY;
@@ -738,7 +763,7 @@ void StartOffDelay(sChannelInfo *cData, uint8_t iChannel) {
     //    2. second off restarts delay time
     //    3. an on stops off delay
     uint8_t lOffDelay = getByteParam(PAR_f1ODelay, iChannel);
-    uint8_t lOffDelayRepeat = (lOffDelay & 48) >> 4;
+    uint8_t lOffDelayRepeat = (lOffDelay & 12) >> 2;
     if ((cData->currentPipeline & PIP_OFF_DELAY) == 0) {
         cData->offDelay = milliSec();
         cData->currentPipeline |= PIP_OFF_DELAY;
@@ -758,7 +783,7 @@ void StartOffDelay(sChannelInfo *cData, uint8_t iChannel) {
                 break;
         }
     }
-    uint8_t lOffDelayReset = (lOffDelay & 64) >> 6;
+    uint8_t lOffDelayReset = (lOffDelay & 2) >> 1;
     // if requested, this on stops an off delay
     if ((lOffDelayReset > 0) && (cData->currentPipeline & PIP_ON_DELAY) > 0) {
         cData->currentPipeline &= ~PIP_ON_DELAY;
@@ -766,7 +791,7 @@ void StartOffDelay(sChannelInfo *cData, uint8_t iChannel) {
 }
 
 void ProcessOffDelay(sChannelInfo *cData, uint8_t iChannel) {
-    unsigned long lOffDelay = getIntParam(PAR_f1ODelayOff, iChannel) * 1000;
+    unsigned long lOffDelay = getIntParam(PAR_f1ODelayOff, iChannel) * 100;
     if (milliSec() - cData->offDelay > lOffDelay) {
         // delay time is over, we turn off pipeline
         cData->currentPipeline &= ~PIP_OFF_DELAY;
@@ -840,8 +865,8 @@ void StartStairlight(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
             if ((cData->currentPipeline & PIP_STAIRLIGHT) == 0)
                 StartOnDelay(cData, iChannel);
             // stairlight should also be switched on
-            if ((cData->currentPipeline & PIP_STAIRLIGHT) == 0 ||
-                getByteParam(PAR_f1ORetrigger, iChannel) == 1) {
+            uint8_t lRetrigger = getByteParam(PAR_f1ORetrigger, iChannel);
+            if ((cData->currentPipeline & PIP_STAIRLIGHT) == 0 || lRetrigger == 1) {
                 // stairlight is not running or may be retriggered
                 // we init the stairlight timer
                 cData->stairlightDelay = milliSec();
@@ -853,7 +878,8 @@ void StartStairlight(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
             if ((cData->currentPipeline & PIP_STAIRLIGHT) == 0)
                 StartOffDelay(cData, iChannel);
             // stairlight should be switched off
-            if (getByteParam(PAR_f1OStairOff, iChannel) == 1) {
+            uint8_t lOff = getByteParam(PAR_f1OStairOff, iChannel);
+            if ( lOff == 1) {
                 // stairlight might be switched off,
                 // we set the timer to 0
                 cData->stairlightDelay = 0;

@@ -117,10 +117,10 @@
                 </TypeRestriction>
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueDpt5" Name="ValueDpt5">
-                <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="0" maxInclusive="255" />
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="255" />
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueDpt5001" Name="ValueDpt5001">
-                <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="0" maxInclusive="100" />
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="100" />
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-InputDefault" Name="InputDefault">
                 <TypeRestriction Base="Value" SizeInBit="8">
@@ -172,7 +172,7 @@
                 <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="0" maxInclusive="32767" />
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueScene" Name="ValueScene">
-                <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="0" maxInclusive="64" />
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="64" />
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueText" Name="ValueText">
                 <TypeText SizeInBit="112" />
@@ -186,13 +186,13 @@
                 </TypeRestriction>
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueDpt6" Name="ValueDpt6">
-                <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="-128" maxInclusive="127" />
+                <TypeNumber SizeInBit="8" Type="signedInt" minInclusive="-128" maxInclusive="127" />
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueDpt7" Name="ValueDpt7">
-                <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="0" maxInclusive="32767" />
+                <TypeNumber SizeInBit="16" Type="unsignedInt" minInclusive="0" maxInclusive="32767" />
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueDpt8" Name="ValueDpt8">
-                <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="-16384" maxInclusive="16383" />
+                <TypeNumber SizeInBit="16" Type="signedInt" minInclusive="-16384" maxInclusive="16383" />
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueDpt9" Name="ValueDpt9">
                 <TypeFloat Encoding="IEEE-754 Single" minInclusive="-671088" maxInclusive="670760" />

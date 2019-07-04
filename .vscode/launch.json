@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/knx-linux/knx-linux",
             "args": [],
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,

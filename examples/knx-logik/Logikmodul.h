@@ -41,7 +41,11 @@
 #define PAR_f1ORetrigger 63       // 1 Bit    W
 #define PAR_f1OStairOff 64        // 1 Bit    W
 #define PAR_f1OBlink 65           // 4 Byte
-#define PAR_f1ODelay 69           // 1 Bit    W
+#define PAR_f1ODelay 69           // 1 Bit / Bit 7    W
+#define PAR_f1ODelayOnRepeat  69  // 2 Bit / Bit 6-5  W
+#define PAR_f1ODelayOnReset   69  // 1 Bit / Bit 4    W
+#define PAR_f1ODelayOffRepeat 69  // 2 Bit / Bit 3-2  W
+#define PAR_f1ODelayOffReset  69  // 1 Bit / Bit 1    W
 #define PAR_f1ODelayOn 70         // 4 Byte
 #define PAR_f1ODelayOff 74        // 4 Byte
 #define PAR_f1ORepeat 78          // 1 Bit    W
