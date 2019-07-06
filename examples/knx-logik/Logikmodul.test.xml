@@ -183,6 +183,8 @@
                   <Enumeration Text="Ja - Wert vorgeben" Value="1" Id="M-00FA_A-0001-01-0000_PT-OutputSend_EN-1" />
                   <Enumeration Text="Ja - Wert von Eingang 1" Value="2" Id="M-00FA_A-0001-01-0000_PT-OutputSend_EN-2" />
                   <Enumeration Text="Ja - Wert von Eingang 2" Value="3" Id="M-00FA_A-0001-01-0000_PT-OutputSend_EN-3" />
+                  <Enumeration Text="Ja - Read Request senden" Value="4" Id="M-00FA_A-0001-01-0000_PT-OutputSend_EN-4" />
+                  <Enumeration Text="Ja - 'Gerät zurücksetzen' senden" Value="5" Id="M-00FA_A-0001-01-0000_PT-OutputSend_EN-5" />
                 </TypeRestriction>
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueDpt6" Name="ValueDpt6">
@@ -202,6 +204,12 @@
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-Delta" Name="Delta">
                 <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="-16777217" maxInclusive="16777216" />
+              </ParameterType>
+              <ParameterType Id="M-00FA_A-0001-01-0000_PT-PALine" Name="PALine">
+                <TypeNumber SizeInBit="4" Type="unsignedInt" minInclusive="0" maxInclusive="15" />
+              </ParameterType>
+              <ParameterType Id="M-00FA_A-0001-01-0000_PT-PADevice" Name="PADevice">
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="255" />
               </ParameterType>
             </ParameterTypes>
             <Parameters>
@@ -449,7 +457,7 @@
               <Parameter Id="M-00FA_A-0001-01-0000_P-1052" Name="f1OStair" ParameterType="M-00FA_A-0001-01-0000_PT-YesNo" Text="Ausgang hat eine Treppenlichtfunktion" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="57" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0001-01-0000_P-1053" Name="f1OTimeBase" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBase" Text="Zeitbasis für Treppenlicht" Value="1">
+              <Parameter Id="M-00FA_A-0001-01-0000_P-1053" Name="f1OTimeBase" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBase" Text="Zeitbasis für Treppenlicht" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="58" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-1054" Name="f1OTime" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBasedTime" Text="Zeit für Treppenlicht" Value="10">
@@ -533,6 +541,15 @@
               <Parameter Id="M-00FA_A-0001-01-0000_P-1076" Name="f1OOnRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert für EIN senden als (3-Byte-RGB)" Value="1">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="89" BitOffset="0" />
               </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-1121" Name="f1OOnPAArea" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Bereich" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="89" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-1122" Name="f1OOnPALine" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Linie" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="89" BitOffset="4" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-1123" Name="f1OOnPADevice" ParameterType="M-00FA_A-0001-01-0000_PT-PADevice" Text="PA Gerät" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="90" BitOffset="0" />
+              </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-1077" Name="f1OOff" ParameterType="M-00FA_A-0001-01-0000_PT-OutputSend" Text="Wert für AUS senden?" Value="1">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="103" BitOffset="0" />
               </Parameter>
@@ -568,6 +585,15 @@
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-1088" Name="f1OOffRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert für AUS senden als (3-Byte-RGB)" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="104" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-1124" Name="f1OOffPAArea" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Bereich" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="104" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-1125" Name="f1OOffPALine" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Linie" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="104" BitOffset="4" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-1126" Name="f1OOffPADevice" ParameterType="M-00FA_A-0001-01-0000_PT-PADevice" Text="PA Gerät" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="105" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-2001" Name="f2Name" ParameterType="M-00FA_A-0001-01-0000_PT-Text40Byte" Text="Beschreibung des Kanals" Value="Logik 2" />
               <Parameter Id="M-00FA_A-0001-01-0000_P-2002" Name="f2StartupDelay" ParameterType="M-00FA_A-0001-01-0000_PT-DelaySeconds" Text="Zeit bis der Kanal nach einem Neustart aktiv wird" SuffixText="Sekunden" Value="1">
@@ -807,7 +833,7 @@
               <Parameter Id="M-00FA_A-0001-01-0000_P-2052" Name="f2OStair" ParameterType="M-00FA_A-0001-01-0000_PT-YesNo" Text="Ausgang hat eine Treppenlichtfunktion" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="167" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0001-01-0000_P-2053" Name="f2OTimeBase" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBase" Text="Zeitbasis für Treppenlicht" Value="1">
+              <Parameter Id="M-00FA_A-0001-01-0000_P-2053" Name="f2OTimeBase" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBase" Text="Zeitbasis für Treppenlicht" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="168" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-2054" Name="f2OTime" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBasedTime" Text="Zeit für Treppenlicht" Value="10">
@@ -891,6 +917,15 @@
               <Parameter Id="M-00FA_A-0001-01-0000_P-2076" Name="f2OOnRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert für EIN senden als (3-Byte-RGB)" Value="1">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="199" BitOffset="0" />
               </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-2121" Name="f2OOnPAArea" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Bereich" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="199" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-2122" Name="f2OOnPALine" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Linie" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="199" BitOffset="4" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-2123" Name="f2OOnPADevice" ParameterType="M-00FA_A-0001-01-0000_PT-PADevice" Text="PA Gerät" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="200" BitOffset="0" />
+              </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-2077" Name="f2OOff" ParameterType="M-00FA_A-0001-01-0000_PT-OutputSend" Text="Wert für AUS senden?" Value="1">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="213" BitOffset="0" />
               </Parameter>
@@ -926,6 +961,15 @@
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-2088" Name="f2OOffRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert für AUS senden als (3-Byte-RGB)" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="214" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-2124" Name="f2OOffPAArea" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Bereich" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="214" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-2125" Name="f2OOffPALine" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Linie" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="214" BitOffset="4" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-2126" Name="f2OOffPADevice" ParameterType="M-00FA_A-0001-01-0000_PT-PADevice" Text="PA Gerät" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="215" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-3001" Name="f3Name" ParameterType="M-00FA_A-0001-01-0000_PT-Text40Byte" Text="Beschreibung des Kanals" Value="Logik 3" />
               <Parameter Id="M-00FA_A-0001-01-0000_P-3002" Name="f3StartupDelay" ParameterType="M-00FA_A-0001-01-0000_PT-DelaySeconds" Text="Zeit bis der Kanal nach einem Neustart aktiv wird" SuffixText="Sekunden" Value="1">
@@ -1165,7 +1209,7 @@
               <Parameter Id="M-00FA_A-0001-01-0000_P-3052" Name="f3OStair" ParameterType="M-00FA_A-0001-01-0000_PT-YesNo" Text="Ausgang hat eine Treppenlichtfunktion" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="277" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0001-01-0000_P-3053" Name="f3OTimeBase" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBase" Text="Zeitbasis für Treppenlicht" Value="1">
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3053" Name="f3OTimeBase" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBase" Text="Zeitbasis für Treppenlicht" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="278" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-3054" Name="f3OTime" ParameterType="M-00FA_A-0001-01-0000_PT-TimeBasedTime" Text="Zeit für Treppenlicht" Value="10">
@@ -1249,6 +1293,15 @@
               <Parameter Id="M-00FA_A-0001-01-0000_P-3076" Name="f3OOnRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert für EIN senden als (3-Byte-RGB)" Value="1">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="309" BitOffset="0" />
               </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3121" Name="f3OOnPAArea" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Bereich" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="309" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3122" Name="f3OOnPALine" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Linie" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="309" BitOffset="4" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3123" Name="f3OOnPADevice" ParameterType="M-00FA_A-0001-01-0000_PT-PADevice" Text="PA Gerät" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="310" BitOffset="0" />
+              </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-3077" Name="f3OOff" ParameterType="M-00FA_A-0001-01-0000_PT-OutputSend" Text="Wert für AUS senden?" Value="1">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="323" BitOffset="0" />
               </Parameter>
@@ -1284,6 +1337,15 @@
               </Parameter>
               <Parameter Id="M-00FA_A-0001-01-0000_P-3088" Name="f3OOffRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert für AUS senden als (3-Byte-RGB)" Value="0">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="324" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3124" Name="f3OOffPAArea" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Bereich" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="324" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3125" Name="f3OOffPALine" ParameterType="M-00FA_A-0001-01-0000_PT-PALine" Text="PA Linie" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="324" BitOffset="4" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3126" Name="f3OOffPADevice" ParameterType="M-00FA_A-0001-01-0000_PT-PADevice" Text="PA Gerät" Value="1">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="325" BitOffset="0" />
               </Parameter>
             </Parameters>
             <ParameterRefs>
@@ -1422,6 +1484,12 @@
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-1118_R-1" RefId="M-00FA_A-0001-01-0000_P-1118" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-1119_R-1" RefId="M-00FA_A-0001-01-0000_P-1119" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-1120_R-1" RefId="M-00FA_A-0001-01-0000_P-1120" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-1121_R-1" RefId="M-00FA_A-0001-01-0000_P-1121" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-1122_R-1" RefId="M-00FA_A-0001-01-0000_P-1122" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-1123_R-1" RefId="M-00FA_A-0001-01-0000_P-1123" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-1124_R-1" RefId="M-00FA_A-0001-01-0000_P-1124" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-1125_R-1" RefId="M-00FA_A-0001-01-0000_P-1125" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-1126_R-1" RefId="M-00FA_A-0001-01-0000_P-1126" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-2001_R-20" RefId="M-00FA_A-0001-01-0000_P-2001" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-2002_R-1" RefId="M-00FA_A-0001-01-0000_P-2002" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-2003_R-1" RefId="M-00FA_A-0001-01-0000_P-2003" />
@@ -1555,6 +1623,12 @@
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-2118_R-1" RefId="M-00FA_A-0001-01-0000_P-2118" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-2119_R-1" RefId="M-00FA_A-0001-01-0000_P-2119" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-2120_R-1" RefId="M-00FA_A-0001-01-0000_P-2120" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2121_R-1" RefId="M-00FA_A-0001-01-0000_P-2121" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2122_R-1" RefId="M-00FA_A-0001-01-0000_P-2122" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2123_R-1" RefId="M-00FA_A-0001-01-0000_P-2123" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2124_R-1" RefId="M-00FA_A-0001-01-0000_P-2124" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2125_R-1" RefId="M-00FA_A-0001-01-0000_P-2125" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2126_R-1" RefId="M-00FA_A-0001-01-0000_P-2126" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-3001_R-30" RefId="M-00FA_A-0001-01-0000_P-3001" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-3002_R-1" RefId="M-00FA_A-0001-01-0000_P-3002" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-3003_R-1" RefId="M-00FA_A-0001-01-0000_P-3003" />
@@ -1688,6 +1762,12 @@
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-3118_R-1" RefId="M-00FA_A-0001-01-0000_P-3118" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-3119_R-1" RefId="M-00FA_A-0001-01-0000_P-3119" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-3120_R-1" RefId="M-00FA_A-0001-01-0000_P-3120" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3121_R-1" RefId="M-00FA_A-0001-01-0000_P-3121" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3122_R-1" RefId="M-00FA_A-0001-01-0000_P-3122" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3123_R-1" RefId="M-00FA_A-0001-01-0000_P-3123" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3124_R-1" RefId="M-00FA_A-0001-01-0000_P-3124" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3125_R-1" RefId="M-00FA_A-0001-01-0000_P-3125" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3126_R-1" RefId="M-00FA_A-0001-01-0000_P-3126" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="M-00FA_A-0001-01-0000_O-1" Name="KOf1E1" Number="1" FunctionText="Eingang 1" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Enabled" ReadOnInitFlag="Disabled" />
@@ -2386,6 +2466,7 @@
                     <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-129" Text=" " />
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1064_R-1" />
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1065_R-1" />
+                    <!-- Create constant values for On-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-1065_R-1">
                       <when test="1">
                         <choose ParamRefId="M-00FA_A-0001-01-0000_P-1064_R-1">
@@ -2424,8 +2505,14 @@
                           </when>
                         </choose>
                       </when>
+                      <when test="5">
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1121_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1122_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1123_R-1" />
+                      </when>
                     </choose>
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1077_R-1" />
+                    <!-- Create constant values for Off-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-1077_R-1">
                       <when test="1">
                         <choose ParamRefId="M-00FA_A-0001-01-0000_P-1064_R-1">
@@ -2464,46 +2551,88 @@
                           </when>
                         </choose>
                       </when>
+                      <when test="5">
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1124_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1125_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1126_R-1" />
+                      </when>
                     </choose>
+                    <!-- Create ComObjects for On-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-1065_R-1">
-                      <when test="!=0">
-                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-1077_R-1">
-                          <when test="!=0">
-                            <choose ParamRefId="M-00FA_A-0001-01-0000_P-1064_R-1">
-                              <when test="0">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-1" />
-                              </when>
-                              <when test="1">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-2" />
-                              </when>
-                              <when test="2">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-3" />
-                              </when>
-                              <when test="3">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-4" />
-                              </when>
-                              <when test="4">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-5" />
-                              </when>
-                              <when test="5">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-6" />
-                              </when>
-                              <when test="6">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-7" />
-                              </when>
-                              <when test="7">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-8" />
-                              </when>
-                              <when test="8">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-9" />
-                              </when>
-                              <when test="9">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-10" />
-                              </when>
-                              <when test="10">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-11" />
-                              </when>
-                            </choose>
+                      <when test="1 2 3 4">
+                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-1064_R-1">
+                          <when test="0">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-1" />
+                          </when>
+                          <when test="1">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-2" />
+                          </when>
+                          <when test="2">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-3" />
+                          </when>
+                          <when test="3">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-4" />
+                          </when>
+                          <when test="4">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-5" />
+                          </when>
+                          <when test="5">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-6" />
+                          </when>
+                          <when test="6">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-7" />
+                          </when>
+                          <when test="7">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-8" />
+                          </when>
+                          <when test="8">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-9" />
+                          </when>
+                          <when test="9">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-10" />
+                          </when>
+                          <when test="10">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-11" />
+                          </when>
+                        </choose>
+                      </when>
+                    </choose>
+                    <!-- Create ComObjects for Off-Value -->
+                    <choose ParamRefId="M-00FA_A-0001-01-0000_P-1077_R-1">
+                      <when test="1 2 3 4">
+                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-1064_R-1">
+                          <when test="0">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-1" />
+                          </when>
+                          <when test="1">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-2" />
+                          </when>
+                          <when test="2">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-3" />
+                          </when>
+                          <when test="3">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-4" />
+                          </when>
+                          <when test="4">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-5" />
+                          </when>
+                          <when test="5">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-6" />
+                          </when>
+                          <when test="6">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-7" />
+                          </when>
+                          <when test="7">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-8" />
+                          </when>
+                          <when test="8">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-9" />
+                          </when>
+                          <when test="9">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-10" />
+                          </when>
+                          <when test="10">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-3_R-11" />
                           </when>
                         </choose>
                       </when>
@@ -3060,6 +3189,7 @@
                     <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-229" Text=" " />
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2064_R-1" />
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2065_R-1" />
+                    <!-- Create constant values for On-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-2065_R-1">
                       <when test="1">
                         <choose ParamRefId="M-00FA_A-0001-01-0000_P-2064_R-1">
@@ -3098,8 +3228,14 @@
                           </when>
                         </choose>
                       </when>
+                      <when test="5">
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2121_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2122_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2123_R-1" />
+                      </when>
                     </choose>
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2077_R-1" />
+                    <!-- Create constant values for Off-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-2077_R-1">
                       <when test="1">
                         <choose ParamRefId="M-00FA_A-0001-01-0000_P-2064_R-1">
@@ -3138,46 +3274,88 @@
                           </when>
                         </choose>
                       </when>
+                      <when test="5">
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2124_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2125_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2126_R-1" />
+                      </when>
                     </choose>
+                    <!-- Create ComObjects for On-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-2065_R-1">
-                      <when test="!=0">
-                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-2077_R-1">
-                          <when test="!=0">
-                            <choose ParamRefId="M-00FA_A-0001-01-0000_P-2064_R-1">
-                              <when test="0">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-1" />
-                              </when>
-                              <when test="1">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-2" />
-                              </when>
-                              <when test="2">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-3" />
-                              </when>
-                              <when test="3">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-4" />
-                              </when>
-                              <when test="4">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-5" />
-                              </when>
-                              <when test="5">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-6" />
-                              </when>
-                              <when test="6">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-7" />
-                              </when>
-                              <when test="7">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-8" />
-                              </when>
-                              <when test="8">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-9" />
-                              </when>
-                              <when test="9">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-10" />
-                              </when>
-                              <when test="10">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-11" />
-                              </when>
-                            </choose>
+                      <when test="1 2 3 4">
+                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-2064_R-1">
+                          <when test="0">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-1" />
+                          </when>
+                          <when test="1">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-2" />
+                          </when>
+                          <when test="2">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-3" />
+                          </when>
+                          <when test="3">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-4" />
+                          </when>
+                          <when test="4">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-5" />
+                          </when>
+                          <when test="5">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-6" />
+                          </when>
+                          <when test="6">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-7" />
+                          </when>
+                          <when test="7">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-8" />
+                          </when>
+                          <when test="8">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-9" />
+                          </when>
+                          <when test="9">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-10" />
+                          </when>
+                          <when test="10">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-11" />
+                          </when>
+                        </choose>
+                      </when>
+                    </choose>
+                    <!-- Create ComObjects for Off-Value -->
+                    <choose ParamRefId="M-00FA_A-0001-01-0000_P-2077_R-1">
+                      <when test="1 2 3 4">
+                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-2064_R-1">
+                          <when test="0">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-1" />
+                          </when>
+                          <when test="1">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-2" />
+                          </when>
+                          <when test="2">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-3" />
+                          </when>
+                          <when test="3">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-4" />
+                          </when>
+                          <when test="4">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-5" />
+                          </when>
+                          <when test="5">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-6" />
+                          </when>
+                          <when test="6">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-7" />
+                          </when>
+                          <when test="7">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-8" />
+                          </when>
+                          <when test="8">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-9" />
+                          </when>
+                          <when test="9">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-10" />
+                          </when>
+                          <when test="10">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-6_R-11" />
                           </when>
                         </choose>
                       </when>
@@ -3734,6 +3912,7 @@
                     <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-329" Text=" " />
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3064_R-1" />
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3065_R-1" />
+                    <!-- Create constant values for On-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-3065_R-1">
                       <when test="1">
                         <choose ParamRefId="M-00FA_A-0001-01-0000_P-3064_R-1">
@@ -3772,8 +3951,14 @@
                           </when>
                         </choose>
                       </when>
+                      <when test="5">
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3121_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3122_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3123_R-1" />
+                      </when>
                     </choose>
                     <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3077_R-1" />
+                    <!-- Create constant values for Off-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-3077_R-1">
                       <when test="1">
                         <choose ParamRefId="M-00FA_A-0001-01-0000_P-3064_R-1">
@@ -3812,46 +3997,88 @@
                           </when>
                         </choose>
                       </when>
+                      <when test="5">
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3124_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3125_R-1" />
+                        <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3126_R-1" />
+                      </when>
                     </choose>
+                    <!-- Create ComObjects for On-Value -->
                     <choose ParamRefId="M-00FA_A-0001-01-0000_P-3065_R-1">
-                      <when test="!=0">
-                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-3077_R-1">
-                          <when test="!=0">
-                            <choose ParamRefId="M-00FA_A-0001-01-0000_P-3064_R-1">
-                              <when test="0">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-1" />
-                              </when>
-                              <when test="1">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-2" />
-                              </when>
-                              <when test="2">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-3" />
-                              </when>
-                              <when test="3">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-4" />
-                              </when>
-                              <when test="4">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-5" />
-                              </when>
-                              <when test="5">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-6" />
-                              </when>
-                              <when test="6">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-7" />
-                              </when>
-                              <when test="7">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-8" />
-                              </when>
-                              <when test="8">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-9" />
-                              </when>
-                              <when test="9">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-10" />
-                              </when>
-                              <when test="10">
-                                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-11" />
-                              </when>
-                            </choose>
+                      <when test="1 2 3 4">
+                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-3064_R-1">
+                          <when test="0">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-1" />
+                          </when>
+                          <when test="1">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-2" />
+                          </when>
+                          <when test="2">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-3" />
+                          </when>
+                          <when test="3">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-4" />
+                          </when>
+                          <when test="4">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-5" />
+                          </when>
+                          <when test="5">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-6" />
+                          </when>
+                          <when test="6">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-7" />
+                          </when>
+                          <when test="7">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-8" />
+                          </when>
+                          <when test="8">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-9" />
+                          </when>
+                          <when test="9">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-10" />
+                          </when>
+                          <when test="10">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-11" />
+                          </when>
+                        </choose>
+                      </when>
+                    </choose>
+                    <!-- Create ComObjects for Off-Value -->
+                    <choose ParamRefId="M-00FA_A-0001-01-0000_P-3077_R-1">
+                      <when test="1 2 3 4">
+                        <choose ParamRefId="M-00FA_A-0001-01-0000_P-3064_R-1">
+                          <when test="0">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-1" />
+                          </when>
+                          <when test="1">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-2" />
+                          </when>
+                          <when test="2">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-3" />
+                          </when>
+                          <when test="3">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-4" />
+                          </when>
+                          <when test="4">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-5" />
+                          </when>
+                          <when test="5">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-6" />
+                          </when>
+                          <when test="6">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-7" />
+                          </when>
+                          <when test="7">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-8" />
+                          </when>
+                          <when test="8">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-9" />
+                          </when>
+                          <when test="9">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-10" />
+                          </when>
+                          <when test="10">
+                            <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-9_R-11" />
                           </when>
                         </choose>
                       </when>

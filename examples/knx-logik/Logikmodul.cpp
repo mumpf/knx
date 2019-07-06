@@ -54,6 +54,8 @@
 #define VAL_Out_Constant 1
 #define VAL_Out_ValE1 2
 #define VAL_Out_ValE2 3
+#define VAL_Out_ReadRequest 4
+#define VAL_Out_ResetDevice 5
 
 // flags for in- and output
 #define BIT_EXT_INPUT_1 1
@@ -131,6 +133,23 @@ int8_t getSByteParam(int iParamIndex, uint8_t iChannel) {
 #endif
 }
 
+uint16_t getWordParam(int iParamIndex, uint8_t iChannel) {
+#ifdef LOGIKTEST
+    return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1];
+#else
+    return KNX->paramWord(calcParamIndex(iParamIndex, iChannel));
+#endif
+}
+
+int16_t getSWordParam(int iParamIndex, uint8_t iChannel) {
+#ifdef LOGIKTEST
+    return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1];
+#else
+    uint8_t* lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
+    return lRef[0] * 256 + lRef[1];
+#endif
+}
+
 uint32_t getIntParam(int iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1] + 256 * 256 * sParamData.data[iParamIndex + 2] + 256 * 256 * 256 * sParamData.data[iParamIndex + 3];
@@ -201,14 +220,13 @@ void knxWrite(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
 #endif
 }
 
-void knxWriteDPT2(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
+void knxWriteRawInt(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
     DbgWrite("knxWrite KO %d int value %d", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
     GroupObject *lKo = getKoForChannel(iIOIndex, iChannel);
     uint8_t *lValueRef = lKo->valueRef();
     *lValueRef = iValue;
     lKo->objectWritten();
-
 #endif
 }
 
@@ -231,6 +249,15 @@ void knxRead(uint8_t iIOIndex, uint8_t iChannel) {
     DbgWrite("knxReadRequest end from KO %d", calcKoNumber(iIOIndex, iChannel));
 #ifndef LOGIKTEST
     getKoForChannel(iIOIndex, iChannel)->requestObjectRead();
+#endif
+}
+
+// send reset device to bus
+void knxResetDevice(uint16_t iAddress) {
+    uint8_t lHigh = iAddress / 256;
+    DbgWrite("knxResetDevice with PA %d.%d.%d", lHigh / 16, lHigh % 16, iAddress % 256 );
+#ifndef LOGIKTEST
+    KNX->restart(iAddress);
 #endif
 }
 
@@ -397,7 +424,7 @@ void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
             break;
         case VAL_DPT_2:
             lValueByte = getByteParam(iParam, iChannel);
-            knxWriteDPT2(0, iChannel, lValueByte);
+            knxWriteRawInt(0, iChannel, lValueByte);
             break;
         case VAL_DPT_5:
         case VAL_DPT_5001: // correct value is calculated by dpt handling
@@ -408,16 +435,16 @@ void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
         case VAL_DPT_6:
             int8_t lValueInt;
             lValueInt = getSByteParam(iParam, iChannel);
-            knxWriteDPT2(0, iChannel, lValueInt);
+            knxWriteRawInt(0, iChannel, lValueInt);
             break;
         case VAL_DPT_7:
             uint16_t lValueUWord;
-            lValueUWord = getIntParam(iParam, iChannel);
+            lValueUWord = getWordParam(iParam, iChannel);
             knxWrite(0, iChannel, lValueUWord);
             break;
         case VAL_DPT_8:
             int16_t lValueSWord;
-            lValueSWord = getIntParam(iParam, iChannel);
+            lValueSWord = getSWordParam(iParam, iChannel);
             knxWrite(0, iChannel, lValueSWord);
             break;
         case VAL_DPT_9:
@@ -527,6 +554,14 @@ void ProcessOutput(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
             case VAL_Out_ValE2:
                 writeParameterValue(cData, BIT_EXT_INPUT_2, iChannel);
                 break;
+            case VAL_Out_ReadRequest:
+                knxRead(0, iChannel);
+                break;
+            case VAL_Out_ResetDevice:
+                uint16_t lAddress;
+                lAddress = getWordParam(PAR_f1OOnValue, iChannel);
+                knxResetDevice(lAddress);
+                break;
             default:
                 // there is no output parametrized
                 break;
@@ -542,6 +577,14 @@ void ProcessOutput(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
                 break;
             case VAL_Out_ValE2:
                 writeParameterValue(cData, BIT_EXT_INPUT_2, iChannel);
+                break;
+            case VAL_Out_ReadRequest:
+                knxRead(0, iChannel);
+                break;
+            case VAL_Out_ResetDevice:
+                uint16_t lAddress;
+                lAddress = getWordParam(PAR_f1OOffValue, iChannel);
+                knxResetDevice(lAddress);
                 break;
             default:
                 // there is no output parametrized
