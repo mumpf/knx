@@ -149,7 +149,7 @@
                   <Enumeration Text="1 Stunde" Value="3" Id="M-00FA_A-0001-01-0000_PT-TimeBase_EN-3" />
                 </TypeRestriction>
               </ParameterType>
-              <ParameterType Id="M-00FA_A-0001-01-0000_PT-OnOffYesNo" Name="YesNo">
+              <ParameterType Id="M-00FA_A-0001-01-0000_PT-OnOffYesNo" Name="OnOffYesNo">
                 <TypeRestriction Base="Value" SizeInBit="1">
                   <Enumeration Text="Nein" Value="0" Id="M-00FA_A-0001-01-0000_PT-YesNo_EN-0" />
                   <Enumeration Text="Ja" Value="1" Id="M-00FA_A-0001-01-0000_PT-YesNo_EN-1" />
@@ -178,6 +178,14 @@
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-ValueText" Name="ValueText">
                 <TypeText SizeInBit="112" />
+              </ParameterType>
+              <ParameterType Id="M-00FA_A-0001-01-0000_PT-OutputFilter" Name="OutputFilter">
+                <TypeRestriction Base="Value" SizeInBit="2">
+                  <Enumeration Text="Alle Wiederholungen durchlassen" Value="0" Id="M-00FA_A-0001-01-0000_PT-OutputFilter_EN-0" />
+                  <Enumeration Text="Nur EIN-Wiederholungen durchlassen" Value="1" Id="M-00FA_A-0001-01-0000_PT-OutputFilter_EN-1" />
+                  <Enumeration Text="Nur AUS-Wiederholungen durchlassen" Value="2" Id="M-00FA_A-0001-01-0000_PT-OutputFilter_EN-2" />
+                  <Enumeration Text="Keine Wiederholungen durchlassen" Value="3" Id="M-00FA_A-0001-01-0000_PT-OutputFilter_EN-3" />
+                </TypeRestriction>
               </ParameterType>
               <ParameterType Id="M-00FA_A-0001-01-0000_PT-OutputSend" Name="OutputSend">
                 <TypeRestriction Base="Value" SizeInBit="8">
@@ -221,13 +229,21 @@
               <Parameter Id="M-00FA_A-0001-01-0000_P-2" Name="MainDelay" ParameterType="M-00FA_A-0001-01-0000_PT-DelaySeconds" Text="Zeit bis das Logikmodul nach einem Neustart aktiv wird" SuffixText="Sekunden" Value="10">
                 <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="4" BitOffset="0" />
               </Parameter>
+              <Parameter Id="M-00FA_A-0001-01-0000_P-3" Name="Heartbeat" ParameterType="M-00FA_A-0001-01-0000_PT-DelaySeconds" Text="In Betrieb senden alle" SuffixText="Sekunden" Value="300">
+                <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="8" BitOffset="0" />
+              </Parameter>
             </Parameters>
             <ParameterRefs>
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-1_R-1" RefId="M-00FA_A-0001-01-0000_P-1" />
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-2_R-1" RefId="M-00FA_A-0001-01-0000_P-2" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3_R-1" RefId="M-00FA_A-0001-01-0000_P-3" />
             </ParameterRefs>
-            <ComObjectTable/>
-            <ComObjectRefs/>
+            <ComObjectTable>
+              <ComObject Id="M-00FA_A-0001-01-0000_O-250" Name="KOHeartbeat" Number="250" FunctionText="Zyklisch" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled"/>
+            </ComObjectTable>
+            <ComObjectRefs>
+              <ComObjectRef Id="M-00FA_A-0001-01-0000_O-250_R-1" RefId="M-00FA_A-0001-01-0000_O-250" Text="In Betieb" ObjectSize="1 Bit" DatapointType="DPST-1-2" />
+            </ComObjectRefs>
             <AddressTable MaxEntries="255" />
             <AssociationTable MaxEntries="255" />
             <LoadProcedures>
@@ -245,6 +261,8 @@
               <ParameterBlock Id="M-00FA_A-0001-01-0000_PB-1" Name="General" Text="Allgemeine Parameter">
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1_R-1" />
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2_R-1" />
+                <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3_R-1" />
+                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-250_R-1" />
               </ParameterBlock>
               <ParameterBlock Id="M-00FA_A-0001-01-0000_PB-2" Name="Info" Text="Information">
                 <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-1" Text="Jeder Kanal dieses Moduls repräsentiert eine Logik. Die Logikverarbeitung ist intern immer Binär (DPT1). Jede Logik hat 2 interne und 2 externe Eingänge, wobei die internen Eingänge mit den Ausgängen anderer Logiken verbunden werden können." />

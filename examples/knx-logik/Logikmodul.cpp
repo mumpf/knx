@@ -57,6 +57,12 @@
 #define VAL_Out_ReadRequest 4
 #define VAL_Out_ResetDevice 5
 
+// enum output filter
+#define VAL_AllowRepeat_All 0
+#define VAL_AllowRepeat_On 1
+#define VAL_AllowRepeat_Off 2
+#define VAL_AllowRepeat_None 3
+
 // flags for in- and output
 #define BIT_EXT_INPUT_1 1
 #define BIT_EXT_INPUT_2 2
@@ -66,18 +72,20 @@
 #define BIT_OUTPUT 16
 
 // pipeline steps
-#define PIP_STARTUP 1         // startup delay for each channel
-#define PIP_REPEAT_INPUT1 2   // send read requests for input 1
-#define PIP_REPEAT_INPUT2 4   // send read requests for input 2
-#define PIP_CONVERT_INPUT1 8  // convert input value 1 to bool
-#define PIP_CONVERT_INPUT2 16 // convert input value 2 to bool
-#define PIP_LOGIC_EXECUTE 32  // do logical step
-#define PIP_STAIRLIGHT 64     // do stairlight delay
-#define PIP_BLINK 128         // do blinking during stairlight
-#define PIP_ON_DELAY 256      // delay on signal
-#define PIP_OFF_DELAY 512     // delay off signal
-#define PIP_ON_REPEAT 1024    // repeat on signal
-#define PIP_OFF_REPEAT 2048   // repeat off signal
+#define PIP_STARTUP 1              // startup delay for each channel
+#define PIP_REPEAT_INPUT1 2        // send read requests for input 1
+#define PIP_REPEAT_INPUT2 4        // send read requests for input 2
+#define PIP_CONVERT_INPUT1 8       // convert input value 1 to bool
+#define PIP_CONVERT_INPUT2 16      // convert input value 2 to bool
+#define PIP_LOGIC_EXECUTE 32       // do logical step
+#define PIP_STAIRLIGHT 64          // do stairlight delay
+#define PIP_BLINK 128              // do blinking during stairlight
+#define PIP_ON_DELAY 256           // delay on signal
+#define PIP_OFF_DELAY 512          // delay off signal
+#define PIP_OUTPUT_FILTER_ON 1024  // Filter repeated signals
+#define PIP_OUTPUT_FILTER_OFF 2048 // Filter repeated signals
+#define PIP_ON_REPEAT 4096         // repeat on signal
+#define PIP_OFF_REPEAT 8192        // repeat off signal
 
 extern KnxFacade *KNX;
 extern Platform *platform;
@@ -108,12 +116,15 @@ struct sChannelInfo {
 sChannelInfo gChannelData[NUM_CHANNELS];
 unsigned long gStartupDelay;
 unsigned long pStartupDelay;
+unsigned long gHeartbeatDelay = 0;
+unsigned long pHeartbeatDelay = 0;
+GroupObject gHeartbeatKo;
 
 // forward declaratins
 void StartLogic(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex, bool iValue);
 
 uint32_t calcParamIndex(int iParamIndex, uint8_t iChannel) {
-    return iParamIndex + iChannel * NUM_paramBlockSize;
+    return iParamIndex + iChannel * NUM_paramBlockSize + NUM_paramOffset;
 }
 
 uint8_t getByteParam(int iParamIndex, uint8_t iChannel) {
@@ -128,7 +139,7 @@ int8_t getSByteParam(int iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex];
 #else
-    uint8_t* lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
+    uint8_t *lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
     return lRef[0];
 #endif
 }
@@ -145,7 +156,7 @@ int16_t getSWordParam(int iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1];
 #else
-    uint8_t* lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
+    uint8_t *lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
     return lRef[0] * 256 + lRef[1];
 #endif
 }
@@ -201,7 +212,7 @@ int calcKoNumber(uint8_t iIOIndex, uint8_t iChannel) {
 /* calculates correct KO for given I/O index and Channel
  * iIOIndex - 0=Output, 1=External input 1, 2=External input 2
  */
-GroupObject* getKoForChannel(uint8_t iIOIndex, uint8_t iChannel) {
+GroupObject *getKoForChannel(uint8_t iIOIndex, uint8_t iChannel) {
     return &KNX->getGroupObject(calcKoNumber(iIOIndex, iChannel));
 }
 
@@ -255,7 +266,7 @@ void knxRead(uint8_t iIOIndex, uint8_t iChannel) {
 // send reset device to bus
 void knxResetDevice(uint16_t iAddress) {
     uint8_t lHigh = iAddress / 256;
-    DbgWrite("knxResetDevice with PA %d.%d.%d", lHigh / 16, lHigh % 16, iAddress % 256 );
+    DbgWrite("knxResetDevice with PA %d.%d.%d", lHigh / 16, lHigh % 16, iAddress % 256);
 #ifndef LOGIKTEST
     KNX->restart(iAddress);
 #endif
@@ -355,7 +366,7 @@ int getParamByDpt(int iDpt, uint8_t iParam, uint8_t iChannel) {
 int getInputValueTest(uint8_t iIOIndex, uint8_t iChannel) {
     int lValue = 0;
     int lParamIndex = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
-	int lIndex = calcKoNumber(iIOIndex, iChannel) - 1;
+    int lIndex = calcKoNumber(iIOIndex, iChannel) - 1;
     // based on dpt, we read the correct c type.
     switch (getByteParam(lParamIndex, iChannel)) {
         case VAL_DPT_1:
@@ -390,7 +401,7 @@ int getInputValueKnx(uint8_t iIOIndex, uint8_t iChannel) {
 
     int lValue = 0;
     int lParamIndex = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
-    GroupObject* lKo = getKoForChannel(iIOIndex, iChannel);
+    GroupObject *lKo = getKoForChannel(iIOIndex, iChannel);
     // based on dpt, we read the correct c type.
     switch (getByteParam(lParamIndex, iChannel)) {
         case VAL_DPT_2:
@@ -430,7 +441,7 @@ int getInputValue(uint8_t iIOIndex, uint8_t iChannel) {
     return getInputValueTest(iIOIndex, iChannel);
 #else
     return getInputValueKnx(iIOIndex, iChannel);
-#endif	
+#endif
 }
 
 void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
@@ -643,6 +654,14 @@ void ProcessStartup(sChannelInfo *cData, uint8_t iChannel) {
     }
 }
 
+void ProcessHeartbeat() {
+    if (milliSec() - gHeartbeatDelay < pStartupDelay) {
+        // we waited enough, let's send a heartbeat signal
+        gHeartbeatKo.value(true);
+        gHeartbeatDelay = milliSec();
+    }
+}
+
 // we send an ReadRequest if reading from input 1 should be repeated
 void ProcessRepeatInput1(sChannelInfo *cData, uint8_t iChannel) {
     uint16_t lRepeatTime = getIntParam(PAR_f1E1Repeat, iChannel) * 1000;
@@ -790,6 +809,44 @@ void ProcessOnOffRepeat(sChannelInfo *cData, uint8_t iChannel) {
     }
 }
 
+// starts Output filter
+void StartOutputFilter(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
+    uint8_t lAllow = (getByteParam(PAR_f1OOutputFiter, iChannel) & 96) >> 5;
+    bool lCurrentOutput = cData->currentIO & BIT_OUTPUT;
+    bool lContinue = false;
+    switch (lAllow) {
+        case VAL_AllowRepeat_All:
+            lContinue = true;
+            break;
+        case VAL_AllowRepeat_On:
+            lContinue = (iOutput || iOutput != lCurrentOutput);
+            break;
+        case VAL_AllowRepeat_Off:
+            lContinue = (!iOutput || iOutput != lCurrentOutput);
+            break;
+        default: // VAL_AlloRepeat_None
+            lContinue = (iOutput != lCurrentOutput);
+            break;
+    }
+    if (lContinue) {
+        cData->currentPipeline &= ~( PIP_OUTPUT_FILTER_OFF | PIP_OUTPUT_FILTER_ON );
+        if (iOutput) {
+            cData->currentPipeline |= PIP_OUTPUT_FILTER_ON;
+        } else {
+            cData->currentPipeline |= PIP_OUTPUT_FILTER_OFF;
+        }
+    }
+}
+
+void ProcessOutputFilter(sChannelInfo *cData, uint8_t iChannel) {
+    if (cData->currentPipeline & PIP_OUTPUT_FILTER_ON) {
+        StartOnOffRepeat(cData, iChannel, true);
+    } else if (cData->currentPipeline & PIP_OUTPUT_FILTER_OFF) {
+        StartOnOffRepeat(cData, iChannel, false);
+    }
+    cData->currentPipeline &= ~(PIP_OUTPUT_FILTER_ON | PIP_OUTPUT_FILTER_ON);
+}
+
 // starts Switch-On-Delay
 void StartOnDelay(sChannelInfo *cData, uint8_t iChannel) {
     // if on delay is already running, there are options:
@@ -830,7 +887,7 @@ void ProcessOnDelay(sChannelInfo *cData, uint8_t iChannel) {
         // delay time is over, we turn off pipeline
         cData->currentPipeline &= ~PIP_ON_DELAY;
         // we start repeatOnProcessing
-        StartOnOffRepeat(cData, iChannel, true);
+        StartOutputFilter(cData, iChannel, true);
     }
 }
 
@@ -874,7 +931,7 @@ void ProcessOffDelay(sChannelInfo *cData, uint8_t iChannel) {
         // delay time is over, we turn off pipeline
         cData->currentPipeline &= ~PIP_OFF_DELAY;
         // we start repeatOffProcessing
-        StartOnOffRepeat(cData, iChannel, false);
+        StartOutputFilter(cData, iChannel, false);
     }
 }
 
@@ -957,7 +1014,7 @@ void StartStairlight(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
                 StartOffDelay(cData, iChannel);
             // stairlight should be switched off
             uint8_t lOff = getByteParam(PAR_f1OStairOff, iChannel);
-            if ( lOff == 1) {
+            if (lOff == 1) {
                 // stairlight might be switched off,
                 // we set the timer to 0
                 cData->stairlightDelay = 0;
@@ -1171,6 +1228,9 @@ void appLoop() {
     // we loop on all channels an execute pipeline
     for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
         sChannelInfo *lData = &gChannelData[lChannel];
+        // at this point startup-delay is done
+        // we process heartbeat
+        ProcessHeartbeat();
         if (lData->currentPipeline & PIP_STARTUP) {
             ProcessStartup(lData, lChannel);
         } else if (lData->currentPipeline > 0) {
@@ -1209,6 +1269,10 @@ void appLoop() {
             // Off delay pipeline
             if (lData->currentPipeline & PIP_OFF_DELAY) {
                 ProcessOffDelay(lData, lChannel);
+            }
+            // Output Filter pipeline
+            if (lData->currentPipeline & (PIP_OUTPUT_FILTER_ON | PIP_OUTPUT_FILTER_OFF)) {
+                ProcessOutputFilter(lData, lChannel);
             }
             // On/Off repeat pipeline
             if (lData->currentPipeline & (PIP_ON_REPEAT | PIP_OFF_REPEAT)) {
@@ -1301,13 +1365,14 @@ void setDPT(GroupObject *iKo, uint8_t iChannel, uint8_t iParamDpt) {
 void appSetup() {
     KNX->readMemory();
 
-    if (KNX->induvidualAddress() == 0)
+    bool setProgmode = false;
+    if (KNX->induvidualAddress() == 0 || setProgmode)
         KNX->progMode(true);
 
     if (KNX->configured()) {
         for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
             // we initialize DPT for output ko
-            GroupObject* lKo = getKoForChannel(0, lChannel);
+            GroupObject *lKo = getKoForChannel(0, lChannel);
             setDPT(lKo, lChannel, PAR_f1ODpt);
             // we initialize DPT and callback for input1 ko
             lKo = getKoForChannel(BIT_EXT_INPUT_1, lChannel);
@@ -1320,6 +1385,8 @@ void appSetup() {
         }
         pStartupDelay = KNX->paramInt(PAR_startupDelay) * 1000;
         gStartupDelay = milliSec();
+        pHeartbeatDelay = KNX->paramInt(PAR_HeartbeatDelay) * 1000;
+        gHeartbeatKo = KNX->getGroupObject(KO_Heartbeat);
         prepareChannels();
     }
     KNX->start();

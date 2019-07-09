@@ -279,7 +279,7 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%120" Name="f%C%ODelayOffReset" ParameterType="M-00FA_A-0001-01-0000_PT-OnOffReset" Text="Darauffolgendes EIN führt zu" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="61" BitOffset="6" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%061" Name="f%C%ORepeat" ParameterType="M-00FA_A-0001-01-0000_PT-YesNo" Text="Ausgang wiederholt zyklisch" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%061" Name="f%C%ORepeat" ParameterType="M-00FA_A-0001-01-0000_PT-OnOffYesNo" Text="Ausgang wiederholt zyklisch" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="70" BitOffset="0" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%062" Name="f%C%ORepeatOn" ParameterType="M-00FA_A-0001-01-0000_PT-DelayDeziSeconds" Text="EIN-Telegramm wird alle n/10 Sekunden wiederholt (0 = nicht wiederholen)" SuffixText="/10 Sekunden" Value="0">
@@ -287,6 +287,9 @@
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%063" Name="f%C%ORepeatOff" ParameterType="M-00FA_A-0001-01-0000_PT-DelayDeziSeconds" Text="AUS-Telegramm wird alle n/10 Sekunden wiederholt (0 = nicht wiederholen)" SuffixText="/10 Sekunden" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="75" BitOffset="0" />
+    </Parameter>
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%127" Name="f%C%OOutputFilter" ParameterType="M-00FA_A-0001-01-0000_PT-OutputFiter" Text="Ausgangsfilter" Value="0">
+      <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="70" BitOffset="1" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%064" Name="f%C%ODpt" ParameterType="M-00FA_A-0001-01-0000_PT-OutputDpt" Text="DPT für Ausgang" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="79" BitOffset="0" />
@@ -522,6 +525,7 @@
     <ParameterRef Id="M-00FA_A-0001-01-0000_P-%C%124_R-1" RefId="M-00FA_A-0001-01-0000_P-%C%124" />
     <ParameterRef Id="M-00FA_A-0001-01-0000_P-%C%125_R-1" RefId="M-00FA_A-0001-01-0000_P-%C%125" />
     <ParameterRef Id="M-00FA_A-0001-01-0000_P-%C%126_R-1" RefId="M-00FA_A-0001-01-0000_P-%C%126" />
+    <ParameterRef Id="M-00FA_A-0001-01-0000_P-%C%127_R-1" RefId="M-00FA_A-0001-01-0000_P-%C%127" />
   </ParameterRefs>
   <ComObjectTable>
     <ComObject Id="M-00FA_A-0001-01-0000_O-%C1%" Name="KOf%C%E1" Number="%C1%" FunctionText="Eingang 1" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Enabled" ReadOnInitFlag="Disabled"/>
@@ -1079,6 +1083,9 @@
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%057_R-1" />
               </when>
             </choose>
+            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%47" Text=" " />
+            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%48" Text="Durch die bisherigen Module kann es vorkommen, dass EIN- oder AUS-Signale mehrfach hintereinander kommen. Der folgende Filter erlaubt einen Einfluss darauf zu nehmen." />
+            <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%127_R-1" />
             <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%43" Text=" " />
             <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%058_R-1" />
             <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%058_R-1">

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.IO;
 
 namespace MultiplyChannels {
     class Program {
-        const int cChannelCount = 3;
-        const int cParameterBlockOffset = 8;
+        const int cChannelCount = 80;
+        const int cParameterBlockOffset = 12;
         const int cParameterBlockSize = 110;
 
         static int gParameterOffset = cParameterBlockOffset;
@@ -77,9 +78,9 @@ namespace MultiplyChannels {
         static void Main(string[] args) {
 
             XmlDocument lResult = new XmlDocument();
-            lResult.Load(@"..\Logikmodul.frame.xml");
+            lResult.Load(Path.Combine("..", "Logikmodul.frame.xml"));
             XmlDocument lTemplate = new XmlDocument();
-            lTemplate.Load(@"..\Logikmodul.templ.xml");
+            lTemplate.Load(Path.Combine("..", "Logikmodul.templ.xml"));
 
 
             nsmgr = new XmlNamespaceManager(lResult.NameTable);
@@ -104,7 +105,7 @@ namespace MultiplyChannels {
                 }
             }
             ProcessFinish(lResult);
-            lResult.Save(@"..\Logikmodul.test.xml");
+            lResult.Save(Path.Combine("..", "Logikmodul.test.xml"));
         }
     }
 }
