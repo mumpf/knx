@@ -291,6 +291,21 @@ bool startupDelay() {
     return (milliSec() - gStartupDelay < pStartupDelay);
 }
 
+// we get an dpt dependant parameter value for difference
+// input evaluation
+// here special handling is necessary because of transport
+// of dpt 9 as an int * 100
+int getParamForDelta(int iDpt, uint8_t iParam, uint8_t iChannel) {
+
+    int lValue;
+    if (iDpt == VAL_DPT_9) {
+        lValue = getFloatParam(iParam, iChannel) * 100.0;
+    } else {
+        lValue = (int)getIntParam(iParam, iChannel);
+    }
+    return lValue;
+}
+
 // we get here numeric params by their DPT
 // DPT1,2,5,6,7,8,17,232 => straight forward int vaues
 // DPT2,17 => straight forward byte values
@@ -305,14 +320,18 @@ int getParamByDpt(int iDpt, uint8_t iParam, uint8_t iChannel) {
         case VAL_DPT_2:
         case VAL_DPT_5:
         case VAL_DPT_17:
+        case VAL_DPT_5001:
             lValue = getByteParam(iParam, iChannel);
             break;
-        case VAL_DPT_5001:
-            lValue = getByteParam(iParam, iChannel) * 100 / 255;
-            break;
         case VAL_DPT_6:
+            lValue = getSByteParam(iParam, iChannel);
+            break;
         case VAL_DPT_7:
+            lValue = getWordParam(iParam, iChannel);
+            break;
         case VAL_DPT_8:
+            lValue = getSWordParam(iParam, iChannel);
+            break;
         case VAL_DPT_232:
             lValue = getIntParam(iParam, iChannel);
             break;
@@ -320,6 +339,7 @@ int getParamByDpt(int iDpt, uint8_t iParam, uint8_t iChannel) {
             lValue = (getFloatParam(iParam, iChannel) * 100.0);
             break;
         default:
+            lValue = getIntParam(iParam, iChannel);
             break;
     }
     return lValue;
@@ -373,29 +393,29 @@ int getInputValueKnx(uint8_t iIOIndex, uint8_t iChannel) {
     GroupObject* lKo = getKoForChannel(iIOIndex, iChannel);
     // based on dpt, we read the correct c type.
     switch (getByteParam(lParamIndex, iChannel)) {
-        case VAL_DPT_1:
-            lValue = lKo->value();
-            break;
-        case VAL_DPT_5:
-            lValue = ((int)lKo->value() * 100 / 255);
-            break;
         case VAL_DPT_2:
-        case VAL_DPT_6:
-        case VAL_DPT_17:
             lValue = lKo->valueRef()[0];
             break;
-        case VAL_DPT_7:
+        case VAL_DPT_6:
+            lValue = (int8_t)lKo->value();
+            break;
         case VAL_DPT_8:
-            lValue = lKo->valueRef()[0] + 256 * lKo->valueRef()[1];
+            lValue = (int16_t)lKo->value();
             break;
-        case VAL_DPT_232:
-            lValue =
-                lKo->valueRef()[0] + 256 * lKo->valueRef()[1] + 65536 * lKo->valueRef()[2];
-            break;
+
+        // case VAL_DPT_7:
+        //     lValue = lKo->valueRef()[0] + 256 * lKo->valueRef()[1];
+        //     break;
+        // case VAL_DPT_232:
+        //     lValue =
+        //         lKo->valueRef()[0] + 256 * lKo->valueRef()[1] + 65536 * lKo->valueRef()[2];
+        //     break;
         case VAL_DPT_9:
             lValue = ((double)lKo->value() * 100.0);
             break;
+        // case VAL_DPT_17:
         default:
+            lValue = lKo->value();
             break;
     }
     return lValue;
@@ -428,8 +448,11 @@ void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
             break;
         case VAL_DPT_5:
         case VAL_DPT_5001: // correct value is calculated by dpt handling
-        case VAL_DPT_17:
             lValueByte = getByteParam(iParam, iChannel);
+            knxWrite(0, iChannel, lValueByte);
+            break;
+        case VAL_DPT_17:
+            lValueByte = getByteParam(iParam, iChannel) - 1;
             knxWrite(0, iChannel, lValueByte);
             break;
         case VAL_DPT_6:
@@ -455,7 +478,7 @@ void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
         case VAL_DPT_16:
             uint8_t *lValueStr;
             lValueStr = getStringParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueStr);
+            knxWrite(0, iChannel, (char *)lValueStr);
             break;
         case VAL_DPT_232:
             int lValueRGB;
@@ -469,8 +492,11 @@ void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
 
 void writeParameterValue(sChannelInfo *cData, int iIOIndex, uint8_t iChannel) {
 
-    int lValue = getInputValue(iIOIndex, iChannel);
+    int lValueOrig = getInputValue(iIOIndex, iChannel);
+    uint8_t lParamDpt = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
+    uint8_t lInputDpt = getByteParam(lParamDpt, iChannel);
     uint8_t lDpt = getByteParam(PAR_f1ODpt, iChannel);
+    int lValue = (lInputDpt == VAL_DPT_9) ? lValueOrig / 10 : lValueOrig;
     switch (lDpt) {
         uint8_t lValueByte;
         case VAL_DPT_1:
@@ -479,19 +505,22 @@ void writeParameterValue(sChannelInfo *cData, int iIOIndex, uint8_t iChannel) {
             knxWrite(0, iChannel, lValueBool);
             break;
         case VAL_DPT_2:
+            lValueByte = lValue;
+            knxWriteRawInt(0, iChannel, lValueByte);
+            break;
         case VAL_DPT_5:
+        case VAL_DPT_5001:
         case VAL_DPT_6:
         case VAL_DPT_17:
             lValueByte = lValue;
             knxWrite(0, iChannel, lValueByte);
             break;
-        case VAL_DPT_5001:
-            lValueByte = lValue;
-            // DPT5 means, that input value range is [0..100], output value range is
-            // [0..255]
-            lValueByte = (lValueByte / 100.0) * 255.0;
-            knxWrite(0, iChannel, lValueByte);
-            break;
+            // lValueByte = lValue;
+            // // DPT5 means, that input value range is [0..100], output value range is
+            // // [0..255]
+            // lValueByte = (lValueByte / 100.0) * 255.0;
+            // knxWrite(0, iChannel, lValueByte);
+            // break;
         case VAL_DPT_7:
         case VAL_DPT_8:
             uint16_t lValueWord;
@@ -500,12 +529,17 @@ void writeParameterValue(sChannelInfo *cData, int iIOIndex, uint8_t iChannel) {
             break;
         case VAL_DPT_9:
             float lValueFloat;
-            lValueFloat = lValue;
+            if (lInputDpt == VAL_DPT_9) {
+                lValueFloat = lValueOrig / 100.0;
+            } else {
+                lValueFloat = lValue;
+            }
             knxWrite(0, iChannel, lValueFloat);
             break;
         case VAL_DPT_16:
-            uint8_t *lValueStr;
-            lValueStr = 0;
+            char lValueStr[15];
+            sprintf(lValueStr, "%d", lValue);
+            knxWrite(0, iChannel, lValueStr);
             break;
         case VAL_DPT_232:
             knxWrite(0, iChannel, lValue);
@@ -642,7 +676,7 @@ void StartConvert(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex) {
 void ProcessConvertInput(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex) {
 
     uint8_t lParamBase = (iIOIndex == 1) ? PAR_f1E1 : PAR_f1E2;
-    uint8_t lConvert = getIntParam(lParamBase, iChannel) >> 4;
+    uint8_t lConvert = getByteParam(lParamBase, iChannel) >> 4;
     bool lValueOut = 0;
     // get input value
     int lValue1In = getInputValue(iIOIndex, iChannel);
@@ -668,7 +702,8 @@ void ProcessConvertInput(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex
                 lUpperBound = 5; // we start with 2
             // scenes or zwngsführung have no intervals, but multiple single values
             for (size_t lScene = 2; lScene <= lUpperBound && lValueOut == 0; lScene++) {
-                lValueOut = ((uint)lValue1In == getIntParam(lParamBase + lScene, iChannel));
+                uint8_t lValue = getByteParam(lParamBase + lScene, iChannel);
+                lValueOut = ((uint)lValue1In == lValue);
             }
             break;
         default:
@@ -683,8 +718,8 @@ void ProcessConvertInput(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex
                             (lValue1In <= getParamByDpt(lDpt, lParamBase + 6, iChannel));
                 break;
             case VAL_InputConvert_DeltaInterval:
-                lValueOut = (lValue1In - lValue2In >= getParamByDpt(lDpt, lParamBase + 2, iChannel)) &&
-                            (lValue1In - lValue2In <= getParamByDpt(lDpt, lParamBase + 6, iChannel));
+                lValueOut = (lValue1In - lValue2In >= getParamForDelta(lDpt, lParamBase + 2, iChannel)) &&
+                            (lValue1In - lValue2In <= getParamForDelta(lDpt, lParamBase + 6, iChannel));
                 break;
             case VAL_InputConvert_Hysterese:
                 lValueOut = cData->currentIO & iIOIndex; // retrieve old result, will be send if current value is in hysterese inbervall
@@ -695,9 +730,9 @@ void ProcessConvertInput(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex
                 break;
             case VAL_InputConvert_DeltaHysterese:
                 lValueOut = cData->currentIO & iIOIndex; // retrieve old result, will be send if current value is in hysterese inbervall
-                if (lValue1In - lValue2In <= getParamByDpt(lDpt, lParamBase + 2, iChannel))
+                if (lValue1In - lValue2In <= getParamForDelta(lDpt, lParamBase + 2, iChannel))
                     lValueOut = false;
-                if (lValue1In - lValue2In >= getParamByDpt(lDpt, lParamBase + 6, iChannel))
+                if (lValue1In - lValue2In >= getParamForDelta(lDpt, lParamBase + 6, iChannel))
                     lValueOut = true;
                 break;
 
@@ -861,7 +896,7 @@ void StartLogic(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex, bool iV
 }
 
 void ProcessBlink(sChannelInfo *cData, uint8_t iChannel) {
-    unsigned long lBlinkTime = getIntParam(PAR_f1OBlink, iChannel);
+    unsigned long lBlinkTime = getIntParam(PAR_f1OBlink, iChannel) * 100;
     if (milliSec() - cData->blinkDelay > lBlinkTime) {
         bool lOn = !(cData->currentIO & BIT_OUTPUT);
         if (lOn) {
@@ -1247,7 +1282,7 @@ void setDPT(GroupObject *iKo, uint8_t iChannel, uint8_t iParamDpt) {
             iKo->dataPointType(Dpt(8, 1));
             break;
         case VAL_DPT_9:
-            iKo->dataPointType(Dpt(9, 1));
+            iKo->dataPointType(Dpt(9, 2));
             break;
         case VAL_DPT_16:
             iKo->dataPointType(Dpt(16, 1));
