@@ -27,7 +27,7 @@
 #include "knx/ip_parameter_object.h"
 #include "knx/bits.h"
 
-#define MAX_MEM 4096
+#define MAX_MEM 32768
 
 LinuxPlatform::LinuxPlatform(int argc, char** argv)
 {
