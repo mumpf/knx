@@ -7,7 +7,7 @@
 #include "Logikmodul.h"
 
 // number of supported channels
-#define NUM_CHANNELS 3
+#define NUM_CHANNELS 80
 
 // enum input defaults
 #define VAL_InputDefault_Undefined 0
@@ -118,7 +118,7 @@ unsigned long gStartupDelay;
 unsigned long pStartupDelay;
 unsigned long gHeartbeatDelay = 0;
 unsigned long pHeartbeatDelay = 0;
-GroupObject gHeartbeatKo;
+GroupObject *gHeartbeatKo;
 
 // forward declaratins
 void StartLogic(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex, bool iValue);
@@ -655,9 +655,9 @@ void ProcessStartup(sChannelInfo *cData, uint8_t iChannel) {
 }
 
 void ProcessHeartbeat() {
-    if (milliSec() - gHeartbeatDelay < pStartupDelay) {
+    if (milliSec() - gHeartbeatDelay > pHeartbeatDelay) {
         // we waited enough, let's send a heartbeat signal
-        gHeartbeatKo.value(true);
+        gHeartbeatKo->value(true);
         gHeartbeatDelay = milliSec();
     }
 }
@@ -829,7 +829,7 @@ void StartOutputFilter(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
             break;
     }
     if (lContinue) {
-        cData->currentPipeline &= ~( PIP_OUTPUT_FILTER_OFF | PIP_OUTPUT_FILTER_ON );
+        cData->currentPipeline &= ~(PIP_OUTPUT_FILTER_OFF | PIP_OUTPUT_FILTER_ON);
         if (iOutput) {
             cData->currentPipeline |= PIP_OUTPUT_FILTER_ON;
         } else {
@@ -844,7 +844,7 @@ void ProcessOutputFilter(sChannelInfo *cData, uint8_t iChannel) {
     } else if (cData->currentPipeline & PIP_OUTPUT_FILTER_OFF) {
         StartOnOffRepeat(cData, iChannel, false);
     }
-    cData->currentPipeline &= ~(PIP_OUTPUT_FILTER_ON | PIP_OUTPUT_FILTER_ON);
+    cData->currentPipeline &= ~(PIP_OUTPUT_FILTER_OFF | PIP_OUTPUT_FILTER_ON);
 }
 
 // starts Switch-On-Delay
@@ -978,7 +978,7 @@ void StartBlink(sChannelInfo *cData, uint8_t iChannel) {
 
 void ProcessStairlight(sChannelInfo *cData, uint8_t iChannel) {
 
-    uint8_t lStairTimeBase = getIntParam(PAR_f1OTimeBase, iChannel);
+    uint8_t lStairTimeBase = getByteParam(PAR_f1OTimeBase, iChannel);
     uint16_t lStairTime = getIntParam(PAR_f1OTime, iChannel);
     unsigned long lTime = lStairTime * sTimeFactors[lStairTimeBase];
 
@@ -1225,12 +1225,13 @@ void appLoop() {
     if (startupDelay())
         return;
 
+    // at this point startup-delay is done
+    // we process heartbeat
+    ProcessHeartbeat();
+
     // we loop on all channels an execute pipeline
     for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
         sChannelInfo *lData = &gChannelData[lChannel];
-        // at this point startup-delay is done
-        // we process heartbeat
-        ProcessHeartbeat();
         if (lData->currentPipeline & PIP_STARTUP) {
             ProcessStartup(lData, lChannel);
         } else if (lData->currentPipeline > 0) {
@@ -1386,7 +1387,8 @@ void appSetup() {
         pStartupDelay = KNX->paramInt(PAR_startupDelay) * 1000;
         gStartupDelay = milliSec();
         pHeartbeatDelay = KNX->paramInt(PAR_HeartbeatDelay) * 1000;
-        gHeartbeatKo = KNX->getGroupObject(KO_Heartbeat);
+        gHeartbeatKo = &KNX->getGroupObject(KO_Heartbeat);
+        gHeartbeatKo->dataPointType(Dpt(1,2));
         prepareChannels();
     }
     KNX->start();
