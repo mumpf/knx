@@ -288,7 +288,7 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%063" Name="f%C%ORepeatOff" ParameterType="M-00FA_A-0001-01-0000_PT-DelayDeziSeconds" Text="AUS-Telegramm wird alle n/10 Sekunden wiederholt (0 = nicht wiederholen)" SuffixText="/10 Sekunden" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="75" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%127" Name="f%C%OOutputFilter" ParameterType="M-00FA_A-0001-01-0000_PT-OutputFiter" Text="Ausgangsfilter" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%127" Name="f%C%OOutputFilter" ParameterType="M-00FA_A-0001-01-0000_PT-OutputFilter" Text="Ausgangsfilter" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="70" BitOffset="1" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%064" Name="f%C%ODpt" ParameterType="M-00FA_A-0001-01-0000_PT-OutputDpt" Text="DPT für Ausgang" Value="0">
@@ -1083,9 +1083,6 @@
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%057_R-1" />
               </when>
             </choose>
-            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%47" Text=" " />
-            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%48" Text="Durch die bisherigen Module kann es vorkommen, dass EIN- oder AUS-Signale mehrfach hintereinander kommen. Der folgende Filter erlaubt einen Einfluss darauf zu nehmen." />
-            <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%127_R-1" />
             <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%43" Text=" " />
             <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%058_R-1" />
             <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%058_R-1">
@@ -1106,6 +1103,9 @@
                 </choose>
               </when>
             </choose>
+            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%47" Text=" " />
+            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%48" Text="Durch die bisherigen Module kann es vorkommen, dass EIN- oder AUS-Signale mehrfach hintereinander kommen. Der folgende Filter erlaubt einen Einfluss darauf zu nehmen." />
+            <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%127_R-1" />
             <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%44" Text=" " />
             <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%061_R-1" />
             <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%061_R-1">

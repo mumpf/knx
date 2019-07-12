@@ -5,7 +5,7 @@ using System.IO;
 
 namespace MultiplyChannels {
     class Program {
-        const int cChannelCount = 3;
+        const int cChannelCount = 80;
         const int cParameterBlockOffset = 12;
         const int cParameterBlockSize = 110;
 
