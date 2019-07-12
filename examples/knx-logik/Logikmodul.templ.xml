@@ -13,7 +13,7 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%004" Name="f%C%Caltuate" ParameterType="M-00FA_A-0001-01-0000_PT-Calculate" Text="Logik auswerten" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="5" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%005" Name="f%C%Trigger" ParameterType="M-00FA_A-0001-01-0000_PT-Trigger" Text="Ausgang sendet seinen Wert weiter" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%005" Name="f%C%Trigger" ParameterType="M-00FA_A-0001-01-0000_PT-Trigger" Text="Logik sendet ihren Wert weiter" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="6" BitOffset="0" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%089" Name="f%C%TriggerE1" ParameterType="M-00FA_A-0001-01-0000_PT-CheckBox" Text="          Externer Eingang 1" Value="0">
@@ -63,10 +63,10 @@
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="14" BitOffset="0" />
     </Parameter>
 
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%011" Name="f%C%E1LowDpt5" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt5" Text="Wert 1" Value="128">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%011" Name="f%C%E1LowDpt5" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt5" Text="Von-Wert" Value="128">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="11" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%012" Name="f%C%E1HighDpt5" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt5" Text="Wert 2" Value="255">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%012" Name="f%C%E1HighDpt5" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt5" Text="Bis-Wert" Value="255">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="15" BitOffset="0" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%013" Name="f%C%E1LowDpt5001" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt5001" Value="50">
@@ -75,28 +75,28 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%014" Name="f%C%E1HighDpt5001" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt5001" Value="100">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="15" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%015" Name="f%C%E1LowDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Wert 1" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%015" Name="f%C%E1LowDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Von-Wert" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="11" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%016" Name="f%C%E1HighDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Wert 2" Value="127">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%016" Name="f%C%E1HighDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Bis-Wert" Value="127">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="15" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%017" Name="f%C%E1LowDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Wert 1" Value="32768">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%017" Name="f%C%E1LowDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Von-Wert" Value="32768">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="11" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%018" Name="f%C%E1HighDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Wert 2" Value="65535">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%018" Name="f%C%E1HighDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Bis-Wert" Value="65535">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="15" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%019" Name="f%C%E1LowDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Wert 1" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%019" Name="f%C%E1LowDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Von-Wert" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="11" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%020" Name="f%C%E1HighDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Wert 2" Value="32767">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%020" Name="f%C%E1HighDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Bis-Wert" Value="32767">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="15" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%021" Name="f%C%E1LowDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Wert 1" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%021" Name="f%C%E1LowDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Von-Wert" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="11" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%022" Name="f%C%E1HighDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Wert 2" Value="670760">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%022" Name="f%C%E1HighDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Bis-Wert" Value="670760">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="15" BitOffset="0" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%023" Name="f%C%E1Low0Dpt17" ParameterType="M-00FA_A-0001-01-0000_PT-ValueScene" Text="Eingang 1 ist EIN bei Szene (0=inaktiv)" Value="1">
@@ -123,10 +123,10 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%107" Name="f%C%E1Low7Dpt17" ParameterType="M-00FA_A-0001-01-0000_PT-ValueScene" Text="... oder bei Szene" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="18" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%024" Name="f%C%E1LowDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert 1" Value="8388608">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%024" Name="f%C%E1LowDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Von-Wert" Value="8388608">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="11" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%025" Name="f%C%E1HighDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert 2" Value="16777216">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%025" Name="f%C%E1HighDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Bis-Wert" Value="16777216">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="15" BitOffset="0" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%026" Name="f%C%E1Default" ParameterType="M-00FA_A-0001-01-0000_PT-InputDefault" Text="Eingang 1 ist nach einem Neustart vorbelegt mit" Value="0">
@@ -168,28 +168,28 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%034" Name="f%C%E2HighDpt5001" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt5001" Value="100">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="30" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%035" Name="f%C%E2LowDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Wert 1" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%035" Name="f%C%E2LowDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Von-Wert" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="26" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%036" Name="f%C%E2HighDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Wert 2" Value="127">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%036" Name="f%C%E2HighDpt6" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt6" Text="Bis-Wert" Value="127">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="30" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%037" Name="f%C%E2LowDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Wert 1" Value="32768">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%037" Name="f%C%E2LowDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Von-Wert" Value="32768">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="26" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%038" Name="f%C%E2HighDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Wert 2" Value="65535">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%038" Name="f%C%E2HighDpt7" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt7" Text="Bis-Wert" Value="65535">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="30" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%039" Name="f%C%E2LowDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Wert 1" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%039" Name="f%C%E2LowDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Von-Wert" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="26" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%040" Name="f%C%E2HighDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Wert 2" Value="32767">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%040" Name="f%C%E2HighDpt8" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt8" Text="Bis-Wert" Value="32767">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="30" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%041" Name="f%C%E2LowDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Wert 1" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%041" Name="f%C%E2LowDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Von-Wert" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="26" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%042" Name="f%C%E2HighDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Wert 2" Value="670760">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%042" Name="f%C%E2HighDpt9" ParameterType="M-00FA_A-0001-01-0000_PT-ValueDpt9" Text="Bis-Wert" Value="670760">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="30" BitOffset="0" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%043" Name="f%C%E2Low0Dpt17" ParameterType="M-00FA_A-0001-01-0000_PT-ValueScene" Text="Eingang 2 ist EIN bei Szene" Value="1">
@@ -216,10 +216,10 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%114" Name="f%C%E2Low7Dpt17" ParameterType="M-00FA_A-0001-01-0000_PT-ValueScene" Text="... oder bei Szene" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="33" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%044" Name="f%C%E2LowDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert 1" Value="8388608">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%044" Name="f%C%E2LowDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Von-Wert" Value="8388608">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="26" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%045" Name="f%C%E2HighDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Wert 2" Value="16777216">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%045" Name="f%C%E2HighDptRGB" ParameterType="M-00FA_A-0001-01-0000_PT-ValueRGB" Text="Bis-Wert" Value="16777216">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="30" BitOffset="0" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%046" Name="f%C%E2Default" ParameterType="M-00FA_A-0001-01-0000_PT-InputDefault" Text="Eingang 2 ist nach einem Neustart vorbelegt mit" Value="0">
@@ -288,7 +288,7 @@
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%063" Name="f%C%ORepeatOff" ParameterType="M-00FA_A-0001-01-0000_PT-DelayDeziSeconds" Text="AUS-Telegramm wird alle n/10 Sekunden wiederholt (0 = nicht wiederholen)" SuffixText="/10 Sekunden" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="75" BitOffset="0" />
     </Parameter>
-    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%127" Name="f%C%OOutputFilter" ParameterType="M-00FA_A-0001-01-0000_PT-OutputFilter" Text="Ausgangsfilter" Value="0">
+    <Parameter Id="M-00FA_A-0001-01-0000_P-%C%127" Name="f%C%OOutputFilter" ParameterType="M-00FA_A-0001-01-0000_PT-OutputFilter" Text="Wiederholungsfilter" Value="0">
       <Memory CodeSegment="M-00FA_A-0001-01-0000_RS-04-00000" Offset="70" BitOffset="1" />
     </Parameter>
     <Parameter Id="M-00FA_A-0001-01-0000_P-%C%064" Name="f%C%ODpt" ParameterType="M-00FA_A-0001-01-0000_PT-OutputDpt" Text="DPT für Ausgang" Value="0">
@@ -566,7 +566,7 @@
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-31" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="3 Bytes" DatapointType="DPT-232"/>
   </ComObjectRefs>
   <Dynamic>
-    <Channel Id="M-00FA_A-0001-01-0000_CH-%C%" Name="Kanal%C%" Number="%C%" Text="Kanal %C%">
+    <Channel Id="M-00FA_A-0001-01-0000_CH-%C%" Name="Kanal%C%" Number="%C%" Text="Kanal %C%: {{%C%0}}">
       <!-- Delta ext. 1 Input-->
       <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%008_R-1">
         <when test="0">
@@ -1026,13 +1026,6 @@
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%007_R-1" />
               </when>
             </choose>
-          </when>
-        </choose>
-      </ParameterBlock>
-      <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%003_R-1">
-        <when test="!=0">
-          <ParameterBlock Id="M-00FA_A-0001-01-0000_PB-%C%8" Name="f%C%Output" Text="    Ausgang">
-            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%40" Text="Die folgenden Blöcke können den Ausgangswert beeinflussen. Sie werden - sofern aktiv - in der hier aufgeführten Reihnfolge ausgeführt" />
             <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%41" Text=" " />
             <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%005_R-1" />
             <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%005_R-1">
@@ -1059,6 +1052,13 @@
                 </choose>
               </when>
             </choose>
+          </when>
+        </choose>
+      </ParameterBlock>
+      <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%003_R-1">
+        <when test="!=0">
+          <ParameterBlock Id="M-00FA_A-0001-01-0000_PB-%C%8" Name="f%C%Output" Text="    Ausgang">
+            <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%40" Text="Die folgenden Blöcke können den Ausgangswert beeinflussen. Sie werden - sofern aktiv - in der hier aufgeführten Reihnfolge ausgeführt" />
             <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-%C%42" Text=" " />
             <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-%C%052_R-1" />
             <choose ParamRefId="M-00FA_A-0001-01-0000_P-%C%052_R-1">

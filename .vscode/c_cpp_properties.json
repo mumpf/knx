@@ -23,13 +23,19 @@
             "intelliSenseMode": "gcc-x64"
         },
         {
-            "name": "Win32",
+            "name": "SAMD",
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARDUINO_ARCH_SAMD"
+            ],
             "includePath": [
-                "C:\\Users\\waldi\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
-                "C:\\Users\\waldi\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.6.21\\**"
+                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/tools/**",
+                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/hardware/samd/1.6.21/**"
             ],
             "forcedInclude": [
-                "C:\\Users\\waldi\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.6.21\\cores\\arduino\\Arduino.h"
+                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/hardware/samd/1.6.21/cores/arduino/Arduino.h"
             ]
         }
     ],
