@@ -70,6 +70,7 @@
 #define BIT_INT_INPUT_2 8
 #define BIT_INPUT_MASK 15
 #define BIT_OUTPUT 16
+#define BIT_LAST_OUTPUT 128
 
 // pipeline steps
 #define PIP_STARTUP 1              // startup delay for each channel
@@ -101,7 +102,7 @@ struct sChannelInfo {
                               // (4) is triggering further processing
     uint8_t validActiveIO;    // Bitfield: validity flags for input (0-3) values and
                               // active inputs (4-7)
-    uint8_t currentIO;        // Bitfield: current input (0-3) and output (4) values
+    uint8_t currentIO;        // Bitfield: current input (0-3) and current output (4) and last (previous) output (7) values
     uint16_t currentPipeline; // Bitfield: indicator for current pipeline step
     unsigned long repeatInput1Delay;
     unsigned long repeatInput2Delay;
@@ -812,29 +813,32 @@ void ProcessOnOffRepeat(sChannelInfo *cData, uint8_t iChannel) {
 // starts Output filter
 void StartOutputFilter(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
     uint8_t lAllow = (getByteParam(PAR_f1OOutputFiter, iChannel) & 96) >> 5;
-    bool lCurrentOutput = cData->currentIO & BIT_OUTPUT;
+    bool lLastOutput = (cData->currentIO & BIT_LAST_OUTPUT) > 0;
     bool lContinue = false;
     switch (lAllow) {
         case VAL_AllowRepeat_All:
             lContinue = true;
             break;
         case VAL_AllowRepeat_On:
-            lContinue = (iOutput || iOutput != lCurrentOutput);
+            lContinue = (iOutput || iOutput != lLastOutput);
             break;
         case VAL_AllowRepeat_Off:
-            lContinue = (!iOutput || iOutput != lCurrentOutput);
+            lContinue = (!iOutput || iOutput != lLastOutput);
             break;
         default: // VAL_AlloRepeat_None
-            lContinue = (iOutput != lCurrentOutput);
+            lContinue = (iOutput != lLastOutput);
             break;
     }
     if (lContinue) {
         cData->currentPipeline &= ~(PIP_OUTPUT_FILTER_OFF | PIP_OUTPUT_FILTER_ON);
-        if (iOutput) {
-            cData->currentPipeline |= PIP_OUTPUT_FILTER_ON;
-        } else {
-            cData->currentPipeline |= PIP_OUTPUT_FILTER_OFF;
-        }
+        cData->currentPipeline |= iOutput ? PIP_OUTPUT_FILTER_ON : PIP_OUTPUT_FILTER_OFF;
+        cData->currentIO &= ~BIT_LAST_OUTPUT;
+        if (iOutput) cData->currentIO |= BIT_LAST_OUTPUT;
+        // if (iOutput) {
+        //     cData->currentPipeline |= PIP_OUTPUT_FILTER_ON;
+        // } else {
+        //     cData->currentPipeline |= PIP_OUTPUT_FILTER_OFF;
+        // }
     }
 }
 
