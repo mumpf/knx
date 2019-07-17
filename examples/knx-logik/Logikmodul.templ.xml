@@ -534,36 +534,36 @@
   </ComObjectTable>
   <ComObjectRefs>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-1" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="1 Bit" DatapointType="DPST-1-1" />
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-2" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bit" DatapointType="DPT-2" />
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-3" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPT-5"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-2" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bit" DatapointType="DPST-2-1" />
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-3" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-5-10"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-4" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-5-1"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-5" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPT-6"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-6" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-7"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-7" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-8"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-8" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-9"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-5" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-6-10"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-6" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-7-1"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-7" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-8-1"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-8" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-9-2"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-9" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="14 Bytes" DatapointType="DPST-16-1"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-10" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-17-1"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-11" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="3 Bytes" DatapointType="DPT-232"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C3%_R-11" RefId="M-00FA_A-0001-01-0000_O-%C3%" Text="K %C%: {{%C%0}}" ObjectSize="3 Bytes" DatapointType="DPST-232-600"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-12" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="1 Bit" DatapointType="DPST-1-1" />
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-13" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bit" DatapointType="DPT-2" />
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-14" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPT-5"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-13" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bit" DatapointType="DPST-2-1" />
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-14" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-5"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-15" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-5-1"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-16" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPT-6"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-17" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-7"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-18" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-8"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-19" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-9"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-16" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-6-10"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-17" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-7-1"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-18" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-8-1"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-19" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-9-2"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-20" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-17-1"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-21" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="3 Bytes" DatapointType="DPT-232"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C1%_R-21" RefId="M-00FA_A-0001-01-0000_O-%C1%" Text="K %C%: {{%C%0}}" ObjectSize="3 Bytes" DatapointType="DPST-232-600"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-22" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="1 Bit" DatapointType="DPST-1-1" />
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-23" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bit" DatapointType="DPT-2" />
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-24" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPT-5"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-23" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bit" DatapointType="DPST-2-1" />
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-24" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-5"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-25" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-5-1"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-26" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPT-6"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-27" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-7"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-28" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-8"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-29" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPT-9"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-26" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-6-10"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-27" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-7-1"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-28" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-8-1"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-29" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="2 Bytes" DatapointType="DPST-9-2"/>
     <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-30" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="1 Byte" DatapointType="DPST-17-1"/>
-    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-31" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="3 Bytes" DatapointType="DPT-232"/>
+    <ComObjectRef Id="M-00FA_A-0001-01-0000_O-%C2%_R-31" RefId="M-00FA_A-0001-01-0000_O-%C2%" Text="K %C%: {{%C%0}}" ObjectSize="3 Bytes" DatapointType="DPST-232-600"/>
   </ComObjectRefs>
   <Dynamic>
     <Channel Id="M-00FA_A-0001-01-0000_CH-%C%" Name="Kanal%C%" Number="%C%" Text="Kanal %C%: {{%C%0}}">
