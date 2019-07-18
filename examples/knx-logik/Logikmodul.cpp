@@ -7,7 +7,7 @@
 #include "Logikmodul.h"
 
 // number of supported channels
-#define NUM_CHANNELS 80
+#define NUM_CHANNELS 5
 
 // enum input defaults
 #define VAL_InputDefault_Undefined 0
@@ -427,7 +427,7 @@ int getInputValueKnx(uint8_t iIOIndex, uint8_t iChannel) {
             break;
         // case VAL_DPT_17:
         default:
-            lValue = lKo->value();
+            lValue = (int32_t)lKo->value();
             break;
     }
     return lValue;
@@ -833,7 +833,8 @@ void StartOutputFilter(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
         cData->currentPipeline &= ~(PIP_OUTPUT_FILTER_OFF | PIP_OUTPUT_FILTER_ON);
         cData->currentPipeline |= iOutput ? PIP_OUTPUT_FILTER_ON : PIP_OUTPUT_FILTER_OFF;
         cData->currentIO &= ~BIT_LAST_OUTPUT;
-        if (iOutput) cData->currentIO |= BIT_LAST_OUTPUT;
+        if (iOutput)
+            cData->currentIO |= BIT_LAST_OUTPUT;
         // if (iOutput) {
         //     cData->currentPipeline |= PIP_OUTPUT_FILTER_ON;
         // } else {
@@ -1392,7 +1393,7 @@ void appSetup() {
         gStartupDelay = milliSec();
         pHeartbeatDelay = KNX->paramInt(PAR_HeartbeatDelay) * 1000;
         gHeartbeatKo = &KNX->getGroupObject(KO_Heartbeat);
-        gHeartbeatKo->dataPointType(Dpt(1,2));
+        gHeartbeatKo->dataPointType(Dpt(1, 2));
         prepareChannels();
     }
     KNX->start();

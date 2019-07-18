@@ -24,19 +24,32 @@
         },
         {
             "name": "SAMD",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/../../libraries/**",
+                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/tools/**",
+                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/hardware/samd/1.6.21/**"
+            ],
+            "forcedInclude": [
+                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/hardware/samd/1.6.21/cores/arduino/Arduino.h"
+            ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
                 "ARDUINO_ARCH_SAMD"
             ],
-            "includePath": [
-                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/tools/**",
-                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/hardware/samd/1.6.21/**"
-            ],
-            "forcedInclude": [
-                "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/hardware/samd/1.6.21/cores/arduino/Arduino.h"
-            ]
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "${workspaceFolder}/../../libraries/**",
+                    "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/tools/**",
+                    "C:/Users/waldi/AppData/Local/Arduino15/packages/arduino/hardware/samd/1.6.21/**"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "intelliSenseMode": "msvc-x64"
         }
     ],
     "version": 4
