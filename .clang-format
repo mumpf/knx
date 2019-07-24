@@ -13,8 +13,8 @@ BraceWrapping:
   BeforeElse: true
   SplitEmptyFunction: false
   IndentBraces: false
-#BreakBeforeBraces: Attach
-BreakBeforeBraces: Custom
+BreakBeforeBraces: Attach
+#BreakBeforeBraces: Custom
 ColumnLimit: 0
 IndentWidth: 4
 NamespaceIndentation: All
