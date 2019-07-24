@@ -83,7 +83,7 @@ void setup() {
     // is the led active on HIGH or low? Default is LOW
     // knx.ledPinActiveOn(HIGH);
     // pin or GPIO programming button is connected to. Default is 0
-    // knx.buttonPin(0);
+    knx.buttonPin(10);
 
     // start the framework.
     knx.start();

@@ -1,0 +1,5 @@
+{
+    "board": "arduino:samd:arduino_zero_native",
+    "sketch": "knx-demo.ino",
+    "output": "../../build"
+}
