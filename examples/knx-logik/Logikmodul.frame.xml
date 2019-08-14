@@ -5,12 +5,12 @@
   <ManufacturerData>
     <Manufacturer RefId="M-00FA">
       <Catalog>
-        <CatalogSection Id="M-00FA_CS-1" Name="Geräte" Number="1" DefaultLanguage="en-US">
-          <CatalogItem Id="M-00FA_H-123-1_HP-0001-01-0000_CI-MYLOGIC-1" Name="Lokikmodul" Number="1" ProductRefId="M-00FA_H-123-1_P-MYLOGIC" Hardware2ProgramRefId="M-00FA_H-123-1_HP-0001-01-0000" DefaultLanguage="en-US" />
+        <CatalogSection Id="M-00FA_CS-1" Name="Geräte" Number="1" DefaultLanguage="de">
+          <CatalogItem Id="M-00FA_H-123-1_HP-0001-01-0000_CI-MYLOGIC-1" Name="Lokikmodul" Number="1" ProductRefId="M-00FA_H-123-1_P-MYLOGIC" Hardware2ProgramRefId="M-00FA_H-123-1_HP-0001-01-0000" DefaultLanguage="de" />
         </CatalogSection>
       </Catalog>
       <ApplicationPrograms>
-        <ApplicationProgram Id="M-00FA_A-0001-01-0000" ApplicationNumber="1" ApplicationVersion="1" ProgramType="ApplicationProgram" MaskVersion="MV-57B0" Name="WPLogic" LoadProcedureStyle="MergedProcedure" PeiType="0" DefaultLanguage="en-US" DynamicTableManagement="false" Linkable="false" MinEtsVersion="4.0">
+        <ApplicationProgram Id="M-00FA_A-0001-01-0000" ApplicationNumber="1" ApplicationVersion="3" ProgramType="ApplicationProgram" MaskVersion="MV-07B0" Name="WPLogic" LoadProcedureStyle="MergedProcedure" PeiType="0" DefaultLanguage="de" DynamicTableManagement="false" Linkable="false" MinEtsVersion="4.0" ReplacesVersions="1 2">
           <Static>
             <Code>
               <RelativeSegment Id="M-00FA_A-0001-01-0000_RS-04-00000" Name="Parameters" Offset="0" Size="%S%" LoadStateMachine="4" />
@@ -235,8 +235,8 @@
             </Parameters>
             <ParameterRefs>
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-1_R-1" RefId="M-00FA_A-0001-01-0000_P-1" />
-              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2_R-1" RefId="M-00FA_A-0001-01-0000_P-2" />
-              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3_R-1" RefId="M-00FA_A-0001-01-0000_P-3" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-2_R-2" RefId="M-00FA_A-0001-01-0000_P-2" />
+              <ParameterRef Id="M-00FA_A-0001-01-0000_P-3_R-3" RefId="M-00FA_A-0001-01-0000_P-3" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="M-00FA_A-0001-01-0000_O-250" Name="KOHeartbeat" Number="250" FunctionText="Zyklisch" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled"/>
@@ -260,8 +260,8 @@
             <ChannelIndependentBlock>
               <ParameterBlock Id="M-00FA_A-0001-01-0000_PB-1" Name="General" Text="Allgemeine Parameter">
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1_R-1" />
-                <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2_R-1" />
-                <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3_R-1" />
+                <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2_R-2" />
+                <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3_R-3" />
                 <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-250_R-1" />
               </ParameterBlock>
               <ParameterBlock Id="M-00FA_A-0001-01-0000_PB-2" Name="Info" Text="Information">
@@ -293,13 +293,16 @@
         </ApplicationProgram>
       </ApplicationPrograms>
       <Hardware>
-        <Hardware Id="M-00FA_H-123-1" Name="WPLogikmodul" SerialNumber="123" VersionNumber="1" HasIndividualAddress="true" HasApplicationProgram="true" IsIPEnabled="true">
+        <Hardware Id="M-00FA_H-123-1" Name="WPLogikmodul" SerialNumber="123" VersionNumber="1" HasIndividualAddress="true" HasApplicationProgram="true">
           <Products>
-            <Product Id="M-00FA_H-123-1_P-MYLOGIC" Text="Lokikmodul" OrderNumber="MYLOGIC" IsRailMounted="false" DefaultLanguage="en-US" />
+            <Product Id="M-00FA_H-123-1_P-MYLOGIC" Text="Lokikmodul" OrderNumber="MYLOGIC" IsRailMounted="false" DefaultLanguage="de">
+              <RegistrationInfo RegistrationStatus="Registered" />
+            </Product>
           </Products>
           <Hardware2Programs>
-            <Hardware2Program Id="M-00FA_H-123-1_HP-0001-01-0000" MediumTypes="MT-5">
+            <Hardware2Program Id="M-00FA_H-123-1_HP-0001-01-0000" MediumTypes="MT-0 MT-5">
               <ApplicationProgramRef RefId="M-00FA_A-0001-01-0000" />
+              <RegistrationInfo RegistrationStatus="Registered" RegistrationNumber="0001/%HardwareVersion%%ApplicationVersion%" />
             </Hardware2Program>
           </Hardware2Programs>
         </Hardware>
