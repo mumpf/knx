@@ -7,7 +7,7 @@
 #include "Logikmodul.h"
 
 // number of supported channels
-#define NUM_CHANNELS 5
+#define NUM_CHANNELS 50
 
 // enum input defaults
 #define VAL_InputDefault_Undefined 0

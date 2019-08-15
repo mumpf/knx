@@ -1,6 +1,6 @@
 {
     "programmer": "AVR ISP",
-    "port": "COM7",
+    "port": "COM4",
     "board": "arduino:samd:arduino_zero_native",
     "sketch": "examples/knx-logik/Logikmodul.ino",
     "output": "../../build"

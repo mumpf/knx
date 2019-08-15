@@ -277,4 +277,5 @@ knx-linux/CMakeCache.txt
 knx-linux/Makefile
 knx-linux/knx-linux
 knx-linux/cmake_install.cmake
+**/*.knxprod
 **/flash.bin

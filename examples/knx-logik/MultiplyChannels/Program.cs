@@ -5,11 +5,10 @@ using System.IO;
 
 namespace MultiplyChannels {
     class Program {
-        const int cChannelCount = 5;
+        const int cChannelCount = 50;
         const int cParameterBlockOffset = 12;
         const int cParameterBlockSize = 110;
 
-        static int gParameterOffset = cParameterBlockOffset;
         static XmlNamespaceManager nsmgr;
 
         static Dictionary<string, string> gPath = new Dictionary<string, string>() {
@@ -73,8 +72,36 @@ namespace MultiplyChannels {
             foreach (XmlNode lNode in lNodes) {
                 lNode.Attributes.GetNamedItem("maxInclusive").Value = cChannelCount.ToString();
             }
+            // change all Id-Attributes
+            XmlNode lApplicationProgramNode = iTargetNode.SelectSingleNode("/knx:KNX/knx:ManufacturerData/knx:Manufacturer/knx:ApplicationPrograms/knx:ApplicationProgram", nsmgr);
+            int lApplicationNumber = int.Parse(lApplicationProgramNode.Attributes.GetNamedItem("ApplicationNumber").Value);
+            int lApplicationVersion = int.Parse(lApplicationProgramNode.Attributes.GetNamedItem("ApplicationVersion").Value);
+            XmlNode lReplacesVersionsAttribute = lApplicationProgramNode.Attributes.GetNamedItem("ReplacesVersions");
+            string lOldId = CalculateId(1, 1);
+            string lNewId = CalculateId(lApplicationNumber, lApplicationVersion);
+
+            XmlNodeList lAttrs = iTargetNode.SelectNodes("//*/@*[string-length() > '13']");
+            foreach (XmlNode lAttr in lAttrs) {
+                if (lAttr.Value != null) lAttr.Value = lAttr.Value.Replace(lOldId, lNewId);
+            }
+            // create registration entry
+            XmlNode lHardwareVersionAttribute = iTargetNode.SelectSingleNode("/knx:KNX/knx:ManufacturerData/knx:Manufacturer/knx:Hardware/knx:Hardware/@VersionNumber", nsmgr);
+            int lHardwareVersion = int.Parse(lHardwareVersionAttribute.Value);
+            XmlNode lRegistrationNumber = iTargetNode.SelectSingleNode("/knx:KNX/knx:ManufacturerData/knx:Manufacturer/knx:Hardware/knx:Hardware/knx:Hardware2Programs/knx:Hardware2Program/knx:RegistrationInfo/@RegistrationNumber", nsmgr);
+            lRegistrationNumber.Value = string.Format("0001/{0}{1}", lHardwareVersion, lApplicationVersion);
+
+            // // Add ReplacesVersions 
+            // if (lReplacesVersionsAttribute != null) {
+            //     string lReplacesVersions = lReplacesVersionsAttribute.Value;
+            //     string lOldVerion = string.Format(" {0}", lApplicationVersion - 1);
+            //     if (!lReplacesVersions.Contains(lOldVerion) && lReplacesVersions != (lApplicationVersion - 1).ToString()) lReplacesVersionsAttribute.Value += lOldVerion;
+            // }
         }
 
+        static string CalculateId(int iApplicationNumber, int iApplicationVersion) {
+            return string.Format("-{0:X4}-{1:X2}-0000", iApplicationNumber, iApplicationVersion);
+
+        }
         static void Main(string[] args) {
 
             XmlDocument lResult = new XmlDocument();
@@ -82,11 +109,8 @@ namespace MultiplyChannels {
             XmlDocument lTemplate = new XmlDocument();
             lTemplate.Load(Path.Combine("..", "Logikmodul.templ.xml"));
 
-
             nsmgr = new XmlNamespaceManager(lResult.NameTable);
             nsmgr.AddNamespace("knx", "http://knx.org/xml/project/11");
-
-
 
             for (int lChannel = 1; lChannel <= cChannelCount; lChannel++) {
                 foreach (var lPath in gPath) {

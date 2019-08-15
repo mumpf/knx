@@ -84,148 +84,151 @@
               </ParameterType>
             </ParameterTypes>
             <Parameters>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-1" Name="StartupDelay" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Anlaufzeit des Moduls nach Neustart" Value="10" SuffixText="Sekunden">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-49" Name="NumChannels" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Anzahl Logikkanäle (hidden)" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="0" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-2" Name="Heartbeat" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="'In Betrieb' Signal senden (0=nicht senden)" Value="600" SuffixText="Sekunden">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-1" Name="StartupDelay" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Anlaufzeit des Moduls nach Neustart" Value="10" SuffixText="Sekunden">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="4" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-3" Name="TempOffset" ParameterType="M-00FA_A-0014-0A-0000_PT-OffsetTemp" Text="Temperatur anpassen" Value="0" SuffixText="/10 °C">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-2" Name="Heartbeat" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="'In Betrieb' Signal senden (0=nicht senden)" Value="600" SuffixText="Sekunden">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="8" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-4" Name="TempCycle" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Temperatur zyklisch senden (0=nicht senden)" Value="0" SuffixText="Sekunden">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-3" Name="TempOffset" ParameterType="M-00FA_A-0014-0A-0000_PT-OffsetTemp" Text="Temperatur anpassen" Value="0" SuffixText="/10 °C">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="12" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-5" Name="DeltaTempValue" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaAbsTemp" Text="Temperatur bei absoluter Abweichung senden (0=nicht senden)" Value="0" SuffixText="/10 °C">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-4" Name="TempCycle" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Temperatur zyklisch senden (0=nicht senden)" Value="0" SuffixText="Sekunden">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="16" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-6" Name="DeltaTempPercent" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaRelTemp" Text="Temperatur bei Abweichung vom vorherigen Wert senden (0=nicht senden)" Value="0" SuffixText="%">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-5" Name="DeltaTempValue" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaAbsTemp" Text="Temperatur bei absoluter Abweichung senden (0=nicht senden)" Value="0" SuffixText="/10 °C">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="20" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-7" Name="TempInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Temperatur-Schwellwert 1" Value="0">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-6" Name="DeltaTempPercent" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaRelTemp" Text="Temperatur bei Abweichung vom vorherigen Wert senden (0=nicht senden)" Value="0" SuffixText="%">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="24" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-8" Name="TempLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Von-Wert" Value="0" SuffixText="°C">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="25" BitOffset="0" />
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-7" Name="TempInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Temperatur-Schwellwert 1" Value="0">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="28" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-9" Name="TempHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Bis-Wert" Value="18" SuffixText="°C">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-8" Name="TempLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Von-Wert" Value="0" SuffixText="°C">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="29" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-10" Name="TempInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Temperatur-Schwellwert 2" Value="0">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-9" Name="TempHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Bis-Wert" Value="18" SuffixText="°C">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="33" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-11" Name="TempLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Von-Wert" Value="30" SuffixText="°C">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="34" BitOffset="0" />
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-10" Name="TempInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Temperatur-Schwellwert 2" Value="0">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="37" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-12" Name="TempHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Bis-Wert" Value="50" SuffixText="°C">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-11" Name="TempLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Von-Wert" Value="30" SuffixText="°C">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="38" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-13" Name="HumOffset" ParameterType="M-00FA_A-0014-0A-0000_PT-OffsetHum" Text="Luftfeuchte anpassen" Value="0" SuffixText="%">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-12" Name="TempHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueTemp" Text="Bis-Wert" Value="50" SuffixText="°C">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="42" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-43" Name="HumDpt" ParameterType="M-00FA_A-0014-0A-0000_PT-SendAs" Text="Luftfeuchte senden als" Value="0">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="144" BitOffset="0" />
-              </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-14" Name="HumCycle" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Luftfeuchte zyklisch senden (0=nicht senden)" Value="0" SuffixText="Sekunden">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-13" Name="HumOffset" ParameterType="M-00FA_A-0014-0A-0000_PT-OffsetHum" Text="Luftfeuchte anpassen" Value="0" SuffixText="%">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="46" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-15" Name="DeltaHumValue" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaAbsHum" Text="Luftfeuchte bei absoluter Abweichung senden (0=nicht senden)" Value="0" SuffixText="%">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-43" Name="HumDpt" ParameterType="M-00FA_A-0014-0A-0000_PT-SendAs" Text="Luftfeuchte senden als" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="50" BitOffset="0" />
               </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-14" Name="HumCycle" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Luftfeuchte zyklisch senden (0=nicht senden)" Value="0" SuffixText="Sekunden">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="51" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-15" Name="DeltaHumValue" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaAbsHum" Text="Luftfeuchte bei absoluter Abweichung senden (0=nicht senden)" Value="0" SuffixText="%">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="55" BitOffset="0" />
+              </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-16" Name="DeltaHumPercent" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaRelHum" Text="Luftfeuchte bei Abweichung vom vorherigem Wert senden (0=nicht senden)" Value="0" SuffixText="%">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="54" BitOffset="0" />
-              </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-17" Name="HumInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftfeuchte-Schwellwert 1" Value="0">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="58" BitOffset="0" />
-              </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-18" Name="HumLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Von-Wert" Value="70" SuffixText="%">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="59" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-19" Name="HumHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Bis-Wert" Value="95" SuffixText="%">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-17" Name="HumInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftfeuchte-Schwellwert 1" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="63" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-20" Name="HumInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftfeuchte-Schwellwert 2" Value="0">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="67" BitOffset="0" />
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-18" Name="HumLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Von-Wert" Value="70" SuffixText="%">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="64" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-21" Name="HumLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Von-Wert" Value="95" SuffixText="%">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-19" Name="HumHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Bis-Wert" Value="95" SuffixText="%">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="68" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-22" Name="HumHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Bis-Wert" Value="100" SuffixText="%">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-20" Name="HumInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftfeuchte-Schwellwert 2" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="72" BitOffset="0" />
               </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-21" Name="HumLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Von-Wert" Value="95" SuffixText="%">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="73" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-22" Name="HumHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueHum" Text="Bis-Wert" Value="100" SuffixText="%">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="77" BitOffset="0" />
+              </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-23" Name="PreOffset" ParameterType="M-00FA_A-0014-0A-0000_PT-OffsetPre" Text="Luftdruck anpassen" Value="0" SuffixText="mbar">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="76" BitOffset="0" />
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="81" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-24" Name="PreCycle" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Luftdruck zyklisch senden (0=nicht senden)" Value="0" SuffixText="Sekunden">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="80" BitOffset="0" />
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="85" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-25" Name="DeltaPreValue" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaAbsPre" Text="Luftdruck bei absoluter Abweichung senden (0=nicht senden)" Value="0" SuffixText="mbar">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="84" BitOffset="0" />
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="89" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-26" Name="DeltaPrePercent" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaRelPre" Text="Luftdruck bei Abweichung vom vorherigem Wert senden (0=nicht senden)" Value="0" SuffixText="%">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="88" BitOffset="0" />
-              </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-27" Name="PreInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftdruck-Schwellwert 1" Value="0">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="92" BitOffset="0" />
-              </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-28" Name="PreLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Von-Wert" Value="960" SuffixText="mbar">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="93" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-29" Name="PreHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Bis-Wert" Value="1000" SuffixText="mbar">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-27" Name="PreInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftdruck-Schwellwert 1" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="97" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-30" Name="PreInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftdruck-Schwellwert 2" Value="0">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="101" BitOffset="0" />
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-28" Name="PreLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Von-Wert" Value="960" SuffixText="mbar">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="98" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-31" Name="PreLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Von-Wert" Value="1020" SuffixText="mbar">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-29" Name="PreHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Bis-Wert" Value="1000" SuffixText="mbar">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="102" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-32" Name="PreHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Bis-Wert" Value="1070" SuffixText="mbar">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-30" Name="PreInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Luftdruck-Schwellwert 2" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="106" BitOffset="0" />
               </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-31" Name="PreLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Von-Wert" Value="1020" SuffixText="mbar">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="107" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-32" Name="PreHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValuePre" Text="Bis-Wert" Value="1070" SuffixText="mbar">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="111" BitOffset="0" />
+              </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-33" Name="VocOffset" ParameterType="M-00FA_A-0014-0A-0000_PT-OffsetVoc" Text="Voc anpassen" Value="0" SuffixText="ppm">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="110" BitOffset="0" />
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="115" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-34" Name="VocCycle" ParameterType="M-00FA_A-0014-0A-0000_PT-DelaySeconds" Text="Voc zyklisch senden (0=nicht senden)" Value="0" SuffixText="Sekunden">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="114" BitOffset="0" />
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="119" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-35" Name="DeltaVocValue" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaAbsVoc" Text="Voc bei absoluter Abweichung senden (0=nicht senden)" Value="0" SuffixText="ppm">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="118" BitOffset="0" />
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="123" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-36" Name="DeltaVocPercent" ParameterType="M-00FA_A-0014-0A-0000_PT-DeltaRelVoc" Text="Voc bei Abweichung vom vorherigem Wert senden (0=nicht senden)" Value="0" SuffixText="%">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="122" BitOffset="0" />
-              </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-37" Name="VocInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Voc-Schwellwert 1" Value="0">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="126" BitOffset="0" />
-              </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-38" Name="VocLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Von-Wert" Value="1000" SuffixText="ppm">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="127" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-39" Name="VocHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Bis-Wert" Value="1600" SuffixText="ppm">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-37" Name="VocInterval1" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Voc-Schwellwert 1" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="131" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-40" Name="VocInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Voc-Schwellwert 2" Value="0">
-                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="135" BitOffset="0" />
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-38" Name="VocLow1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Von-Wert" Value="1000" SuffixText="ppm">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="132" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-41" Name="VocLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Von-Wert" Value="1600" SuffixText="ppm">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-39" Name="VocHigh1" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Bis-Wert" Value="1600" SuffixText="ppm">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="136" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-42" Name="VocHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Bis-Wert" Value="2000" SuffixText="ppm">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-40" Name="VocInterval2" ParameterType="M-00FA_A-0014-0A-0000_PT-Active" Text="Voc-Schwellwert 2" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="140" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-41" Name="VocLow2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Von-Wert" Value="1600" SuffixText="ppm">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="141" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-42" Name="VocHigh2" ParameterType="M-00FA_A-0014-0A-0000_PT-ValueVoc" Text="Bis-Wert" Value="2000" SuffixText="ppm">
+                <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="145" BitOffset="0" />
               </Parameter>
               <Parameter Id="M-00FA_A-0014-0A-0000_P-44" Name="SensorTemp" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="Temperatur" Value="1">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="146" BitOffset="0" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-45" Name="SensorTemp" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="Luftfeuchte" Value="1">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-45" Name="SensorHum" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="Luftfeuchte" Value="1">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="146" BitOffset="1" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-46" Name="SensorTemp" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="Luftdruck" Value="0">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-46" Name="SensorPre" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="Luftdruck" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="146" BitOffset="2" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-47" Name="SensorTemp" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="Voc" Value="0">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-47" Name="SensorVoc" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="Voc" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="146" BitOffset="3" />
               </Parameter>
-              <Parameter Id="M-00FA_A-0014-0A-0000_P-48" Name="SensorTemp" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="1 Wire" Value="0">
+              <Parameter Id="M-00FA_A-0014-0A-0000_P-48" Name="Sensor1Wire" ParameterType="M-00FA_A-0014-0A-0000_PT-CheckBox" Text="1 Wire" Value="0">
                 <Memory CodeSegment="M-00FA_A-0014-0A-0000_RS-04-00000" Offset="146" BitOffset="4" />
               </Parameter>
             </Parameters>
@@ -278,21 +281,22 @@
               <ParameterRef Id="M-00FA_A-0014-0A-0000_P-46_R-46" RefId="M-00FA_A-0014-0A-0000_P-46" />
               <ParameterRef Id="M-00FA_A-0014-0A-0000_P-47_R-47" RefId="M-00FA_A-0014-0A-0000_P-47" />
               <ParameterRef Id="M-00FA_A-0014-0A-0000_P-48_R-48" RefId="M-00FA_A-0014-0A-0000_P-48" />
+              <ParameterRef Id="M-00FA_A-0014-0A-0000_P-48_R-49" RefId="M-00FA_A-0014-0A-0000_P-49" />
             </ParameterRefs>
             <ComObjectTable>
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-1" Name="In Betrieb" Text="In Betrieb" Number="1" FunctionText="Sendet zyklisch" ObjectSize="1 Bit" ReadFlag="Disabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-16" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-2" Name="Temperatur" Text="Temperatur" Number="2" FunctionText="Messwert" ObjectSize="2 Bytes" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-9-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-3" Name="Temperatur" Text="Temperatur" Number="3" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-4" Name="Temperatur" Text="Temperatur" Number="4" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-5" Name="Luftfeuchte" Text="Luftfeuchte" Number="5" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-6" Name="Luftfeuchte" Text="Luftfeuchte" Number="6" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-7" Name="Luftfeuchte" Text="Luftfeuchte" Number="7" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-8" Name="Luftdruck" Text="Luftdruck" Number="8" FunctionText="Messwert" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-9-6" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-9" Name="Luftdruck" Text="Luftdruck" Number="9" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-10" Name="Luftdruck" Text="Luftdruck" Number="10" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-11" Name="VOC" Text="VOC" Number="11" FunctionText="Messwert" ObjectSize="2 Bytes" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-9-8" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-12" Name="VOC" Text="VOC" Number="12" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="M-00FA_A-0014-0A-0000_O-13" Name="VOC" Text="VOC" Number="13" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-1" Name="In Betrieb" Text="In Betrieb" Number="241" FunctionText="Sendet zyklisch" ObjectSize="1 Bit" ReadFlag="Disabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-16" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-2" Name="Temperatur" Text="Temperatur" Number="242" FunctionText="Messwert" ObjectSize="2 Bytes" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-9-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-3" Name="Temperatur" Text="Temperatur" Number="243" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-4" Name="Temperatur" Text="Temperatur" Number="244" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-5" Name="Luftfeuchte" Text="Luftfeuchte" Number="245" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-6" Name="Luftfeuchte" Text="Luftfeuchte" Number="246" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-7" Name="Luftfeuchte" Text="Luftfeuchte" Number="247" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-8" Name="Luftdruck" Text="Luftdruck" Number="248" FunctionText="Messwert" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-9-6" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-9" Name="Luftdruck" Text="Luftdruck" Number="249" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-10" Name="Luftdruck" Text="Luftdruck" Number="250" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-11" Name="VOC" Text="VOC" Number="251" FunctionText="Messwert" ObjectSize="2 Bytes" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-9-8" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-12" Name="VOC" Text="VOC" Number="252" FunctionText="Schwellwert 1" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="M-00FA_A-0014-0A-0000_O-13" Name="VOC" Text="VOC" Number="253" FunctionText="Schwellwert 2" ObjectSize="1 Bit" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
             </ComObjectTable>
             <ComObjectRefs>
               <ComObjectRef Id="M-00FA_A-0014-0A-0000_O-1_R-1" RefId="M-00FA_A-0014-0A-0000_O-1" />
