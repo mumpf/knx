@@ -17,5 +17,5 @@ class Bau57B0 : public BauSystemB
   private:
     IpParameterObject _ipParameters;
     IpDataLinkLayer _dlLayer;
-    uint8_t _descriptor[2] = {0x57, 0xb0};
+    uint8_t _descriptor[2] = {0x07, 0xb0};
 };

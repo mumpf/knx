@@ -21,6 +21,7 @@ void BauSystemB::loop()
     dataLinkLayer().loop();
     _transLayer.loop();
     sendNextGroupTelegram();
+    nextRestartState();
 }
 
 bool BauSystemB::enabled()
@@ -294,7 +295,56 @@ void BauSystemB::addSaveRestore(SaveRestore* obj)
 }
 
 
-void BauSystemB::restartRequest(uint16_t asap)
+bool BauSystemB::restartRequest(uint16_t asap)
 {
-    _appLayer.restartRequest(AckRequested, LowPriority, NetworkLayerParameter, asap);
+    if (_appLayer.isConnected()) 
+        return false;
+    _restartState = 1; // order important, has to be set BEFORE connectRequest
+    _restartDestination = asap;
+    _appLayer.connectRequest(asap, SystemPriority);
+    _appLayer.deviceDescriptorReadRequest(AckRequested, SystemPriority, NetworkLayerParameter, asap, 0);
+    return true;
+
+}
+
+void BauSystemB::connectConfirm(uint16_t destination) {
+    if (_restartState == 1 && destination == _restartDestination) {
+        /* restart connection is confirmed, go to the next state */
+        _restartState = 2;
+        _restartDelay = _platform.millis();
+    } else
+    {
+        _restartState = 0;
+        _restartDestination = -1;
+    }
+    
+}
+
+void BauSystemB::nextRestartState() {
+    switch (_restartState)
+    {
+    case 0:
+        /* inactive state, do nothing */
+        break;
+    case 1:
+        /* wait for connection, we do nothing here */
+        break;
+    case 2:
+        /* connection confirmed, we send restartRequest, but we wait a moment (sending ACK etc)... */
+        if (_platform.millis() - _restartDelay > 30) {
+            _appLayer.restartRequest(AckRequested, SystemPriority, NetworkLayerParameter);
+            _restartState = 3;
+            _restartDelay = _platform.millis();
+        }
+        break;
+    case 3:
+        /* restart is finished, we send a discommect */
+        if (_platform.millis() - _restartDelay > 30) {
+            _appLayer.disconnectRequest(SystemPriority);
+            _restartState = 0;
+            _restartDestination = -1;
+        }
+    default:
+        break;
+    }
 }

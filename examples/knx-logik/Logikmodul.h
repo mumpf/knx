@@ -5,21 +5,20 @@
 #define DEVICE_ID 1
 #define REVISION 0
 
-#define KO_f1E1 1
-#define KO_f1E2 2
-#define KO_f1O 3
-
 #define KO_Heartbeat 250 // fix, only once
+#define KO_ChannelOffset 1 // min = 1
+
+// number of supported channels
+#define NUM_Channels 50
+#define NUM_paramOffset 12
+#define NUM_paramBlockSize 110
 
 // fixed parameters, just one occurence
-#define PAR_numChannels 0         // 4 Byte
+#define PAR_numChannels 0         // 4 Byte // parameter is hidden, just to verivy firmware with knxprod
 #define PAR_startupDelay 4        // 4 Byte
 #define PAR_HeartbeatDelay 8      // 4 Byte
 
 //Dynamic parameters, per cannel occurence
-#define NUM_paramBlockSize 110
-#define NUM_paramOffset 12
-
 #define PAR_f1StartupDelay 0      // 4 Byte
 #define PAR_f1Logic 4             // 3 Bit    X
 #define PAR_f1Calculate 5         // 1 Bit    X

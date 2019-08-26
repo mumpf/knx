@@ -11,9 +11,6 @@ long milliSec() {
     return millis();
 }
 
-void DbgWrite(const char* fmt, ...) {
-}
-
 void setup() {
     KNX = &knx;
     SerialDBG.begin(115200);
