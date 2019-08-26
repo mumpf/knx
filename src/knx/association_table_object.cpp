@@ -29,12 +29,20 @@ uint16_t AssociationTableObject::entryCount()
     return ntohs(_tableData[0]);
 }
 
-uint16_t AssociationTableObject::operator[](uint16_t idx)
+uint16_t AssociationTableObject::getTSAP(uint16_t idx)
 {
     if (idx < 0 || idx >= entryCount())
         return 0;
 
-    return ntohs(_tableData[idx + 1]);
+    return ntohs(_tableData[2 * idx + 1]);
+}
+
+uint16_t AssociationTableObject::getASAP(uint16_t idx)
+{
+    if (idx < 0 || idx >= entryCount())
+        return 0;
+
+    return ntohs(_tableData[2 * idx + 2]);
 }
 
 uint8_t* AssociationTableObject::save(uint8_t* buffer)
@@ -49,17 +57,19 @@ uint8_t* AssociationTableObject::restore(uint8_t* buffer)
     return buffer;
 }
 
+// return type is int32 so that we can return uint16 and -1
 int32_t AssociationTableObject::translateAsap(uint16_t asap)
 {
     uint16_t entries = entryCount();
     for (uint16_t i = 0; i < entries; i++)
     {
-        uint16_t entry = operator[](i);
-        if (lowByte(entry) == asap)
-            return highByte(entry);
+        if (getASAP(i) == asap)
+            return getTSAP(i);
     }
     return -1;
 }
+
+
 
 void AssociationTableObject::beforeStateChange(LoadState& newState)
 {
@@ -72,7 +82,7 @@ void AssociationTableObject::beforeStateChange(LoadState& newState)
 static PropertyDescription _propertyDescriptions[] =
 {
     { PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0 },
-    { PID_TABLE, false, PDT_GENERIC_02, 254, ReadLv3 | WriteLv0 },
+    { PID_TABLE, false, PDT_GENERIC_04, 65535, ReadLv3 | WriteLv0 },
     { PID_LOAD_STATE_CONTROL, true, PDT_CONTROL, 1, ReadLv3 | WriteLv3 },
     { PID_TABLE_REFERENCE, false, PDT_UNSIGNED_LONG, 1, ReadLv3 | WriteLv0 },
     { PID_ERROR_CODE, false, PDT_ENUM8, 1, ReadLv3 | WriteLv0 },
@@ -88,4 +98,19 @@ uint8_t AssociationTableObject::propertyCount()
 PropertyDescription* AssociationTableObject::propertyDescriptions()
 {
     return _propertyDescriptions;
+}
+
+int32_t AssociationTableObject::nextAsap(uint16_t tsap, uint16_t& startIdx)
+{
+    uint16_t entries = entryCount();
+    for (uint16_t i = startIdx; i < entries; i++)
+    {
+        startIdx = i+1;
+
+        if (getTSAP(i) == tsap)
+        {
+            return getASAP(i);
+        }
+    }
+    return -1;
 }

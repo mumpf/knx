@@ -1,3 +1,4 @@
+#include "bits.h"
 #include "bau_systemB.h"
 #include <string.h>
 #include <stdio.h>
@@ -5,7 +6,7 @@
 BauSystemB::BauSystemB(Platform& platform): _memory(platform), _addrTable(platform),
     _assocTable(platform), _groupObjTable(platform), _appProgram(platform),
     _platform(platform), _appLayer(_assocTable, *this),
-    _transLayer(_appLayer, _addrTable, _platform), _netLayer(_transLayer)
+    _transLayer(_appLayer, _addrTable), _netLayer(_transLayer)
 {
     _appLayer.transportLayer(_transLayer);
     _transLayer.networkLayer(_netLayer);
@@ -311,7 +312,7 @@ void BauSystemB::connectConfirm(uint16_t destination) {
     if (_restartState == 1 && destination == _restartDestination) {
         /* restart connection is confirmed, go to the next state */
         _restartState = 2;
-        _restartDelay = _platform.millis();
+        _restartDelay = millis();
     } else
     {
         _restartState = 0;
@@ -331,15 +332,15 @@ void BauSystemB::nextRestartState() {
         break;
     case 2:
         /* connection confirmed, we send restartRequest, but we wait a moment (sending ACK etc)... */
-        if (_platform.millis() - _restartDelay > 30) {
+        if (millis() - _restartDelay > 30) {
             _appLayer.restartRequest(AckRequested, SystemPriority, NetworkLayerParameter);
             _restartState = 3;
-            _restartDelay = _platform.millis();
+            _restartDelay = millis();
         }
         break;
     case 3:
         /* restart is finished, we send a discommect */
-        if (_platform.millis() - _restartDelay > 30) {
+        if (millis() - _restartDelay > 30) {
             _appLayer.disconnectRequest(SystemPriority);
             _restartState = 0;
             _restartDestination = -1;
