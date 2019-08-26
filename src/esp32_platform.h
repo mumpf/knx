@@ -1,14 +1,15 @@
-#ifdef ARDUINO_ARCH_ESP8266
+#ifdef ARDUINO_ARCH_ESP32
 #include "knx/platform.h"
-#include <ESP8266WiFi.h>
+#include "knx/platform.h"
+#include <WiFi.h>
 #include <WiFiUdp.h>
 
 #define SerialDBG Serial
 
-class EspPlatform : public Platform
+class Esp32Platform : public Platform
 {
 public:
-    EspPlatform();
+    Esp32Platform();
 
     // ip stuff
     uint32_t currentIpAddress();

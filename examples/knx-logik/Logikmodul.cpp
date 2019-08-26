@@ -1,4 +1,7 @@
 
+#include "../src/knx/bits.h"
+#include "../src/knx_facade.h"
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -69,6 +72,12 @@
 #define BIT_OUTPUT 16
 #define BIT_LAST_OUTPUT 128
 
+// enum fo IOIndex
+#define IO_Absolute 0
+#define IO_Input1 BIT_EXT_INPUT_1 // 1
+#define IO_Input2 BIT_EXT_INPUT_2 // 2
+#define IO_Output 3
+
 // pipeline steps
 #define PIP_STARTUP 1              // startup delay for each channel
 #define PIP_REPEAT_INPUT1 2        // send read requests for input 1
@@ -85,13 +94,21 @@
 #define PIP_ON_REPEAT 4096         // repeat on signal
 #define PIP_OFF_REPEAT 8192        // repeat off signal
 
-extern KnxFacade *KNX;
-extern Platform *platform;
+#ifdef __linux__
+extern KnxFacade<LinuxPlatform, Bau57B0> knx;
+#endif
 
-uint32_t milliSec();
-void DbgWrite(const char *fmt, ...);
+void DbgWrite(const char *format, ...) {
+    char buffer[256];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, 256, format, args);
+    //   perror (buffer);
+    va_end(args);
+    println(buffer);
+}
 
-unsigned long sTimeFactors[] = {100, 1000, 60000, 3600000};
+uint32_t sTimeFactors[] = {100, 1000, 60000, 3600000};
 
 struct sChannelInfo {
     /* Runtime information per channel */
@@ -101,69 +118,69 @@ struct sChannelInfo {
                               // active inputs (4-7)
     uint8_t currentIO;        // Bitfield: current input (0-3) and current output (4) and last (previous) output (7) values
     uint16_t currentPipeline; // Bitfield: indicator for current pipeline step
-    unsigned long repeatInput1Delay;
-    unsigned long repeatInput2Delay;
-    unsigned long stairlightDelay;
-    unsigned long blinkDelay;
-    unsigned long onDelay;
-    unsigned long offDelay;
-    unsigned long repeatOnOffDelay;
+    uint32_t repeatInput1Delay;
+    uint32_t repeatInput2Delay;
+    uint32_t stairlightDelay;
+    uint32_t blinkDelay;
+    uint32_t onDelay;
+    uint32_t offDelay;
+    uint32_t repeatOnOffDelay;
 };
 
 // runtime information for the whole logik module
 sChannelInfo gChannelData[NUM_Channels];
-unsigned long gStartupDelay;
-unsigned long pStartupDelay;
-unsigned long gHeartbeatDelay = 0;
-unsigned long pHeartbeatDelay = 0;
+uint32_t gStartupDelay;
+uint32_t pStartupDelay;
+uint32_t gHeartbeatDelay = 0;
+uint32_t pHeartbeatDelay = 0;
 GroupObject *gHeartbeatKo;
 
 // forward declaratins
 void StartLogic(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex, bool iValue);
 
-uint32_t calcParamIndex(int iParamIndex, uint8_t iChannel) {
+uint16_t calcParamIndex(uint16_t iParamIndex, uint8_t iChannel) {
     return iParamIndex + iChannel * NUM_paramBlockSize + NUM_paramOffset;
 }
 
-uint8_t getByteParam(int iParamIndex, uint8_t iChannel) {
+uint8_t getByteParam(uint16_t iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex];
 #else
-    return KNX->paramByte(calcParamIndex(iParamIndex, iChannel));
+    return knx.paramByte(calcParamIndex(iParamIndex, iChannel));
 #endif
 }
 
-int8_t getSByteParam(int iParamIndex, uint8_t iChannel) {
+int8_t getSByteParam(uint16_t iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex];
 #else
-    uint8_t *lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
+    uint8_t *lRef = knx.paramData(calcParamIndex(iParamIndex, iChannel));
     return lRef[0];
 #endif
 }
 
-uint16_t getWordParam(int iParamIndex, uint8_t iChannel) {
+uint16_t getWordParam(uint16_t iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1];
 #else
-    return KNX->paramWord(calcParamIndex(iParamIndex, iChannel));
+    return knx.paramWord(calcParamIndex(iParamIndex, iChannel));
 #endif
 }
 
-int16_t getSWordParam(int iParamIndex, uint8_t iChannel) {
+int16_t getSWordParam(uint16_t iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1];
 #else
-    uint8_t *lRef = KNX->paramData(calcParamIndex(iParamIndex, iChannel));
+    uint8_t *lRef = knx.paramData(calcParamIndex(iParamIndex, iChannel));
     return lRef[0] * 256 + lRef[1];
 #endif
 }
 
-uint32_t getIntParam(int iParamIndex, uint8_t iChannel) {
+uint32_t getIntParam(uint16_t iParamIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return sParamData.data[iParamIndex] + 256 * sParamData.data[iParamIndex + 1] + 256 * 256 * sParamData.data[iParamIndex + 2] + 256 * 256 * 256 * sParamData.data[iParamIndex + 3];
 #else
-    return KNX->paramInt(calcParamIndex(iParamIndex, iChannel));
+    return knx.paramInt(calcParamIndex(iParamIndex, iChannel));
 #endif
 }
 
@@ -183,53 +200,57 @@ float getFloat(uint8_t *data) {
     return myFloat.lFloat;
 }
 
-float getFloatParam(int iParamIndex, uint8_t iChannel) {
-    uint32_t lIndex = calcParamIndex(iParamIndex, iChannel);
+float getFloatParam(uint16_t iParamIndex, uint8_t iChannel) {
+    uint16_t lIndex = calcParamIndex(iParamIndex, iChannel);
 #ifdef LOGIKTEST
     float lFloat = getFloat(&sParamData.data[lIndex]);
 #else
-    float lFloat = getFloat(KNX->paramData(lIndex));
+    float lFloat = getFloat(knx.paramData(lIndex));
 #endif
     return lFloat;
 }
 
-uint8_t *getStringParam(int iParamIndex, uint8_t iChannel) {
-    uint32_t lIndex = calcParamIndex(iParamIndex, iChannel);
+uint8_t *getStringParam(uint16_t iParamIndex, uint8_t iChannel) {
+    uint16_t lIndex = calcParamIndex(iParamIndex, iChannel);
 #ifdef LOGIKTEST
     return &sParamData.data[lIndex];
 #else
-    return KNX->paramData(lIndex);
+    return knx.paramData(lIndex);
 #endif
 }
 
-int calcKoNumber(uint8_t iIOIndex, uint8_t iChannel) {
-    int lIndex = (iIOIndex == 0) ? 3 : iIOIndex;
-    return lIndex + iChannel * 3;
+// if IOIndex = 0, iChannel is the absolute KO number 8starting with 1)
+// if IOIndex > 0, iChannel is channel number and IOIndex specifies Input1, Input2 or Output
+uint16_t calcKoNumber(uint8_t iIOIndex, uint8_t iChannel) {
+    // int lIndex = (iIOIndex == 0) ? 3 : iIOIndex;
+    // return KO_ChannelOffset - 1 + lIndex + iChannel * 3;
+    uint16_t lIndex = (iIOIndex) ? KO_Offset - 1 + iIOIndex + iChannel * 3 : iChannel;
+    return lIndex;
 }
 
 /* calculates correct KO for given I/O index and Channel
  * iIOIndex - 0=Output, 1=External input 1, 2=External input 2
  */
 GroupObject *getKoForChannel(uint8_t iIOIndex, uint8_t iChannel) {
-    return &KNX->getGroupObject(calcKoNumber(iIOIndex, iChannel));
+    return &knx.getGroupObject(calcKoNumber(iIOIndex, iChannel));
 }
 
 // write value to bus
-void knxWrite(uint8_t iIOIndex, uint8_t iChannel, bool iValue) {
+void knxWriteBool(uint8_t iIOIndex, uint8_t iChannel, bool iValue) {
     DbgWrite("knxWrite KO %d bool value %d", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
     getKoForChannel(iIOIndex, iChannel)->value(iValue);
 #endif
 }
 
-void knxWrite(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
+void knxWriteInt(uint8_t iIOIndex, uint8_t iChannel, int32_t iValue) {
     DbgWrite("knxWrite KO %d int value %d", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
     getKoForChannel(iIOIndex, iChannel)->value((int32_t)iValue);
 #endif
 }
 
-void knxWriteRawInt(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
+void knxWriteRawInt(uint8_t iIOIndex, uint8_t iChannel, int32_t iValue) {
     DbgWrite("knxWrite KO %d int value %d", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
     GroupObject *lKo = getKoForChannel(iIOIndex, iChannel);
@@ -239,14 +260,14 @@ void knxWriteRawInt(uint8_t iIOIndex, uint8_t iChannel, int iValue) {
 #endif
 }
 
-void knxWrite(uint8_t iIOIndex, uint8_t iChannel, float iValue) {
+void knxWriteFloat(uint8_t iIOIndex, uint8_t iChannel, float iValue) {
     DbgWrite("knxWrite KO %d float value %f", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
     getKoForChannel(iIOIndex, iChannel)->value(iValue);
 #endif
 }
 
-void knxWrite(uint8_t iIOIndex, uint8_t iChannel, char *iValue) {
+void knxWriteString(uint8_t iIOIndex, uint8_t iChannel, char *iValue) {
     DbgWrite("knxWrite KO %d string value %s", calcKoNumber(iIOIndex, iChannel), iValue);
 #ifndef LOGIKTEST
     getKoForChannel(iIOIndex, iChannel)->value(iValue);
@@ -262,30 +283,12 @@ void knxRead(uint8_t iIOIndex, uint8_t iChannel) {
 }
 
 // send reset device to bus
-void knxResetDevice(uint16_t iAddress) {
-    uint8_t lHigh = iAddress / 256;
-    DbgWrite("knxResetDevice with PA %d.%d.%d", lHigh / 16, lHigh % 16, iAddress % 256);
+void knxResetDevice(uint16_t iParamIndex, uint8_t iChannel) {
+    uint16_t lAddress = getWordParam(iParamIndex, iChannel);
+    uint8_t lHigh = lAddress / 256;
+    DbgWrite("knxResetDevice with PA %d.%d.%d", lHigh / 16, lHigh % 16, lAddress % 256);
 #ifndef LOGIKTEST
-    KNX->restart(iAddress);
-#endif
-}
-
-// get KO value from memory
-bool knxGetBool(uint8_t iIOIndex, uint8_t iChannel) {
-    // DbgWrite("knxReadRequest end from KO %d", calcKoNumber(iIOIndex, iChannel));
-#ifdef LOGIKTEST
-    return sKoData.data[calcKoNumber(iIOIndex, iChannel) - 1];
-#else
-    return getKoForChannel(iIOIndex, iChannel)->value();
-#endif
-}
-
-uint8_t knxGetByte(uint8_t iIOIndex, uint8_t iChannel) {
-    // DbgWrite("knxReadRequest end from KO %d", calcKoNumber(iIOIndex, iChannel));
-#ifdef LOGIKTEST
-    return sKoData.data[calcKoNumber(iIOIndex, iChannel) - 1];
-#else
-    return getKoForChannel(iIOIndex, iChannel)->valueRef()[0];
+    knx.restart(lAddress);
 #endif
 }
 
@@ -297,20 +300,20 @@ uint8_t knxGetByte(uint8_t iIOIndex, uint8_t iChannel) {
 
 // true solgange der Start des gesamten Moduls verzögert werden soll
 bool startupDelay() {
-    return (milliSec() - gStartupDelay < pStartupDelay);
+    return (millis() - gStartupDelay < pStartupDelay);
 }
 
 // we get an dpt dependant parameter value for difference
 // input evaluation
 // here special handling is necessary because of transport
 // of dpt 9 as an int * 100
-int getParamForDelta(int iDpt, uint8_t iParam, uint8_t iChannel) {
+int32_t getParamForDelta(int8_t iDpt, uint8_t iParam, uint8_t iChannel) {
 
-    int lValue;
+    int32_t lValue;
     if (iDpt == VAL_DPT_9) {
         lValue = getFloatParam(iParam, iChannel) * 100.0;
     } else {
-        lValue = (int)getIntParam(iParam, iChannel);
+        lValue = (int32_t)getIntParam(iParam, iChannel);
     }
     return lValue;
 }
@@ -320,8 +323,8 @@ int getParamForDelta(int iDpt, uint8_t iParam, uint8_t iChannel) {
 // DPT2,17 => straight forward byte values
 // DPT5001 => scale down to [0..100]
 // DPT9 => transport as 1/100, means take int(float * 100)
-int getParamByDpt(int iDpt, uint8_t iParam, uint8_t iChannel) {
-    int lValue = 0;
+int32_t getParamByDpt(int8_t iDpt, uint8_t iParam, uint8_t iChannel) {
+    int32_t lValue = 0;
     switch (iDpt) {
         case VAL_DPT_1:
             lValue = getByteParam(iParam, iChannel) != 0;
@@ -395,10 +398,10 @@ int getInputValueTest(uint8_t iIOIndex, uint8_t iChannel) {
 }
 #endif
 
-int getInputValueKnx(uint8_t iIOIndex, uint8_t iChannel) {
+int32_t getInputValueKnx(uint8_t iIOIndex, uint8_t iChannel) {
 
-    int lValue = 0;
-    int lParamIndex = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
+    int32_t lValue = 0;
+    uint16_t lParamIndex = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
     GroupObject *lKo = getKoForChannel(iIOIndex, iChannel);
     // based on dpt, we read the correct c type.
     switch (getByteParam(lParamIndex, iChannel)) {
@@ -434,7 +437,7 @@ int getInputValueKnx(uint8_t iIOIndex, uint8_t iChannel) {
 // DPT1,2,5,6,7,8,17,232 => straight forward
 // DPT5001 => scale down to [0..100]
 // DPT9 => transport as 1/100, means take int(float * 100)
-int getInputValue(uint8_t iIOIndex, uint8_t iChannel) {
+int32_t getInputValue(uint8_t iIOIndex, uint8_t iChannel) {
 #ifdef LOGIKTEST
     return getInputValueTest(iIOIndex, iChannel);
 #else
@@ -442,87 +445,87 @@ int getInputValue(uint8_t iIOIndex, uint8_t iChannel) {
 #endif
 }
 
-void writeConstantValue(sChannelInfo *cData, int iParam, uint8_t iChannel) {
+void writeConstantValue(sChannelInfo *cData, uint16_t iParam, uint8_t iChannel) {
     uint8_t lDpt = getByteParam(PAR_f1ODpt, iChannel);
     switch (lDpt) {
         uint8_t lValueByte;
         case VAL_DPT_1:
             bool lValueBool;
             lValueBool = getByteParam(iParam, iChannel) != 0;
-            knxWrite(0, iChannel, lValueBool);
+            knxWriteBool(IO_Output, iChannel, lValueBool);
             break;
         case VAL_DPT_2:
             lValueByte = getByteParam(iParam, iChannel);
-            knxWriteRawInt(0, iChannel, lValueByte);
+            knxWriteRawInt(IO_Output, iChannel, lValueByte);
             break;
         case VAL_DPT_5:
         case VAL_DPT_5001: // correct value is calculated by dpt handling
             lValueByte = getByteParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueByte);
+            knxWriteInt(IO_Output, iChannel, lValueByte);
             break;
         case VAL_DPT_17:
             lValueByte = getByteParam(iParam, iChannel) - 1;
-            knxWrite(0, iChannel, lValueByte);
+            knxWriteInt(IO_Output, iChannel, lValueByte);
             break;
         case VAL_DPT_6:
             int8_t lValueInt;
             lValueInt = getSByteParam(iParam, iChannel);
-            knxWriteRawInt(0, iChannel, lValueInt);
+            knxWriteRawInt(IO_Output, iChannel, lValueInt);
             break;
         case VAL_DPT_7:
             uint16_t lValueUWord;
             lValueUWord = getWordParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueUWord);
+            knxWriteInt(IO_Output, iChannel, lValueUWord);
             break;
         case VAL_DPT_8:
             int16_t lValueSWord;
             lValueSWord = getSWordParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueSWord);
+            knxWriteInt(IO_Output, iChannel, lValueSWord);
             break;
         case VAL_DPT_9:
             float lValueFloat;
             lValueFloat = getFloatParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueFloat);
+            knxWriteFloat(IO_Output, iChannel, lValueFloat);
             break;
         case VAL_DPT_16:
             uint8_t *lValueStr;
             lValueStr = getStringParam(iParam, iChannel);
-            knxWrite(0, iChannel, (char *)lValueStr);
+            knxWriteString(IO_Output, iChannel, (char *)lValueStr);
             break;
         case VAL_DPT_232:
-            int lValueRGB;
+            int32_t lValueRGB;
             lValueRGB = getIntParam(iParam, iChannel);
-            knxWrite(0, iChannel, lValueRGB);
+            knxWriteInt(IO_Output, iChannel, lValueRGB);
             break;
         default:
             break;
     }
 }
 
-void writeParameterValue(sChannelInfo *cData, int iIOIndex, uint8_t iChannel) {
+void writeParameterValue(sChannelInfo *cData, uint8_t iIOIndex, uint8_t iChannel) {
 
-    int lValueOrig = getInputValue(iIOIndex, iChannel);
-    uint8_t lParamDpt = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
+    int32_t lValueOrig = getInputValue(iIOIndex, iChannel);
+    uint16_t lParamDpt = (iIOIndex == 1) ? PAR_f1E1Dpt : PAR_f1E2Dpt;
     uint8_t lInputDpt = getByteParam(lParamDpt, iChannel);
     uint8_t lDpt = getByteParam(PAR_f1ODpt, iChannel);
-    int lValue = (lInputDpt == VAL_DPT_9) ? lValueOrig / 10 : lValueOrig;
+    int32_t lValue = (lInputDpt == VAL_DPT_9) ? lValueOrig / 10 : lValueOrig;
     switch (lDpt) {
         uint8_t lValueByte;
         case VAL_DPT_1:
             bool lValueBool;
             lValueBool = lValue != 0;
-            knxWrite(0, iChannel, lValueBool);
+            knxWriteBool(IO_Output, iChannel, lValueBool);
             break;
         case VAL_DPT_2:
             lValueByte = lValue;
-            knxWriteRawInt(0, iChannel, lValueByte);
+            knxWriteRawInt(IO_Output, iChannel, lValueByte);
             break;
         case VAL_DPT_5:
         case VAL_DPT_5001:
         case VAL_DPT_6:
         case VAL_DPT_17:
             lValueByte = lValue;
-            knxWrite(0, iChannel, lValueByte);
+            knxWriteInt(IO_Output, iChannel, lValueByte);
             break;
             // lValueByte = lValue;
             // // DPT5 means, that input value range is [0..100], output value range is
@@ -534,7 +537,7 @@ void writeParameterValue(sChannelInfo *cData, int iIOIndex, uint8_t iChannel) {
         case VAL_DPT_8:
             uint16_t lValueWord;
             lValueWord = lValue;
-            knxWrite(0, iChannel, lValueWord);
+            knxWriteInt(IO_Output, iChannel, lValueWord);
             break;
         case VAL_DPT_9:
             float lValueFloat;
@@ -543,15 +546,15 @@ void writeParameterValue(sChannelInfo *cData, int iIOIndex, uint8_t iChannel) {
             } else {
                 lValueFloat = lValue;
             }
-            knxWrite(0, iChannel, lValueFloat);
+            knxWriteFloat(IO_Output, iChannel, lValueFloat);
             break;
         case VAL_DPT_16:
             char lValueStr[15];
             sprintf(lValueStr, "%d", lValue);
-            knxWrite(0, iChannel, lValueStr);
+            knxWriteString(IO_Output, iChannel, lValueStr);
             break;
         case VAL_DPT_232:
-            knxWrite(0, iChannel, lValue);
+            knxWriteInt(IO_Output, iChannel, lValue);
             break;
         default:
             break;
@@ -565,22 +568,54 @@ void ProcessInternalInputs(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
     for (uint8_t lChannel = 0; lChannel < NUM_Channels; lChannel++) {
         uint8_t lInput1 = getByteParam(PAR_f1I1, lChannel);
         if (lInput1 > 0) {
-            uint lFunction1 = getIntParam(PAR_f1I1Function, lChannel);
-            if (lFunction1 == (uint)(iChannel + 1)) {
+            uint32_t lFunction1 = getIntParam(PAR_f1I1Function, lChannel);
+            if (lFunction1 == (uint32_t)(iChannel + 1)) {
                 sChannelInfo *lData = &gChannelData[lChannel];
                 StartLogic(lData, lChannel, BIT_INT_INPUT_1, iValue);
             }
         }
         uint8_t lInput2 = getByteParam(PAR_f1I2, lChannel);
         if (lInput2 > 0) {
-            uint lFunction2 = getIntParam(PAR_f1I2Function, lChannel);
-            if (lFunction2 == (uint)(iChannel + 1)) {
+            uint32_t lFunction2 = getIntParam(PAR_f1I2Function, lChannel);
+            if (lFunction2 == (uint32_t)(iChannel + 1)) {
                 sChannelInfo *lData = &gChannelData[lChannel];
                 StartLogic(lData, lChannel, BIT_INT_INPUT_2, iValue);
             }
         }
     }
 }
+
+// void StartDeviceReset(sChannelInfo *cData, uint8_t iChannel) {
+//     cData->resetDeviceDelay = millis();
+//     cData->triggerIO |= BIT_RESET_DEVICE; //set the reset device bit
+//     cData->currentPipeline |= PIP_RESET_DEVICE;
+//     uint16_t lAddress = getWordParam(PAR_f1OOnValue, iChannel);
+//     //we send the connect request immediately
+//     knxConnectDevice(lAddress);
+//     //TODO: Check if connection successful
+//     //TODO: Are multiple connection possible? Otherwise we need a lock system
+// }
+
+// void ProcessDeviceReset(sChannelInfo *cData, uint8_t iChannel) {
+//     //currently we wait a second before we send the next command
+//     if (millis() - 1000 > cData->resetDeviceDelay) {
+//         uint16_t lAddress = getWordParam(PAR_f1OOnValue, iChannel);
+//         if (cData->triggerIO & BIT_RESET_DEVICE) {
+//             //now we send reset device
+//             knxResetDevice(lAddress);
+//             //remove the reset device bit
+//             cData->triggerIO &= ~BIT_RESET_DEVICE;
+//             //set new wait time
+//             cData->resetDeviceDelay = millis();
+//         } else {
+//             //finished, we send a disconnect
+//             knxDisconnectDevice(lAddress);
+//             // remove pipeline marker
+//             cData->currentPipeline &= ~PIP_RESET_DEVICE;
+//         }
+//     }
+
+// }
 
 // process the output itself
 void ProcessOutput(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
@@ -592,18 +627,16 @@ void ProcessOutput(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
                 writeConstantValue(cData, PAR_f1OOnValue, iChannel);
                 break;
             case VAL_Out_ValE1:
-                writeParameterValue(cData, BIT_EXT_INPUT_1, iChannel);
+                writeParameterValue(cData, IO_Input1, iChannel);
                 break;
             case VAL_Out_ValE2:
-                writeParameterValue(cData, BIT_EXT_INPUT_2, iChannel);
+                writeParameterValue(cData, IO_Input2, iChannel);
                 break;
             case VAL_Out_ReadRequest:
-                knxRead(0, iChannel);
+                knxRead(IO_Output, iChannel);
                 break;
             case VAL_Out_ResetDevice:
-                uint16_t lAddress;
-                lAddress = getWordParam(PAR_f1OOnValue, iChannel);
-                knxResetDevice(lAddress);
+                knxResetDevice(PAR_f1OOnValue, iChannel);
                 break;
             default:
                 // there is no output parametrized
@@ -616,18 +649,16 @@ void ProcessOutput(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
                 writeConstantValue(cData, PAR_f1OOffValue, iChannel);
                 break;
             case VAL_Out_ValE1:
-                writeParameterValue(cData, BIT_EXT_INPUT_1, iChannel);
+                writeParameterValue(cData, IO_Input1, iChannel);
                 break;
             case VAL_Out_ValE2:
-                writeParameterValue(cData, BIT_EXT_INPUT_2, iChannel);
+                writeParameterValue(cData, IO_Input2, iChannel);
                 break;
             case VAL_Out_ReadRequest:
-                knxRead(0, iChannel);
+                knxRead(IO_Output, iChannel);
                 break;
             case VAL_Out_ResetDevice:
-                uint16_t lAddress;
-                lAddress = getWordParam(PAR_f1OOffValue, iChannel);
-                knxResetDevice(lAddress);
+                knxResetDevice(PAR_f1OOffValue, iChannel);
                 break;
             default:
                 // there is no output parametrized
@@ -645,7 +676,7 @@ void StartStartup(sChannelInfo *cData, uint8_t iChannel) {
 
 // channel startup delay
 void ProcessStartup(sChannelInfo *cData, uint8_t iChannel) {
-    if (milliSec() - gStartupDelay > cData->onDelay) {
+    if (millis() - gStartupDelay > cData->onDelay) {
         // we waited enough, remove pipeline marker
         cData->currentPipeline &= ~PIP_STARTUP;
         cData->onDelay = 0;
@@ -653,10 +684,11 @@ void ProcessStartup(sChannelInfo *cData, uint8_t iChannel) {
 }
 
 void ProcessHeartbeat() {
-    if (milliSec() - gHeartbeatDelay > pHeartbeatDelay) {
+    // the first heartbeat is send directly after startup delay of the device
+    if (gHeartbeatDelay == 0 || millis() - gHeartbeatDelay > pHeartbeatDelay) {
         // we waited enough, let's send a heartbeat signal
         gHeartbeatKo->value(true);
-        gHeartbeatDelay = milliSec();
+        gHeartbeatDelay = millis();
     }
 }
 
@@ -664,9 +696,9 @@ void ProcessHeartbeat() {
 void ProcessRepeatInput1(sChannelInfo *cData, uint8_t iChannel) {
     uint16_t lRepeatTime = getIntParam(PAR_f1E1Repeat, iChannel) * 1000;
 
-    if (milliSec() - cData->repeatInput1Delay > lRepeatTime) {
-        knxRead(BIT_EXT_INPUT_1, iChannel);
-        cData->repeatInput1Delay = milliSec();
+    if (millis() - cData->repeatInput1Delay > lRepeatTime) {
+        knxRead(IO_Input1, iChannel);
+        cData->repeatInput1Delay = millis();
         if (lRepeatTime == 0)
             cData->currentPipeline &= ~PIP_REPEAT_INPUT1;
     }
@@ -677,9 +709,9 @@ void ProcessRepeatInput2(sChannelInfo *cData, uint8_t iChannel) {
 
     uint16_t lRepeatTime = getIntParam(PAR_f1E2Repeat, iChannel) * 1000;
 
-    if (milliSec() - cData->repeatInput2Delay > lRepeatTime) {
-        knxRead(BIT_EXT_INPUT_2, iChannel);
-        cData->repeatInput2Delay = milliSec();
+    if (millis() - cData->repeatInput2Delay > lRepeatTime) {
+        knxRead(IO_Input2, iChannel);
+        cData->repeatInput2Delay = millis();
         if (lRepeatTime == 0)
             cData->currentPipeline &= ~PIP_REPEAT_INPUT2;
     }
@@ -692,12 +724,12 @@ void StartConvert(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex) {
 // we convert according ext. input value to bool
 void ProcessConvertInput(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex) {
 
-    uint8_t lParamBase = (iIOIndex == 1) ? PAR_f1E1 : PAR_f1E2;
+    uint16_t lParamBase = (iIOIndex == 1) ? PAR_f1E1 : PAR_f1E2;
     uint8_t lConvert = getByteParam(lParamBase, iChannel) >> 4;
     bool lValueOut = 0;
     // get input value
-    int lValue1In = getInputValue(iIOIndex, iChannel);
-    int lValue2In = 0;
+    int32_t lValue1In = getInputValue(iIOIndex, iChannel);
+    int32_t lValue2In = 0;
     if (lConvert & 1) {
         // in case of delta conversion get the other input value
         lValue2In = getInputValue(3 - iIOIndex, iChannel);
@@ -720,7 +752,7 @@ void ProcessConvertInput(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex
             // scenes or zwngsführung have no intervals, but multiple single values
             for (size_t lScene = 2; lScene <= lUpperBound && lValueOut == 0; lScene++) {
                 uint8_t lValue = getByteParam(lParamBase + lScene, iChannel);
-                lValueOut = ((uint)lValue1In == lValue);
+                lValueOut = ((uint8_t)lValue1In == lValue);
             }
             break;
         default:
@@ -768,7 +800,7 @@ void StartOnOffRepeat(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
     // if repeat is already active, we wait until next cycle
     if (iOutput) {
         if ((cData->currentPipeline & PIP_ON_REPEAT) == 0) {
-            cData->repeatOnOffDelay = milliSec();
+            cData->repeatOnOffDelay = millis();
             cData->currentPipeline &= ~PIP_OFF_REPEAT;
             ProcessOutput(cData, iChannel, iOutput);
             if (getIntParam(PAR_f1ORepeatOn, iChannel) > 0)
@@ -776,7 +808,7 @@ void StartOnOffRepeat(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
         }
     } else {
         if ((cData->currentPipeline & PIP_OFF_REPEAT) == 0) {
-            cData->repeatOnOffDelay = milliSec();
+            cData->repeatOnOffDelay = millis();
             cData->currentPipeline &= ~PIP_ON_REPEAT;
             ProcessOutput(cData, iChannel, iOutput);
             if (getIntParam(PAR_f1ORepeatOff, iChannel) > 0)
@@ -787,7 +819,7 @@ void StartOnOffRepeat(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
 
 void ProcessOnOffRepeat(sChannelInfo *cData, uint8_t iChannel) {
 
-    unsigned long lRepeat;
+    uint32_t lRepeat;
     bool lValue;
 
     if (cData->currentPipeline & PIP_ON_REPEAT) {
@@ -799,11 +831,11 @@ void ProcessOnOffRepeat(sChannelInfo *cData, uint8_t iChannel) {
         lValue = false;
     }
 
-    if (milliSec() - cData->repeatOnOffDelay > lRepeat) {
+    if (millis() - cData->repeatOnOffDelay > lRepeat) {
         // delay time is over, we repeat the output
         ProcessOutput(cData, iChannel, lValue);
         // and we restart repeat counter
-        cData->repeatOnOffDelay = milliSec();
+        cData->repeatOnOffDelay = millis();
     }
 }
 
@@ -858,7 +890,7 @@ void StartOnDelay(sChannelInfo *cData, uint8_t iChannel) {
     uint8_t lOnDelay = getByteParam(PAR_f1ODelay, iChannel);
     uint8_t lOnDelayRepeat = (lOnDelay & 96) >> 5;
     if ((cData->currentPipeline & PIP_ON_DELAY) == 0) {
-        cData->onDelay = milliSec();
+        cData->onDelay = millis();
         cData->currentPipeline |= PIP_ON_DELAY;
     } else {
         // we have a new on value, we look how to process in case of repetition
@@ -870,7 +902,7 @@ void StartOnDelay(sChannelInfo *cData, uint8_t iChannel) {
                 cData->onDelay = 0;
                 break;
             case VAL_Delay_Extend:
-                cData->onDelay = milliSec();
+                cData->onDelay = millis();
                 break;
             default:
                 break;
@@ -884,8 +916,8 @@ void StartOnDelay(sChannelInfo *cData, uint8_t iChannel) {
 }
 
 void ProcessOnDelay(sChannelInfo *cData, uint8_t iChannel) {
-    unsigned long lOnDelay = getIntParam(PAR_f1ODelayOn, iChannel) * 100;
-    if (milliSec() - cData->onDelay > lOnDelay) {
+    uint32_t lOnDelay = getIntParam(PAR_f1ODelayOn, iChannel) * 100;
+    if (millis() - cData->onDelay > lOnDelay) {
         // delay time is over, we turn off pipeline
         cData->currentPipeline &= ~PIP_ON_DELAY;
         // we start repeatOnProcessing
@@ -902,7 +934,7 @@ void StartOffDelay(sChannelInfo *cData, uint8_t iChannel) {
     uint8_t lOffDelay = getByteParam(PAR_f1ODelay, iChannel);
     uint8_t lOffDelayRepeat = (lOffDelay & 12) >> 2;
     if ((cData->currentPipeline & PIP_OFF_DELAY) == 0) {
-        cData->offDelay = milliSec();
+        cData->offDelay = millis();
         cData->currentPipeline |= PIP_OFF_DELAY;
     } else {
         // we have a new on value, we look how to process in case of repetition
@@ -914,7 +946,7 @@ void StartOffDelay(sChannelInfo *cData, uint8_t iChannel) {
                 cData->offDelay = 0;
                 break;
             case VAL_Delay_Extend:
-                cData->offDelay = milliSec();
+                cData->offDelay = millis();
                 break;
             default:
                 break;
@@ -928,8 +960,8 @@ void StartOffDelay(sChannelInfo *cData, uint8_t iChannel) {
 }
 
 void ProcessOffDelay(sChannelInfo *cData, uint8_t iChannel) {
-    unsigned long lOffDelay = getIntParam(PAR_f1ODelayOff, iChannel) * 100;
-    if (milliSec() - cData->offDelay > lOffDelay) {
+    uint32_t lOffDelay = getIntParam(PAR_f1ODelayOff, iChannel) * 100;
+    if (millis() - cData->offDelay > lOffDelay) {
         // delay time is over, we turn off pipeline
         cData->currentPipeline &= ~PIP_OFF_DELAY;
         // we start repeatOffProcessing
@@ -940,7 +972,7 @@ void ProcessOffDelay(sChannelInfo *cData, uint8_t iChannel) {
 void StartLogic(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex, bool iValue) {
     // invert input
     bool lValue = iValue;
-    uint8_t lParamBase = (iIOIndex == 1) ? PAR_f1E1 : (iIOIndex == 2) ? PAR_f1E2 : (iIOIndex == 4) ? PAR_f1I1 : PAR_f1I2;
+    uint16_t lParamBase = (iIOIndex == 1) ? PAR_f1E1 : (iIOIndex == 2) ? PAR_f1E2 : (iIOIndex == 4) ? PAR_f1I1 : PAR_f1I2;
     if ((getByteParam(lParamBase, iChannel) & BIT_INPUT_MASK) == 2)
         lValue = !iValue;
     // set according input bit
@@ -955,8 +987,8 @@ void StartLogic(sChannelInfo *cData, uint8_t iChannel, uint8_t iIOIndex, bool iV
 }
 
 void ProcessBlink(sChannelInfo *cData, uint8_t iChannel) {
-    unsigned long lBlinkTime = getIntParam(PAR_f1OBlink, iChannel) * 100;
-    if (milliSec() - cData->blinkDelay > lBlinkTime) {
+    uint32_t lBlinkTime = getIntParam(PAR_f1OBlink, iChannel) * 100;
+    if (millis() - cData->blinkDelay > lBlinkTime) {
         bool lOn = !(cData->currentIO & BIT_OUTPUT);
         if (lOn) {
             cData->currentIO |= BIT_OUTPUT;
@@ -965,14 +997,14 @@ void ProcessBlink(sChannelInfo *cData, uint8_t iChannel) {
             cData->currentIO &= ~BIT_OUTPUT;
             StartOffDelay(cData, iChannel);
         }
-        cData->blinkDelay = milliSec();
+        cData->blinkDelay = millis();
     }
 }
 
 void StartBlink(sChannelInfo *cData, uint8_t iChannel) {
-    unsigned long lBlinkTime = getIntParam(PAR_f1OBlink, iChannel);
+    uint32_t lBlinkTime = getIntParam(PAR_f1OBlink, iChannel);
     if (lBlinkTime > 0) {
-        cData->blinkDelay = milliSec();
+        cData->blinkDelay = millis();
         cData->currentPipeline |= PIP_BLINK;
         cData->currentIO |= BIT_OUTPUT;
     }
@@ -981,10 +1013,10 @@ void StartBlink(sChannelInfo *cData, uint8_t iChannel) {
 void ProcessStairlight(sChannelInfo *cData, uint8_t iChannel) {
 
     uint8_t lStairTimeBase = getByteParam(PAR_f1OTimeBase, iChannel);
-    uint16_t lStairTime = getIntParam(PAR_f1OTime, iChannel);
-    unsigned long lTime = lStairTime * sTimeFactors[lStairTimeBase];
+    uint32_t lStairTime = getIntParam(PAR_f1OTime, iChannel);
+    uint32_t lTime = lStairTime * sTimeFactors[lStairTimeBase];
 
-    if (milliSec() - cData->stairlightDelay > lTime) {
+    if (millis() - cData->stairlightDelay > lTime) {
         // stairlight time is over, we switch off, also potential blinking
         cData->currentPipeline &= ~(PIP_STAIRLIGHT | PIP_BLINK);
         // we start switchOffProcessing
@@ -1006,7 +1038,7 @@ void StartStairlight(sChannelInfo *cData, uint8_t iChannel, bool iOutput) {
             if ((cData->currentPipeline & PIP_STAIRLIGHT) == 0 || lRetrigger == 1) {
                 // stairlight is not running or may be retriggered
                 // we init the stairlight timer
-                cData->stairlightDelay = milliSec();
+                cData->stairlightDelay = millis();
                 cData->currentPipeline |= PIP_STAIRLIGHT;
                 StartBlink(cData, iChannel);
             }
@@ -1134,7 +1166,7 @@ void prepareChannels() {
             // function is active, we process input presets
             // external input 1
             // first check, if input is active
-            int lIsActive = getByteParam(PAR_f1E1, lChannel) & BIT_INPUT_MASK;
+            uint8_t lIsActive = getByteParam(PAR_f1E1, lChannel) & BIT_INPUT_MASK;
             if (lIsActive == 0) {
                 //input 1 might be also activated by a delta input converter
                 lIsActive = (getByteParam(PAR_f1E2Convert, lChannel) >> 4) & 1;
@@ -1143,7 +1175,7 @@ void prepareChannels() {
                 // input is active, we set according flag
                 lData->validActiveIO |= BIT_EXT_INPUT_1 << 4;
                 // now set input default value
-                int lParInput = getByteParam(PAR_f1E1Default, lChannel);
+                uint8_t lParInput = getByteParam(PAR_f1E1Default, lChannel);
                 switch (lParInput) {
                     case VAL_InputDefault_Read:
                         /* to read immediately we activate repeated read pipeline with 0 delay */
@@ -1176,7 +1208,7 @@ void prepareChannels() {
             if (lIsActive > 0) {
                 // input is active, we set according flag
                 lData->validActiveIO |= BIT_EXT_INPUT_2 << 4;
-                int lParInput = getByteParam(PAR_f1E2Default, lChannel);
+                uint8_t lParInput = getByteParam(PAR_f1E2Default, lChannel);
                 switch (lParInput) {
                     case VAL_InputDefault_Read:
                         /* to read immediately we activate repeated read pipeline with 0 delay */
@@ -1220,7 +1252,7 @@ void prepareChannels() {
 }
 
 void appLoop() {
-    if (!KNX->configured())
+    if (!knx.configured())
         return;
 
     // handle KNX stuff
@@ -1247,11 +1279,11 @@ void appLoop() {
             // convert input pipeline
             if (lData->currentPipeline & PIP_CONVERT_INPUT1) {
                 lData->currentPipeline &= ~PIP_CONVERT_INPUT1;
-                ProcessConvertInput(lData, lChannel, BIT_EXT_INPUT_1);
+                ProcessConvertInput(lData, lChannel, IO_Input1);
             }
             if (lData->currentPipeline & PIP_CONVERT_INPUT2) {
                 lData->currentPipeline &= ~PIP_CONVERT_INPUT2;
-                ProcessConvertInput(lData, lChannel, BIT_EXT_INPUT_2);
+                ProcessConvertInput(lData, lChannel, IO_Input2);
             }
             // Logic execution pipeline
             if (lData->currentPipeline & PIP_LOGIC_EXECUTE) {
@@ -1281,6 +1313,10 @@ void appLoop() {
             if (lData->currentPipeline & (PIP_ON_REPEAT | PIP_OFF_REPEAT)) {
                 ProcessOnOffRepeat(lData, lChannel);
             }
+            // // reset device pipeline
+            // if (lData->currentPipeline & PIP_RESET_DEVICE) {
+            //     ProcessDeviceReset(lData, lChannel);
+            // }
         }
     }
 }
@@ -1289,14 +1325,14 @@ void processInput(uint8_t iIOIndex, uint8_t iChannel) {
     if (iIOIndex == 0)
         return;
     sChannelInfo *lData = &gChannelData[iChannel];
-    uint8_t lParamBase = (iIOIndex == 1) ? PAR_f1E1 : PAR_f1E2;
+    uint16_t lParamBase = (iIOIndex == 1) ? PAR_f1E1 : PAR_f1E2;
     // we have now an event for an input, first we check, if this input is active
     uint8_t lActive = getByteParam(lParamBase, iChannel) & BIT_INPUT_MASK;
     if (lActive > 0)
         // this input is we start convert for this input
         StartConvert(lData, iChannel, iIOIndex);
     // this input might also be used for delta conversion in the other input
-    uint8_t lOtherParamBase = (iIOIndex == 2) ? PAR_f1E1 : PAR_f1E2;
+    uint16_t lOtherParamBase = (iIOIndex == 2) ? PAR_f1E1 : PAR_f1E2;
     uint8_t lConverter = getByteParam(lOtherParamBase, iChannel) >> 4;
     if (lConverter & 1) {
         // delta convertersion, we start convert for the other input
@@ -1366,32 +1402,32 @@ void setDPT(GroupObject *iKo, uint8_t iChannel, uint8_t iParamDpt) {
 }
 
 void appSetup() {
-    KNX->readMemory();
+    knx.readMemory();
 
     bool setProgmode = false;
-    if (KNX->induvidualAddress() == 0 || setProgmode)
-        KNX->progMode(true);
+    if (knx.induvidualAddress() == 0 || setProgmode)
+        knx.progMode(true);
 
-    if (KNX->configured()) {
+    if (knx.configured()) {
         for (uint8_t lChannel = 0; lChannel < NUM_Channels; lChannel++) {
             // we initialize DPT for output ko
-            GroupObject *lKo = getKoForChannel(0, lChannel);
+            GroupObject *lKo = getKoForChannel(IO_Output, lChannel);
             setDPT(lKo, lChannel, PAR_f1ODpt);
             // we initialize DPT and callback for input1 ko
-            lKo = getKoForChannel(BIT_EXT_INPUT_1, lChannel);
+            lKo = getKoForChannel(IO_Input1, lChannel);
             setDPT(lKo, lChannel, PAR_f1E1Dpt);
             lKo->callback(processInputKo);
-            // we initialize DPT and callback for input1 ko
-            lKo = getKoForChannel(BIT_EXT_INPUT_2, lChannel);
+            // we initialize DPT and callback for input2 ko
+            lKo = getKoForChannel(IO_Input2, lChannel);
             setDPT(lKo, lChannel, PAR_f1E2Dpt);
             lKo->callback(processInputKo);
         }
-        pStartupDelay = KNX->paramInt(PAR_startupDelay) * 1000;
-        gStartupDelay = milliSec();
-        pHeartbeatDelay = KNX->paramInt(PAR_HeartbeatDelay) * 1000;
-        gHeartbeatKo = &KNX->getGroupObject(KO_Heartbeat);
+        pStartupDelay = knx.paramInt(PAR_startupDelay) * 1000;
+        gStartupDelay = millis();
+        pHeartbeatDelay = knx.paramInt(PAR_HeartbeatDelay) * 1000;
+        gHeartbeatKo = getKoForChannel(IO_Absolute, KO_Heartbeat);
         gHeartbeatKo->dataPointType(Dpt(1, 2));
         prepareChannels();
     }
-    KNX->start();
+    knx.start();
 }

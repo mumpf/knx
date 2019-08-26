@@ -1,55 +1,59 @@
-#include "esp_platform.h"
+#include "esp32_platform.h"
 
-#ifdef ARDUINO_ARCH_ESP8266
-#include <user_interface.h>
+#ifdef ARDUINO_ARCH_ESP32
 #include <Arduino.h>
 #include <EEPROM.h>
 
 #include "knx/bits.h"
 
-EspPlatform::EspPlatform()
+#define SerialDBG Serial
+
+Esp32Platform::Esp32Platform()
 {
 }
 
-uint32_t EspPlatform::currentIpAddress()
+uint32_t Esp32Platform::currentIpAddress()
 {
     return WiFi.localIP();
 }
 
-uint32_t EspPlatform::currentSubnetMask()
+uint32_t Esp32Platform::currentSubnetMask()
 {
     return WiFi.subnetMask();
 }
 
-uint32_t EspPlatform::currentDefaultGateway()
+uint32_t Esp32Platform::currentDefaultGateway()
 {
     return WiFi.gatewayIP();
 }
 
-void EspPlatform::macAddress(uint8_t * addr)
+void Esp32Platform::macAddress(uint8_t * addr)
 {
-    wifi_get_macaddr(STATION_IF, addr);
+    esp_wifi_get_mac(WIFI_IF_STA, addr);
 }
 
-void EspPlatform::restart()
+void Esp32Platform::restart()
 {
     Serial.println("restart");
-    ESP.reset();
+    ESP.restart();
 }
 
-void EspPlatform::fatalError()
+void Esp32Platform::fatalError()
 {
+    Serial.println("GURU MEDITATION - fatal error!");
     const int period = 200;
     while (true)
     {
+#ifdef LED_BUILTIN
         if ((millis() % period) > (period / 2))
             digitalWrite(LED_BUILTIN, HIGH);
         else
             digitalWrite(LED_BUILTIN, LOW);
+#endif
     }
 }
 
-void EspPlatform::setupMultiCast(uint32_t addr, uint16_t port)
+void Esp32Platform::setupMultiCast(uint32_t addr, uint16_t port)
 {
     _mulitcastAddr = htonl(addr);
     _mulitcastPort = port;
@@ -57,26 +61,26 @@ void EspPlatform::setupMultiCast(uint32_t addr, uint16_t port)
     
     Serial.printf("setup multicast addr: %s port: %d ip: %s\n", mcastaddr.toString().c_str(), port,
         WiFi.localIP().toString().c_str());
-    uint8 result = _udp.beginMulticast(WiFi.localIP(), mcastaddr, port);
+    uint8_t result = _udp.beginMulticast(mcastaddr, port);
     Serial.printf("result %d\n", result);
 }
 
-void EspPlatform::closeMultiCast()
+void Esp32Platform::closeMultiCast()
 {
     _udp.stop();
 }
 
-bool EspPlatform::sendBytes(uint8_t * buffer, uint16_t len)
+bool Esp32Platform::sendBytes(uint8_t * buffer, uint16_t len)
 {
     //printHex("<- ",buffer, len);
     int result = 0;
-    result = _udp.beginPacketMulticast(_mulitcastAddr, _mulitcastPort, WiFi.localIP());
+    result = _udp.beginMulticastPacket();
     result = _udp.write(buffer, len);
     result = _udp.endPacket();
     return true;
 }
 
-int EspPlatform::readBytes(uint8_t * buffer, uint16_t maxLen)
+int Esp32Platform::readBytes(uint8_t * buffer, uint16_t maxLen)
 {
     int len = _udp.parsePacket();
     if (len == 0)
@@ -93,51 +97,51 @@ int EspPlatform::readBytes(uint8_t * buffer, uint16_t maxLen)
     return len;
 }
 
-uint8_t * EspPlatform::getEepromBuffer(uint16_t size)
+uint8_t * Esp32Platform::getEepromBuffer(uint16_t size)
 {
     EEPROM.begin(size);
     return EEPROM.getDataPtr();
 }
 
-void EspPlatform::commitToEeprom()
+void Esp32Platform::commitToEeprom()
 {
     EEPROM.commit();
 }
 
-void EspPlatform::setupUart()
+void Esp32Platform::setupUart()
 {
     Serial.begin(19200, SERIAL_8E1);
     while (!Serial) ;
 }
 
 
-void EspPlatform::closeUart()
+void Esp32Platform::closeUart()
 {
     Serial.end();
 }
 
 
-int EspPlatform::uartAvailable()
+int Esp32Platform::uartAvailable()
 {
     return Serial.available();
 }
 
 
-size_t EspPlatform::writeUart(const uint8_t data)
+size_t Esp32Platform::writeUart(const uint8_t data)
 {
     printHex("<p", &data, 1);
     return Serial.write(data);
 }
 
 
-size_t EspPlatform::writeUart(const uint8_t *buffer, size_t size)
+size_t Esp32Platform::writeUart(const uint8_t *buffer, size_t size)
 {
     printHex("<p", buffer, size);
     return Serial.write(buffer, size);
 }
 
 
-int EspPlatform::readUart()
+int Esp32Platform::readUart()
 {
     int val = Serial.read();
     if (val > 0)
@@ -146,7 +150,7 @@ int EspPlatform::readUart()
 }
 
 
-size_t EspPlatform::readBytesUart(uint8_t *buffer, size_t length)
+size_t Esp32Platform::readBytesUart(uint8_t *buffer, size_t length)
 {
     size_t toRead = length;
     uint8_t* pos = buffer;

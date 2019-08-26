@@ -6,34 +6,19 @@
 #include <stdlib.h>
 #include <time.h>
 
-KnxFacade *KNX = 0;
-Platform *platform = 0;
+KnxFacade<LinuxPlatform, Bau57B0> knx;
 
-uint32_t milliSec() {
-    return platform->millis();
-}
-    
-void DbgWrite(const char* fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    vprintf(fmt, ap);
-    va_end(ap);
-}
-
-
-int main(int argc, char **argv) {
-
-    platform = new LinuxPlatform(argc, argv);
-    Bau57B0 bau(*platform);
-    KNX = new KnxFacade(bau);
-
+int main(int argc, char **argv)
+{
+    knx.platform().cmdLineArgs(argc, argv);
 
     appSetup();
-
-    while (1) {
-        KNX->loop();
-        if (KNX->configured())
+    
+    while (1)
+    {
+        knx.loop();
+        if(knx.configured())
             appLoop();
-        platform->mdelay(10);
+        delay(10);
     }
 }

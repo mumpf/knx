@@ -15,7 +15,8 @@ float maxValue = 0;
 float minValue = RAND_MAX;
 long lastsend = 0;
 
-void measureTemp() {
+void measureTemp()
+{
     long now = millis();
     if ((now - lastsend) < 2000)
         return;
@@ -28,26 +29,31 @@ void measureTemp() {
     // write new value to groupobject
     goCurrent.value(currentValue);
 
-    if (currentValue > maxValue) {
+    if (currentValue > maxValue)
+    {
         maxValue = currentValue;
         goMax.value(maxValue);
     }
 
-    if (currentValue < minValue) {
+    if (currentValue < minValue)
+    {
         minValue = currentValue;
         goMin.value(minValue);
     }
 }
 
 // callback from reset-GO
-void resetCallback(GroupObject &go) {
-    if (go.value()) {
+void resetCallback(GroupObject& go)
+{
+    if (go.value())
+    {
         maxValue = 0;
         minValue = 10000;
     }
 }
 
-void setup() {
+void setup()
+{
     SerialDBG.begin(115200);
 
     randomSeed(millis());
@@ -61,7 +67,8 @@ void setup() {
     knx.readMemory();
 
     // print values of parameters if device is already configured
-    if (knx.configured()) {
+    if (knx.configured())
+    {
         // register callback for reset GO
         goReset.callback(resetCallback);
 
@@ -77,19 +84,19 @@ void setup() {
         SerialDBG.println(knx.paramByte(4));
     }
 
-    // pin or GPIO the programming led is connected to. Default is LED_BUILDIN
+    // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
     // knx.ledPin(LED_BUILTIN);
-    knx.ledPin(26);
     // is the led active on HIGH or low? Default is LOW
     // knx.ledPinActiveOn(HIGH);
     // pin or GPIO programming button is connected to. Default is 0
-    knx.buttonPin(10);
+    // knx.buttonPin(0);
 
     // start the framework.
     knx.start();
 }
 
-void loop() {
+void loop()
+{
     // don't delay here to much. Otherwise you might lose packages or mess up the timing with ETS
     knx.loop();
 

@@ -5,17 +5,7 @@
 #include <WiFiManager.h>
 #endif
 
-KnxFacade* KNX = 0;
-
-long milliSec() {
-    return millis();
-}
-
-void DbgWrite(const char* fmt, ...) {
-}
-
 void setup() {
-    KNX = &knx;
     SerialDBG.begin(115200);
     SerialDBG.println("Startup called...");
 

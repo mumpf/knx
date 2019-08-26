@@ -9,10 +9,10 @@
 #define NUM_Channels 50
 #define NUM_paramBlockSize 110
 #define NUM_paramOffset 12
-#define KO_Offset 100
+#define KO_Offset 1
 
 // fixed KO, just one occurence
-#define KO_Heartbeat 1 // fix, only once
+#define KO_Heartbeat 250 // fix, only once
 
 // fixed parameters, just one occurence
 #define PAR_numChannels 0    // 4 Byte

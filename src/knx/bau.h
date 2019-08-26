@@ -5,6 +5,7 @@
 class BusAccessUnit
 {
   public:
+    virtual ~BusAccessUnit() {}
     virtual void groupValueReadLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, bool status);
     virtual void groupValueReadIndication(uint16_t asap, Priority priority, HopCountType hopType);
     virtual void groupValueReadResponseConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopTtype,
@@ -107,4 +108,5 @@ class BusAccessUnit
     virtual void keyWriteResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, uint8_t level,
                                          bool status);
     virtual void keyWriteAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, uint8_t level);
+    virtual void connectConfirm(uint16_t destination);
 };

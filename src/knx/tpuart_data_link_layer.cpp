@@ -80,9 +80,9 @@
 #define RX_WAIT_DATA_CON 3
 #define TX_FRAME 4
 
-#define BYTE_TIMEOUT 10     //milli seconds
-#define CONFIRM_TIMEOUT 500 //milli seconds
-#define RESET_TIMEOUT 100   //milli seconds
+#define BYTE_TIMEOUT          10   //milli seconds
+#define CONFIRM_TIMEOUT       500  //milli seconds
+#define RESET_TIMEOUT         100 //milli seconds
 
 void TpUartDataLinkLayer::loop() {
 
@@ -106,15 +106,16 @@ void TpUartDataLinkLayer::loop() {
             }
             break;
         case TX_FRAME:
-            if (sendSingleFrameByte() == false) {
+            if (sendSingleFrameByte() == false)
+            {
                 _waitConfirm = true;
-                _waitConfirmStartTime = _platform.millis();
+                _waitConfirmStartTime = millis();
                 _loopState = IDLE;
             }
             break;
         case RX_FIRST_BYTE:
             rxByte = _platform.readUart();
-            _lastByteRxTime = _platform.millis();
+            _lastByteRxTime = millis();
             _RxByteCnt = 0;
             _xorSum = 0;
             if ((rxByte & L_DATA_MASK) == L_DATA_STANDARD_IND) {
@@ -175,7 +176,8 @@ void TpUartDataLinkLayer::loop() {
             _loopState = IDLE;
             break;
         case RX_L_DATA:
-            if (_platform.millis() - _lastByteRxTime > BYTE_TIMEOUT) {
+            if (millis() - _lastByteRxTime > BYTE_TIMEOUT)
+            {
                 _RxByteCnt = 0;
                 _loopState = IDLE;
                 println("Timeout during RX_L_DATA");
@@ -183,7 +185,7 @@ void TpUartDataLinkLayer::loop() {
             }
             if (!_platform.uartAvailable())
                 break;
-            _lastByteRxTime = _platform.millis();
+            _lastByteRxTime = millis();
             rxByte = _platform.readUart();
 
             if (_RxByteCnt == MAX_KNX_TELEGRAM_SIZE) {
@@ -197,7 +199,8 @@ void TpUartDataLinkLayer::loop() {
                 //Destination Address + payload available
                 _xorSum ^= rxByte;
                 //check if echo
-                if (!((buffer[0] ^ _sendBuffer[0]) & ~0x20) && !memcmp(buffer + 2, _sendBuffer + 1, 5)) { //ignore repeated bit of control byte
+                if (!((buffer[0] ^ _sendBuffer[0]) & ~0x20) && !memcmp(buffer + _convert + 1, _sendBuffer + 1, 5))
+                { //ignore repeated bit of control byte
                     _isEcho = true;
                 } else {
                     _isEcho = false;
@@ -255,8 +258,9 @@ void TpUartDataLinkLayer::loop() {
             if (!_platform.uartAvailable())
                 break;
             rxByte = _platform.readUart();
-            _lastByteRxTime = _platform.millis();
-            if ((rxByte & L_DATA_CON_MASK) == L_DATA_CON) {
+            _lastByteRxTime = millis();
+            if ((rxByte & L_DATA_CON_MASK) == L_DATA_CON)
+            {
                 //println("L_DATA_CON received");
                 dataConBytesReceived(_receiveBuffer, _RxByteCnt + 2, ((rxByte & SUCCESS) > 0));
                 _waitConfirm = false;
@@ -279,8 +283,10 @@ void TpUartDataLinkLayer::loop() {
             break;
     }
 
-    if (_waitConfirm) {
-        if (_platform.millis() - _waitConfirmStartTime > CONFIRM_TIMEOUT) {
+    if (_waitConfirm)
+    {
+        if (millis() - _waitConfirmStartTime > CONFIRM_TIMEOUT)
+        {
             println("L_DATA_CON not received within expected time");
             uint8_t cemiBuffer[MAX_KNX_TELEGRAM_SIZE];
             cemiBuffer[0] = 0x29;
@@ -308,12 +314,13 @@ bool TpUartDataLinkLayer::sendFrame(CemiFrame& frame) {
 bool TpUartDataLinkLayer::resetChip() {
     uint8_t cmd = U_RESET_REQ;
     _platform.writeUart(cmd);
-    _waitConfirmStartTime = _platform.millis();
-    while (true) {
+    _waitConfirmStartTime = millis();
+    while (true)
+    {
         int resp = _platform.readUart();
         if (resp == U_RESET_IND)
             return true;
-        else if (_platform.millis() - _waitConfirmStartTime > RESET_TIMEOUT)
+        else if (millis() - _waitConfirmStartTime > RESET_TIMEOUT)
             return false;
     }
 }
