@@ -1,18 +1,8 @@
 {
     "version": "2.0.0",
-    "windows": {
-        "options": {
-            "shell": {
-                "executable": "c:\\windows\\sysnative\\bash.exe",
-                "args": [
-                    "-c"
-                ]
-            }
-        }
-    },
     "tasks": [
         {
-            "label": "CMAKE on WSL",
+            "label": "CMAKE",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -21,6 +11,20 @@
             ],
             "group": {
                 "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "MultiplyChannels",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "examples/knx-logik/MultiplyChannels/bin/Debug/netcoreapp3.0/MultiplyChannels.dll",
+                "examples/knx-logik/Logikmodul"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
                 "isDefault": true
             }
         },

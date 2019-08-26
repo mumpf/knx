@@ -5,23 +5,26 @@
 #define DEVICE_ID 18
 #define REVISION 0
 
-#define KO_f1E1 1
-#define KO_f1E2 2
-#define KO_f1O 3
+// number of supported channels
+#define NUM_Channels 20
+#define NUM_paramBlockSize 110
+#define NUM_paramOffset 147
+#define KO_Offset 100
 
-#define KO_Heartbeat 241      // fix, only once
-#define KO_TempValue 242      // fix, only once
-#define KO_TempThreshold1 243 // fix, only once
-#define KO_TempThreshold2 244 // fix, only once
-#define KO_HumValue 245       // fix, only once
-#define KO_HumThreshold1 246  // fix, only once
-#define KO_HumThreshold2 247  // fix, only once
-#define KO_PreValue 248       // fix, only once
-#define KO_PreThreshold1 249  // fix, only once
-#define KO_PreThreshold2 250  // fix, only once
-#define KO_VocValue 251       // fix, only once
-#define KO_VocThreshold1 252  // fix, only once
-#define KO_VocThreshold2 253  // fix, only once
+// fixed KO, just one occurence
+#define KO_Heartbeat 1      // fix, only once
+#define KO_TempValue 2      // fix, only once
+#define KO_TempThreshold1 3 // fix, only once
+#define KO_TempThreshold2 4 // fix, only once
+#define KO_HumValue 5       // fix, only once
+#define KO_HumThreshold1 6  // fix, only once
+#define KO_HumThreshold2 7  // fix, only once
+#define KO_PreValue 8       // fix, only once
+#define KO_PreThreshold1 9  // fix, only once
+#define KO_PreThreshold2 10 // fix, only once
+#define KO_VocValue 11      // fix, only once
+#define KO_VocThreshold1 12 // fix, only once
+#define KO_VocThreshold2 13 // fix, only once
 
 // fixed parameters, just one occurence
 #define PAR_numChannels 0       // 4 Byte
@@ -75,9 +78,6 @@
                                 //          Bit 4: 1-Wire
 
 //Dynamic parameters, per cannel occurence
-#define NUM_paramBlockSize 110
-#define NUM_paramOffset 147
-
 #define PAR_f1StartupDelay 0     // 4 Byte
 #define PAR_f1Logic 4            // 3 Bit    X
 #define PAR_f1Calculate 5        // 1 Bit    X

@@ -279,3 +279,4 @@ knx-linux/knx-linux
 knx-linux/cmake_install.cmake
 **/*.knxprod
 **/flash.bin
+examples/knx-logik/Logikmodul.knxprod

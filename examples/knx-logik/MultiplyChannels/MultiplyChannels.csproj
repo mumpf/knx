@@ -1,8 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+  <ItemGroup>
+    <Reference Include="Knx.Ets.Converter.ConverterEngine.dll">
+      <HintPath>C:\Program Files (x86)\ETS4\Knx.Ets.Converter.ConverterEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview4.19164.7" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
+  </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
 </Project>

@@ -6,9 +6,6 @@
 // #include "LogikTest.h"
 #include "Logikmodul.h"
 
-// number of supported channels
-#define NUM_CHANNELS 50
-
 // enum input defaults
 #define VAL_InputDefault_Undefined 0
 #define VAL_InputDefault_Read 1
@@ -114,7 +111,7 @@ struct sChannelInfo {
 };
 
 // runtime information for the whole logik module
-sChannelInfo gChannelData[NUM_CHANNELS];
+sChannelInfo gChannelData[NUM_Channels];
 unsigned long gStartupDelay;
 unsigned long pStartupDelay;
 unsigned long gHeartbeatDelay = 0;
@@ -565,7 +562,7 @@ void writeParameterValue(sChannelInfo *cData, int iIOIndex, uint8_t iChannel) {
 void ProcessInternalInputs(sChannelInfo *cData, uint8_t iChannel, bool iValue) {
 
     // search for any internal input associated to this channel
-    for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
+    for (uint8_t lChannel = 0; lChannel < NUM_Channels; lChannel++) {
         uint8_t lInput1 = getByteParam(PAR_f1I1, lChannel);
         if (lInput1 > 0) {
             uint lFunction1 = getIntParam(PAR_f1I1Function, lChannel);
@@ -1125,7 +1122,7 @@ void ProcessLogic(sChannelInfo *cData, uint8_t iChannel) {
 
 void prepareChannels() {
 
-    for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
+    for (uint8_t lChannel = 0; lChannel < NUM_Channels; lChannel++) {
         sChannelInfo *lData = &gChannelData[lChannel];
         // initialize most important runtime field
         lData->currentPipeline = 0;
@@ -1235,7 +1232,7 @@ void appLoop() {
     ProcessHeartbeat();
 
     // we loop on all channels an execute pipeline
-    for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
+    for (uint8_t lChannel = 0; lChannel < NUM_Channels; lChannel++) {
         sChannelInfo *lData = &gChannelData[lChannel];
         if (lData->currentPipeline & PIP_STARTUP) {
             ProcessStartup(lData, lChannel);
@@ -1376,7 +1373,7 @@ void appSetup() {
         KNX->progMode(true);
 
     if (KNX->configured()) {
-        for (uint8_t lChannel = 0; lChannel < NUM_CHANNELS; lChannel++) {
+        for (uint8_t lChannel = 0; lChannel < NUM_Channels; lChannel++) {
             // we initialize DPT for output ko
             GroupObject *lKo = getKoForChannel(0, lChannel);
             setDPT(lKo, lChannel, PAR_f1ODpt);

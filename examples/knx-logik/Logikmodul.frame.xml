@@ -239,10 +239,10 @@
               <ParameterRef Id="M-00FA_A-0001-01-0000_P-3_R-3" RefId="M-00FA_A-0001-01-0000_P-3" />
             </ParameterRefs>
             <ComObjectTable>
-              <ComObject Id="M-00FA_A-0001-01-0000_O-250" Name="KOHeartbeat" Number="250" FunctionText="Zyklisch" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled"/>
+              <ComObject Id="M-00FA_A-0001-01-0000_O-1" Name="KOHeartbeat" Number="1" FunctionText="Zyklisch" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled"/>
             </ComObjectTable>
             <ComObjectRefs>
-              <ComObjectRef Id="M-00FA_A-0001-01-0000_O-250_R-1" RefId="M-00FA_A-0001-01-0000_O-250" Text="In Betieb" ObjectSize="1 Bit" DatapointType="DPST-1-2" />
+              <ComObjectRef Id="M-00FA_A-0001-01-0000_O-1_R-1" RefId="M-00FA_A-0001-01-0000_O-1" Text="In Betieb" ObjectSize="1 Bit" DatapointType="DPST-1-2" />
             </ComObjectRefs>
             <AddressTable MaxEntries="255" />
             <AssociationTable MaxEntries="255" />
@@ -262,7 +262,7 @@
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-1_R-1" />
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-2_R-2" />
                 <ParameterRefRef RefId="M-00FA_A-0001-01-0000_P-3_R-3" />
-                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-250_R-1" />
+                <ComObjectRefRef RefId="M-00FA_A-0001-01-0000_O-1_R-1" />
               </ParameterBlock>
               <ParameterBlock Id="M-00FA_A-0001-01-0000_PB-2" Name="Info" Text="Information">
                 <ParameterSeparator Id="M-00FA_A-0001-01-0000_PS-1" Text="Jeder Kanal dieses Moduls repräsentiert eine Logik. Die Logikverarbeitung ist intern immer Binär (DPT1). Jede Logik hat 2 interne und 2 externe Eingänge, wobei die internen Eingänge mit den Ausgängen anderer Logiken verbunden werden können." />
