@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdint.h>
-#include "knx_types.h"
 #include "apdu.h"
+#include "knx_types.h"
+#include <stdint.h>
 
 class AssociationTableObject;
 class BusAccessUnit;
@@ -150,5 +150,5 @@ class ApplicationLayer
     AssociationTableObject& _assocTable;
     BusAccessUnit& _bau;
     TransportLayer* _transportLayer = 0;
-    int32_t _connectedTsap;
+    int32_t _connectedTsap = 0;
 };
