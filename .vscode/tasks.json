@@ -15,20 +15,6 @@
             }
         },
         {
-            "label": "MultiplyChannels",
-            "type": "shell",
-            "command": "dotnet",
-            "args": [
-                "examples/knx-logik/MultiplyChannels/bin/Debug/netcoreapp3.0/MultiplyChannels.dll",
-                "examples/knx-logik/Logikmodul"
-            ],
-            "problemMatcher": [],
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            }
-        },
-        {
             "type": "shell",
             "label": "g++-6 build active file",
             "command": "/usr/bin/g++-6",
