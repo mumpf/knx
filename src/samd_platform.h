@@ -4,7 +4,6 @@
 
 #ifdef ARDUINO_ARCH_SAMD
 
-
 class SamdPlatform : public ArduinoPlatform
 {
 public:
