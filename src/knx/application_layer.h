@@ -150,5 +150,5 @@ class ApplicationLayer
     AssociationTableObject& _assocTable;
     BusAccessUnit& _bau;
     TransportLayer* _transportLayer = 0;
-    int32_t _connectedTsap = 0;
+    int32_t _connectedTsap = -1;
 };

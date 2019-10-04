@@ -1,12 +1,13 @@
-#include "bits.h"
 #include "bau_systemB.h"
-#include <string.h>
+#include "bits.h"
 #include <stdio.h>
+#include <string.h>
 
-BauSystemB::BauSystemB(Platform& platform): _memory(platform), _addrTable(platform),
-    _assocTable(platform), _groupObjTable(platform), _appProgram(platform),
-    _platform(platform), _appLayer(_assocTable, *this),
-    _transLayer(_appLayer, _addrTable), _netLayer(_transLayer)
+BauSystemB::BauSystemB(Platform& platform)
+    : _memory(platform), _addrTable(platform),
+      _assocTable(platform), _groupObjTable(platform), _appProgram(platform),
+      _platform(platform), _appLayer(_assocTable, *this),
+      _transLayer(_appLayer, _addrTable), _netLayer(_transLayer)
 {
     _appLayer.transportLayer(_transLayer);
     _transLayer.networkLayer(_netLayer);
@@ -57,7 +58,7 @@ void BauSystemB::sendNextGroupTelegram()
         {
             uint8_t* data = go.valueRef();
             _appLayer.groupValueWriteRequest(AckRequested, asap, go.priority(), NetworkLayerParameter, data,
-                go.sizeInTelegram());
+                                             go.sizeInTelegram());
         }
         else if (flag == ReadRequest)
         {
@@ -73,7 +74,7 @@ void BauSystemB::sendNextGroupTelegram()
     startIdx = 1;
 }
 
-void BauSystemB::updateGroupObject(GroupObject & go, uint8_t * data, uint8_t length)
+void BauSystemB::updateGroupObject(GroupObject& go, uint8_t* data, uint8_t length)
 {
     uint8_t* goData = go.valueRef();
     if (length != go.valueSize())
@@ -118,15 +119,12 @@ ApplicationProgramObject& BauSystemB::parameters()
 bool BauSystemB::configured()
 {
     // _configured is set to true initially, if the device was configured with ETS it will be set to true after restart
-    
+
     if (!_configured)
         return false;
-    
-    _configured = _groupObjTable.loadState() == LS_LOADED
-        && _addrTable.loadState() == LS_LOADED
-        && _assocTable.loadState() == LS_LOADED
-        && _appProgram.loadState() == LS_LOADED;
-    
+
+    _configured = _groupObjTable.loadState() == LS_LOADED && _addrTable.loadState() == LS_LOADED && _assocTable.loadState() == LS_LOADED && _appProgram.loadState() == LS_LOADED;
+
     return _configured;
 }
 
@@ -139,7 +137,7 @@ void BauSystemB::deviceDescriptorReadIndication(Priority priority, HopCountType 
 }
 
 void BauSystemB::memoryWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint16_t memoryAddress, uint8_t * data)
+                                       uint16_t memoryAddress, uint8_t* data)
 {
     memcpy(_platform.memoryReference() + memoryAddress, data, number);
     _memory.memoryModified();
@@ -149,10 +147,10 @@ void BauSystemB::memoryWriteIndication(Priority priority, HopCountType hopType, 
 }
 
 void BauSystemB::memoryReadIndication(Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint16_t memoryAddress)
+                                      uint16_t memoryAddress)
 {
     _appLayer.memoryReadResponse(AckRequested, priority, hopType, asap, number, memoryAddress,
-        _platform.memoryReference() + memoryAddress);
+                                 _platform.memoryReference() + memoryAddress);
 }
 
 void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopType, uint16_t asap)
@@ -170,7 +168,7 @@ void BauSystemB::authorizeIndication(Priority priority, HopCountType hopType, ui
 void BauSystemB::userMemoryReadIndication(Priority priority, HopCountType hopType, uint16_t asap, uint8_t number, uint32_t memoryAddress)
 {
     _appLayer.userMemoryReadResponse(AckRequested, priority, hopType, asap, number, memoryAddress,
-        _platform.memoryReference() + memoryAddress);
+                                     _platform.memoryReference() + memoryAddress);
 }
 
 void BauSystemB::userMemoryWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, uint8_t number, uint32_t memoryAddress, uint8_t* data)
@@ -183,7 +181,7 @@ void BauSystemB::userMemoryWriteIndication(Priority priority, HopCountType hopTy
 }
 
 void BauSystemB::propertyDescriptionReadIndication(Priority priority, HopCountType hopType, uint16_t asap, uint8_t objectIndex,
-    uint8_t propertyId, uint8_t propertyIndex)
+                                                   uint8_t propertyId, uint8_t propertyIndex)
 {
     uint8_t pid = propertyId;
     bool writeEnable = false;
@@ -195,20 +193,20 @@ void BauSystemB::propertyDescriptionReadIndication(Priority priority, HopCountTy
         obj->readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
 
     _appLayer.propertyDescriptionReadResponse(AckRequested, priority, hopType, asap, objectIndex, pid, propertyIndex,
-        writeEnable, type, numberOfElements, access);
+                                              writeEnable, type, numberOfElements, access);
 }
 
 void BauSystemB::propertyValueWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, uint8_t objectIndex,
-    uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
+                                              uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
 {
     InterfaceObject* obj = getInterfaceObject(objectIndex);
-    if(obj)
+    if (obj)
         obj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
     propertyValueReadIndication(priority, hopType, asap, objectIndex, propertyId, numberOfElements, startIndex);
 }
 
 void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hopType, uint16_t asap, uint8_t objectIndex,
-    uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
+                                             uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
 {
     uint8_t size = 0;
     uint32_t elementCount = numberOfElements;
@@ -222,10 +220,10 @@ void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hop
         elementCount = 0;
 
     uint8_t data[size];
-    if(obj)
+    if (obj)
         obj->readProperty((PropertyID)propertyId, startIndex, elementCount, data);
     _appLayer.propertyValueReadResponse(AckRequested, priority, hopType, asap, objectIndex, propertyId, elementCount,
-        startIndex, data, size);
+                                        startIndex, data, size);
 }
 
 void BauSystemB::individualAddressReadIndication(HopCountType hopType)
@@ -240,7 +238,7 @@ void BauSystemB::individualAddressWriteIndication(HopCountType hopType, uint16_t
         _deviceObj.induvidualAddress(newaddress);
 }
 
-void BauSystemB::groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, uint8_t * data, uint8_t dataLength, bool status)
+void BauSystemB::groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, uint8_t* data, uint8_t dataLength, bool status)
 {
     GroupObject& go = _groupObjTable.get(asap);
     if (status)
@@ -264,13 +262,13 @@ void BauSystemB::groupValueReadIndication(uint16_t asap, Priority priority, HopC
 
     if (!go.communicationEnable() || !go.readEnable())
         return;
-    
+
     uint8_t* data = go.valueRef();
     _appLayer.groupValueReadResponse(AckRequested, asap, priority, hopType, data, go.sizeInTelegram());
 }
 
 void BauSystemB::groupValueReadAppLayerConfirm(uint16_t asap, Priority priority, HopCountType hopType, uint8_t* data,
-    uint8_t dataLength)
+                                               uint8_t dataLength)
 {
     GroupObject& go = _groupObjTable.get(asap);
 
@@ -280,7 +278,7 @@ void BauSystemB::groupValueReadAppLayerConfirm(uint16_t asap, Priority priority,
     updateGroupObject(go, data, dataLength);
 }
 
-void BauSystemB::groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, uint8_t * data, uint8_t dataLength)
+void BauSystemB::groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, uint8_t* data, uint8_t dataLength)
 {
     GroupObject& go = _groupObjTable.get(asap);
 
@@ -295,57 +293,60 @@ void BauSystemB::addSaveRestore(SaveRestore* obj)
     _memory.addSaveRestore(obj);
 }
 
-
 bool BauSystemB::restartRequest(uint16_t asap)
 {
-    if (_appLayer.isConnected()) 
+    if (_appLayer.isConnected())
         return false;
     _restartState = 1; // order important, has to be set BEFORE connectRequest
     _restartDestination = asap;
     _appLayer.connectRequest(asap, SystemPriority);
     _appLayer.deviceDescriptorReadRequest(AckRequested, SystemPriority, NetworkLayerParameter, asap, 0);
     return true;
-
 }
 
-void BauSystemB::connectConfirm(uint16_t destination) {
-    if (_restartState == 1 && destination == _restartDestination) {
+void BauSystemB::connectConfirm(uint16_t tsap)
+{
+    if (_restartState == 1 && tsap >= 0)
+    {
         /* restart connection is confirmed, go to the next state */
         _restartState = 2;
         _restartDelay = millis();
-    } else
+    }
+    else
     {
         _restartState = 0;
         _restartDestination = -1;
     }
-    
 }
 
-void BauSystemB::nextRestartState() {
+void BauSystemB::nextRestartState()
+{
     switch (_restartState)
     {
-    case 0:
-        /* inactive state, do nothing */
-        break;
-    case 1:
-        /* wait for connection, we do nothing here */
-        break;
-    case 2:
-        /* connection confirmed, we send restartRequest, but we wait a moment (sending ACK etc)... */
-        if (millis() - _restartDelay > 30) {
-            _appLayer.restartRequest(AckRequested, SystemPriority, NetworkLayerParameter);
-            _restartState = 3;
-            _restartDelay = millis();
-        }
-        break;
-    case 3:
-        /* restart is finished, we send a discommect */
-        if (millis() - _restartDelay > 30) {
-            _appLayer.disconnectRequest(SystemPriority);
-            _restartState = 0;
-            _restartDestination = -1;
-        }
-    default:
-        break;
+        case 0:
+            /* inactive state, do nothing */
+            break;
+        case 1:
+            /* wait for connection, we do nothing here */
+            break;
+        case 2:
+            /* connection confirmed, we send restartRequest, but we wait a moment (sending ACK etc)... */
+            if (millis() - _restartDelay > 30)
+            {
+                _appLayer.restartRequest(AckRequested, SystemPriority, NetworkLayerParameter);
+                _restartState = 3;
+                _restartDelay = millis();
+            }
+            break;
+        case 3:
+            /* restart is finished, we send a discommect */
+            if (millis() - _restartDelay > 30)
+            {
+                _appLayer.disconnectRequest(SystemPriority);
+                _restartState = 0;
+                _restartDestination = -1;
+            }
+        default:
+            break;
     }
 }

@@ -1,15 +1,15 @@
 #include "application_layer.h"
-#include "transport_layer.h"
-#include "cemi_frame.h"
-#include "association_table_object.h"
 #include "apdu.h"
+#include "association_table_object.h"
 #include "bau.h"
-#include "string.h"
 #include "bits.h"
+#include "cemi_frame.h"
+#include "string.h"
+#include "transport_layer.h"
 #include <stdio.h>
 
-ApplicationLayer::ApplicationLayer(AssociationTableObject& assocTable, BusAccessUnit& bau):
-    _assocTable(assocTable),  _bau(bau)
+ApplicationLayer::ApplicationLayer(AssociationTableObject& assocTable, BusAccessUnit& bau)
+    : _assocTable(assocTable), _bau(bau)
 {
 }
 
@@ -55,19 +55,19 @@ void ApplicationLayer::dataGroupIndication(HopCountType hopType, Priority priori
     }
 }
 
-void ApplicationLayer::dataGroupConfirm(AckType ack, HopCountType hopType, Priority priority,  uint16_t tsap, APDU& apdu, bool status)
+void ApplicationLayer::dataGroupConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu, bool status)
 {
     switch (apdu.type())
     {
-    case GroupValueRead:
-        _bau.groupValueReadLocalConfirm(ack, _savedAsapReadRequest, priority, hopType, status);
-        break;
-    case GroupValueResponse:
-        _bau.groupValueReadResponseConfirm(ack, _savedAsapResponse, priority, hopType, apdu.data(), apdu.length() - 1, status);
-        break;
-    case GroupValueWrite:
-        _bau.groupValueWriteLocalConfirm(ack, _savedAsapWriteRequest, priority, hopType, apdu.data(), apdu.length() - 1, status);
-        break;
+        case GroupValueRead:
+            _bau.groupValueReadLocalConfirm(ack, _savedAsapReadRequest, priority, hopType, status);
+            break;
+        case GroupValueResponse:
+            _bau.groupValueReadResponseConfirm(ack, _savedAsapResponse, priority, hopType, apdu.data(), apdu.length() - 1, status);
+            break;
+        case GroupValueWrite:
+            _bau.groupValueWriteLocalConfirm(ack, _savedAsapWriteRequest, priority, hopType, apdu.data(), apdu.length() - 1, status);
+            break;
     }
 }
 
@@ -97,7 +97,7 @@ void ApplicationLayer::dataBroadcastIndication(HopCountType hopType, Priority pr
             uint16_t domainAddress;
             popWord(domainAddress, data + 7);
             _bau.individualAddressSerialNumberReadAppLayerConfirm(hopType, data + 1, apdu.frame().sourceAddress(),
-                domainAddress);
+                                                                  domainAddress);
             break;
         }
         case IndividualAddressSerialNumberWrite:
@@ -150,12 +150,10 @@ void ApplicationLayer::dataBroadcastConfirm(AckType ack, HopCountType hopType, P
 
 void ApplicationLayer::dataSystemBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu)
 {
-
 }
 
 void ApplicationLayer::dataSystemBroadcastConfirm(HopCountType hopType, Priority priority, APDU& apdu, bool status)
 {
-
 }
 
 void ApplicationLayer::dataIndividualIndication(HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu)
@@ -175,7 +173,8 @@ void ApplicationLayer::connectIndication(uint16_t tsap)
 
 void ApplicationLayer::connectConfirm(uint16_t destination, uint16_t tsap, bool status)
 {
-    if (status) { 
+    if (status)
+    {
         _connectedTsap = tsap;
         _bau.connectConfirm(tsap);
         // _connectedTsap = destination;
@@ -202,7 +201,6 @@ void ApplicationLayer::dataConnectedIndication(Priority priority, uint16_t tsap,
 
 void ApplicationLayer::dataConnectedConfirm(uint16_t tsap)
 {
-
 }
 #pragma endregion
 void ApplicationLayer::groupValueReadRequest(AckType ack, uint16_t asap, Priority priority, HopCountType hopType)
@@ -211,11 +209,11 @@ void ApplicationLayer::groupValueReadRequest(AckType ack, uint16_t asap, Priorit
     CemiFrame frame(1);
     APDU& apdu = frame.apdu();
     apdu.type(GroupValueRead);
-    
+
     int32_t value = _assocTable.translateAsap(asap);
     if (value < 0)
         return; // there is no tsap in association table for this asap
-    
+
     uint16_t tsap = (uint16_t)value;
 
     // first to bus then to itself
@@ -223,13 +221,13 @@ void ApplicationLayer::groupValueReadRequest(AckType ack, uint16_t asap, Priorit
     dataGroupIndication(hopType, priority, tsap, apdu);
 }
 
-void ApplicationLayer::groupValueReadResponse(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, uint8_t * data, uint8_t dataLength)
+void ApplicationLayer::groupValueReadResponse(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, uint8_t* data, uint8_t dataLength)
 {
     _savedAsapResponse = asap;
     groupValueSend(GroupValueResponse, ack, asap, priority, hopType, data, dataLength);
 }
 
-void ApplicationLayer::groupValueWriteRequest(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, uint8_t * data, uint8_t dataLength)
+void ApplicationLayer::groupValueWriteRequest(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, uint8_t* data, uint8_t dataLength)
 {
     _savedAsapWriteRequest = asap;
     groupValueSend(GroupValueWrite, ack, asap, priority, hopType, data, dataLength);
@@ -261,7 +259,7 @@ void ApplicationLayer::individualAddressReadResponse(AckType ack, HopCountType h
     _transportLayer->dataBroadcastRequest(ack, hopType, SystemPriority, apdu);
 }
 
-void ApplicationLayer::individualAddressSerialNumberReadRequest(AckType ack, HopCountType hopType, uint8_t * serialNumber)
+void ApplicationLayer::individualAddressSerialNumberReadRequest(AckType ack, HopCountType hopType, uint8_t* serialNumber)
 {
     CemiFrame frame(7);
     APDU& apdu = frame.apdu();
@@ -271,8 +269,8 @@ void ApplicationLayer::individualAddressSerialNumberReadRequest(AckType ack, Hop
     _transportLayer->dataBroadcastRequest(ack, hopType, SystemPriority, apdu);
 }
 
-void ApplicationLayer::individualAddressSerialNumberReadResponse(AckType ack, HopCountType hopType, 
-    uint8_t * serialNumber, uint16_t domainAddress)
+void ApplicationLayer::individualAddressSerialNumberReadResponse(AckType ack, HopCountType hopType,
+                                                                 uint8_t* serialNumber, uint16_t domainAddress)
 {
     CemiFrame frame(7);
     APDU& apdu = frame.apdu();
@@ -284,8 +282,8 @@ void ApplicationLayer::individualAddressSerialNumberReadResponse(AckType ack, Ho
     _transportLayer->dataBroadcastRequest(ack, hopType, SystemPriority, apdu);
 }
 
-void ApplicationLayer::individualAddressSerialNumberWriteRequest(AckType ack, HopCountType hopType, uint8_t * serialNumber,
-    uint16_t newaddress)
+void ApplicationLayer::individualAddressSerialNumberWriteRequest(AckType ack, HopCountType hopType, uint8_t* serialNumber,
+                                                                 uint16_t newaddress)
 {
     CemiFrame frame(13);
     APDU& apdu = frame.apdu();
@@ -297,52 +295,54 @@ void ApplicationLayer::individualAddressSerialNumberWriteRequest(AckType ack, Ho
     _transportLayer->dataBroadcastRequest(ack, hopType, SystemPriority, apdu);
 }
 
-void ApplicationLayer::deviceDescriptorReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t descriptorType)
+void ApplicationLayer::deviceDescriptorReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                                   uint8_t descriptorType)
 {
     CemiFrame frame(1);
     APDU& apdu = frame.apdu();
     apdu.type(DeviceDescriptorRead);
     uint8_t* data = apdu.data();
     *data |= (descriptorType & 0x3f);
-    
+
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::deviceDescriptorReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t descriptorType, uint8_t* deviceDescriptor)
+void ApplicationLayer::deviceDescriptorReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                                    uint8_t descriptorType, uint8_t* deviceDescriptor)
 {
     uint8_t length = 0;
     switch (descriptorType)
     {
-    case 0:
-        length = 3;
-        break;
-    case 2:
-        length = 14;
-        break;
-    default:
-        length = 1;
-        descriptorType = 0x3f;
-        break;
+        case 0:
+            length = 3;
+            break;
+        case 2:
+            length = 14;
+            break;
+        default:
+            length = 1;
+            descriptorType = 0x3f;
+            break;
     }
     CemiFrame frame(length);
     APDU& apdu = frame.apdu();
     apdu.type(DeviceDescriptorResponse);
     uint8_t* data = apdu.data();
     *data |= (descriptorType & 0x3f);
-    
+
     if (length > 1)
         memcpy(data + 1, deviceDescriptor, length - 1);
-    
+
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::connectRequest(uint16_t destination, Priority priority) {
+void ApplicationLayer::connectRequest(uint16_t destination, Priority priority)
+{
     _transportLayer->connectRequest(destination, priority);
 }
 
-void ApplicationLayer::disconnectRequest(Priority priority) {
+void ApplicationLayer::disconnectRequest(Priority priority)
+{
     _transportLayer->disconnectRequest(_connectedTsap, priority);
 }
 
@@ -355,8 +355,8 @@ void ApplicationLayer::restartRequest(AckType ack, Priority priority, HopCountTy
     individualSend(ack, hopType, priority, _connectedTsap, apdu);
 }
 
-void ApplicationLayer::propertyValueReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
+void ApplicationLayer::propertyValueReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                                uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
 {
     CemiFrame frame(5);
     APDU& apdu = frame.apdu();
@@ -367,26 +367,26 @@ void ApplicationLayer::propertyValueReadRequest(AckType ack, Priority priority, 
     data = pushByte(propertyId, data);
     pushWord(startIndex & 0xfff, data);
     *data &= ((numberOfElements & 0xf) << 4);
-    
+
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::propertyValueReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
+void ApplicationLayer::propertyValueReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                                 uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
 {
     propertyDataSend(PropertyValueResponse, ack, priority, hopType, asap, objectIndex, propertyId, numberOfElements,
-        startIndex, data, length);
+                     startIndex, data, length);
 }
 
-void ApplicationLayer::propertyValueWriteRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t * data, uint8_t length)
+void ApplicationLayer::propertyValueWriteRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                                 uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
 {
     propertyDataSend(PropertyValueWrite, ack, priority, hopType, asap, objectIndex, propertyId, numberOfElements,
-        startIndex, data, length);
+                     startIndex, data, length);
 }
 
 void ApplicationLayer::propertyDescriptionReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex)
+                                                      uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex)
 {
     CemiFrame frame(4);
     APDU& apdu = frame.apdu();
@@ -399,8 +399,8 @@ void ApplicationLayer::propertyDescriptionReadRequest(AckType ack, Priority prio
 }
 
 void ApplicationLayer::propertyDescriptionReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex, bool writeEnable, uint8_t type, 
-    uint16_t maxNumberOfElements, uint8_t access)
+                                                       uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex, bool writeEnable, uint8_t type,
+                                                       uint16_t maxNumberOfElements, uint8_t access)
 {
     CemiFrame frame(8);
     APDU& apdu = frame.apdu();
@@ -418,7 +418,7 @@ void ApplicationLayer::propertyDescriptionReadResponse(AckType ack, Priority pri
 }
 
 void ApplicationLayer::memoryReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint16_t memoryAddress)
+                                         uint16_t memoryAddress)
 {
     CemiFrame frame(3);
     APDU& apdu = frame.apdu();
@@ -430,19 +430,19 @@ void ApplicationLayer::memoryReadRequest(AckType ack, Priority priority, HopCoun
 }
 
 void ApplicationLayer::memoryReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint16_t memoryAddress, uint8_t * memoryData)
+                                          uint16_t memoryAddress, uint8_t* memoryData)
 {
     memorySend(MemoryResponse, ack, priority, hopType, asap, number, memoryAddress, memoryData);
 }
 
 void ApplicationLayer::memoryWriteRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t number, uint16_t memoryAddress, uint8_t * data)
+                                          uint8_t number, uint16_t memoryAddress, uint8_t* data)
 {
     memorySend(MemoryWrite, ack, priority, hopType, asap, number, memoryAddress, data);
 }
 
 void ApplicationLayer::userMemoryReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t number, uint32_t memoryAddress)
+                                             uint8_t number, uint32_t memoryAddress)
 {
     CemiFrame frame(4);
     APDU& apdu = frame.apdu();
@@ -454,14 +454,14 @@ void ApplicationLayer::userMemoryReadRequest(AckType ack, Priority priority, Hop
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::userMemoryReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t number, uint32_t memoryAddress, uint8_t * memoryData)
+void ApplicationLayer::userMemoryReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                              uint8_t number, uint32_t memoryAddress, uint8_t* memoryData)
 {
     userMemorySend(UserMemoryResponse, ack, priority, hopType, asap, number, memoryAddress, memoryData);
 }
 
 void ApplicationLayer::userMemoryWriteRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t number, uint32_t memoryAddress, uint8_t * memoryData)
+                                              uint8_t number, uint32_t memoryAddress, uint8_t* memoryData)
 {
     userMemorySend(UserMemoryWrite, ack, priority, hopType, asap, number, memoryAddress, memoryData);
 }
@@ -475,7 +475,7 @@ void ApplicationLayer::userManufacturerInfoReadRequest(AckType ack, Priority pri
 }
 
 void ApplicationLayer::userManufacturerInfoReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t* info)
+                                                        uint8_t* info)
 {
     CemiFrame frame(4);
     APDU& apdu = frame.apdu();
@@ -526,8 +526,8 @@ void ApplicationLayer::keyWriteResponse(AckType ack, Priority priority, HopCount
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::propertyDataSend(ApduType type, AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
+void ApplicationLayer::propertyDataSend(ApduType type, AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                        uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
 {
     CemiFrame frame(5 + length);
     APDU& apdu = frame.apdu();
@@ -548,8 +548,8 @@ void ApplicationLayer::propertyDataSend(ApduType type, AckType ack, Priority pri
         _transportLayer->dataIndividualRequest(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::groupValueSend(ApduType type, AckType ack, uint16_t asap, Priority priority, HopCountType hopType, 
-    uint8_t* data,  uint8_t& dataLength)
+void ApplicationLayer::groupValueSend(ApduType type, AckType ack, uint16_t asap, Priority priority, HopCountType hopType,
+                                      uint8_t* data, uint8_t& dataLength)
 {
     CemiFrame frame(dataLength + 1);
     APDU& apdu = frame.apdu();
@@ -572,7 +572,7 @@ void ApplicationLayer::groupValueSend(ApduType type, AckType ack, uint16_t asap,
 }
 
 void ApplicationLayer::memorySend(ApduType type, AckType ack, Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint16_t memoryAddress, uint8_t * memoryData)
+                                  uint16_t memoryAddress, uint8_t* memoryData)
 {
     CemiFrame frame(3 + number);
     APDU& apdu = frame.apdu();
@@ -587,7 +587,7 @@ void ApplicationLayer::memorySend(ApduType type, AckType ack, Priority priority,
 }
 
 void ApplicationLayer::userMemorySend(ApduType type, AckType ack, Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint32_t memoryAddress, uint8_t * memoryData)
+                                      uint32_t memoryAddress, uint8_t* memoryData)
 {
     CemiFrame frame(4 + number);
     APDU& apdu = frame.apdu();
@@ -601,7 +601,7 @@ void ApplicationLayer::userMemorySend(ApduType type, AckType ack, Priority prior
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::individualIndication(HopCountType hopType, Priority priority, uint16_t tsap, APDU & apdu)
+void ApplicationLayer::individualIndication(HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu)
 {
     uint8_t* data = apdu.data();
     switch (apdu.type())
@@ -630,7 +630,7 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
             popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadAppLayerConfirm(priority, hopType, tsap, data[1], data[2], data[3] >> 4,
-                startIndex, data + 5, apdu.length() - 5);
+                                                  startIndex, data + 5, apdu.length() - 5);
             break;
         }
         case PropertyValueWrite:
@@ -639,7 +639,7 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
             popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueWriteIndication(priority, hopType, tsap, data[1], data[2], data[3] >> 4,
-                startIndex, data + 5, apdu.length() - 5);
+                                              startIndex, data + 5, apdu.length() - 5);
             break;
         }
         case PropertyDescriptionRead:
@@ -647,7 +647,7 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
             break;
         case PropertyDescriptionResponse:
             _bau.propertyDescriptionReadAppLayerConfirm(priority, hopType, tsap, data[1], data[2], data[3],
-                (data[4] & 0x80) > 0, data[4] & 0x3f, getWord(data + 5) & 0xfff, data[7]);
+                                                        (data[4] & 0x80) > 0, data[4] & 0x3f, getWord(data + 5) & 0xfff, data[7]);
             break;
         case MemoryRead:
             _bau.memoryReadIndication(priority, hopType, tsap, data[0] & 0x3f, getWord(data + 1));
@@ -697,7 +697,7 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
     }
 }
 
-void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU & apdu, bool status)
+void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu, bool status)
 {
     uint8_t* data = apdu.data();
     switch (apdu.type())
@@ -717,7 +717,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
             popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadLocalConfirm(ack, priority, hopType, tsap, data[1], data[2], data[3] >> 4,
-                startIndex, status);
+                                               startIndex, status);
             break;
         }
         case PropertyValueResponse:
@@ -726,7 +726,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
             popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadResponseConfirm(ack, priority, hopType, tsap, data[1], data[2], data[3] >> 4,
-                startIndex, data + 5, apdu.length() - 5, status);
+                                                  startIndex, data + 5, apdu.length() - 5, status);
             break;
         }
         case PropertyValueWrite:
@@ -735,7 +735,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
             popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueWriteLocalConfirm(ack, priority, hopType, tsap, data[1], data[2], data[3] >> 4,
-                startIndex, data + 5, apdu.length() - 5, status);
+                                                startIndex, data + 5, apdu.length() - 5, status);
             break;
         }
         case PropertyDescriptionRead:
@@ -743,7 +743,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
             break;
         case PropertyDescriptionResponse:
             _bau.propertyDescriptionReadResponseConfirm(ack, priority, hopType, tsap, data[1], data[2], data[3],
-                (data[4] & 0x80) > 0, data[4] & 0x3f, getWord(data + 5) & 0xfff, data[7], status);
+                                                        (data[4] & 0x80) > 0, data[4] & 0x3f, getWord(data + 5) & 0xfff, data[7], status);
             break;
         case MemoryRead:
             _bau.memoryReadLocalConfirm(ack, priority, hopType, tsap, data[0] & 0x3f, getWord(data + 1), status);
@@ -771,7 +771,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
             uint32_t address = ((data[1] & 0xf0) << 12) + (data[2] << 8) + data[3];
             _bau.memoryWriteLocalConfirm(ack, priority, hopType, tsap, data[1] & 0xf, address, data + 4, status);
             break;
-        }        
+        }
         case UserManufacturerInfoRead:
             _bau.userManufacturerInfoLocalConfirm(ack, priority, hopType, tsap, status);
             break;
@@ -801,6 +801,7 @@ void ApplicationLayer::individualSend(AckType ack, HopCountType hopType, Priorit
         _transportLayer->dataIndividualRequest(ack, hopType, priority, asap, apdu);
 }
 
-bool ApplicationLayer::isConnected() {
-    return (_connectedTsap > 0);
+bool ApplicationLayer::isConnected()
+{
+    return (_connectedTsap >= 0);
 }
