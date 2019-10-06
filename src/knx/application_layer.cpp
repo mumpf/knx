@@ -10,7 +10,7 @@
 
 ApplicationLayer::ApplicationLayer(AssociationTableObject& assocTable, BusAccessUnit& bau):
     _assocTable(assocTable),  _bau(bau)
-{
+{  
 }
 
 void ApplicationLayer::transportLayer(TransportLayer& layer)
@@ -59,15 +59,15 @@ void ApplicationLayer::dataGroupConfirm(AckType ack, HopCountType hopType, Prior
 {
     switch (apdu.type())
     {
-    case GroupValueRead:
-        _bau.groupValueReadLocalConfirm(ack, _savedAsapReadRequest, priority, hopType, status);
-        break;
-    case GroupValueResponse:
-        _bau.groupValueReadResponseConfirm(ack, _savedAsapResponse, priority, hopType, apdu.data(), apdu.length() - 1, status);
-        break;
-    case GroupValueWrite:
-        _bau.groupValueWriteLocalConfirm(ack, _savedAsapWriteRequest, priority, hopType, apdu.data(), apdu.length() - 1, status);
-        break;
+        case GroupValueRead:
+            _bau.groupValueReadLocalConfirm(ack, _savedAsapReadRequest, priority, hopType, status);
+            break;
+        case GroupValueResponse:
+            _bau.groupValueReadResponseConfirm(ack, _savedAsapResponse, priority, hopType, apdu.data(), apdu.length() - 1, status);
+            break;
+        case GroupValueWrite:
+            _bau.groupValueWriteLocalConfirm(ack, _savedAsapWriteRequest, priority, hopType, apdu.data(), apdu.length() - 1, status);
+            break;
     }
 }
 
@@ -176,7 +176,10 @@ void ApplicationLayer::connectIndication(uint16_t tsap)
 void ApplicationLayer::connectConfirm(uint16_t destination, uint16_t tsap, bool status)
 {
     if (status)
+    {
         _connectedTsap = tsap;
+        _bau.connectConfirm(tsap);
+    }
     else
         _connectedTsap = -1;
 }
@@ -188,7 +191,7 @@ void ApplicationLayer::disconnectIndication(uint16_t tsap)
 
 void ApplicationLayer::disconnectConfirm(Priority priority, uint16_t tsap, bool status)
 {
-
+    _connectedTsap = -1;
 }
 
 void ApplicationLayer::dataConnectedIndication(Priority priority, uint16_t tsap, APDU& apdu)
@@ -207,11 +210,11 @@ void ApplicationLayer::groupValueReadRequest(AckType ack, uint16_t asap, Priorit
     CemiFrame frame(1);
     APDU& apdu = frame.apdu();
     apdu.type(GroupValueRead);
-    
+
     int32_t value = _assocTable.translateAsap(asap);
     if (value < 0)
         return; // there is no tsap in association table for this asap
-    
+
     uint16_t tsap = (uint16_t)value;
 
     // first to bus then to itself
@@ -281,7 +284,7 @@ void ApplicationLayer::individualAddressSerialNumberReadResponse(AckType ack, Ho
 }
 
 void ApplicationLayer::individualAddressSerialNumberWriteRequest(AckType ack, HopCountType hopType, uint8_t * serialNumber,
-    uint16_t newaddress)
+     uint16_t newaddress)
 {
     CemiFrame frame(13);
     APDU& apdu = frame.apdu();
@@ -293,57 +296,67 @@ void ApplicationLayer::individualAddressSerialNumberWriteRequest(AckType ack, Ho
     _transportLayer->dataBroadcastRequest(ack, hopType, SystemPriority, apdu);
 }
 
-void ApplicationLayer::deviceDescriptorReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t descriptorType)
+void ApplicationLayer::deviceDescriptorReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                                   uint8_t descriptorType)
 {
     CemiFrame frame(1);
     APDU& apdu = frame.apdu();
     apdu.type(DeviceDescriptorRead);
     uint8_t* data = apdu.data();
     *data |= (descriptorType & 0x3f);
-    
+
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::deviceDescriptorReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
-    uint8_t descriptorType, uint8_t* deviceDescriptor)
+void ApplicationLayer::deviceDescriptorReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
+                                                    uint8_t descriptorType, uint8_t* deviceDescriptor)
 {
     uint8_t length = 0;
     switch (descriptorType)
     {
-    case 0:
-        length = 3;
-        break;
-    case 2:
-        length = 14;
-        break;
-    default:
-        length = 1;
-        descriptorType = 0x3f;
-        break;
+        case 0:
+            length = 3;
+            break;
+        case 2:
+            length = 14;
+            break;
+        default:
+            length = 1;
+            descriptorType = 0x3f;
+            break;
     }
     CemiFrame frame(length);
     APDU& apdu = frame.apdu();
     apdu.type(DeviceDescriptorResponse);
     uint8_t* data = apdu.data();
     *data |= (descriptorType & 0x3f);
-    
+
     if (length > 1)
         memcpy(data + 1, deviceDescriptor, length - 1);
-    
+
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::restartRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap)
+void ApplicationLayer::connectRequest(uint16_t destination, Priority priority)
+{
+    _transportLayer->connectRequest(destination, priority);
+}
+
+void ApplicationLayer::disconnectRequest(Priority priority)
+{
+    _transportLayer->disconnectRequest(_connectedTsap, priority);
+}
+
+void ApplicationLayer::restartRequest(AckType ack, Priority priority, HopCountType hopType)
 {
     CemiFrame frame(1);
     APDU& apdu = frame.apdu();
     apdu.type(Restart);
 
-    individualSend(ack, hopType, priority, asap, apdu);
+    individualSend(ack, hopType, priority, _connectedTsap, apdu);
 }
 
-void ApplicationLayer::propertyValueReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
+void ApplicationLayer::propertyValueReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
     uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
 {
     CemiFrame frame(5);
@@ -355,18 +368,18 @@ void ApplicationLayer::propertyValueReadRequest(AckType ack, Priority priority, 
     data = pushByte(propertyId, data);
     pushWord(startIndex & 0xfff, data);
     *data &= ((numberOfElements & 0xf) << 4);
-    
+
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::propertyValueReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
+void ApplicationLayer::propertyValueReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
     uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
 {
     propertyDataSend(PropertyValueResponse, ack, priority, hopType, asap, objectIndex, propertyId, numberOfElements,
         startIndex, data, length);
 }
 
-void ApplicationLayer::propertyValueWriteRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
+void ApplicationLayer::propertyValueWriteRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
     uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t * data, uint8_t length)
 {
     propertyDataSend(PropertyValueWrite, ack, priority, hopType, asap, objectIndex, propertyId, numberOfElements,
@@ -374,7 +387,7 @@ void ApplicationLayer::propertyValueWriteRequest(AckType ack, Priority priority,
 }
 
 void ApplicationLayer::propertyDescriptionReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex)
+                                                      uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex)
 {
     CemiFrame frame(4);
     APDU& apdu = frame.apdu();
@@ -387,7 +400,7 @@ void ApplicationLayer::propertyDescriptionReadRequest(AckType ack, Priority prio
 }
 
 void ApplicationLayer::propertyDescriptionReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex, bool writeEnable, uint8_t type, 
+    uint8_t objectIndex, uint8_t propertyId, uint8_t propertyIndex, bool writeEnable, uint8_t type,
     uint16_t maxNumberOfElements, uint8_t access)
 {
     CemiFrame frame(8);
@@ -406,7 +419,7 @@ void ApplicationLayer::propertyDescriptionReadResponse(AckType ack, Priority pri
 }
 
 void ApplicationLayer::memoryReadRequest(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint16_t memoryAddress)
+                                         uint16_t memoryAddress)
 {
     CemiFrame frame(3);
     APDU& apdu = frame.apdu();
@@ -442,7 +455,7 @@ void ApplicationLayer::userMemoryReadRequest(AckType ack, Priority priority, Hop
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::userMemoryReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
+void ApplicationLayer::userMemoryReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
     uint8_t number, uint32_t memoryAddress, uint8_t * memoryData)
 {
     userMemorySend(UserMemoryResponse, ack, priority, hopType, asap, number, memoryAddress, memoryData);
@@ -463,7 +476,7 @@ void ApplicationLayer::userManufacturerInfoReadRequest(AckType ack, Priority pri
 }
 
 void ApplicationLayer::userManufacturerInfoReadResponse(AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
-    uint8_t* info)
+                                                        uint8_t* info)
 {
     CemiFrame frame(4);
     APDU& apdu = frame.apdu();
@@ -514,7 +527,7 @@ void ApplicationLayer::keyWriteResponse(AckType ack, Priority priority, HopCount
     individualSend(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::propertyDataSend(ApduType type, AckType ack, Priority priority, HopCountType hopType, uint16_t asap, 
+void ApplicationLayer::propertyDataSend(ApduType type, AckType ack, Priority priority, HopCountType hopType, uint16_t asap,
     uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
 {
     CemiFrame frame(5 + length);
@@ -536,7 +549,7 @@ void ApplicationLayer::propertyDataSend(ApduType type, AckType ack, Priority pri
         _transportLayer->dataIndividualRequest(ack, hopType, priority, asap, apdu);
 }
 
-void ApplicationLayer::groupValueSend(ApduType type, AckType ack, uint16_t asap, Priority priority, HopCountType hopType, 
+void ApplicationLayer::groupValueSend(ApduType type, AckType ack, uint16_t asap, Priority priority, HopCountType hopType,
     uint8_t* data,  uint8_t& dataLength)
 {
     CemiFrame frame(dataLength + 1);
@@ -560,7 +573,7 @@ void ApplicationLayer::groupValueSend(ApduType type, AckType ack, uint16_t asap,
 }
 
 void ApplicationLayer::memorySend(ApduType type, AckType ack, Priority priority, HopCountType hopType, uint16_t asap, uint8_t number,
-    uint16_t memoryAddress, uint8_t * memoryData)
+     uint16_t memoryAddress, uint8_t * memoryData)
 {
     CemiFrame frame(3 + number);
     APDU& apdu = frame.apdu();
@@ -714,7 +727,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
             popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadResponseConfirm(ack, priority, hopType, tsap, data[1], data[2], data[3] >> 4,
-                startIndex, data + 5, apdu.length() - 5, status);
+             startIndex, data + 5, apdu.length() - 5, status);
             break;
         }
         case PropertyValueWrite:
@@ -759,7 +772,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
             uint32_t address = ((data[1] & 0xf0) << 12) + (data[2] << 8) + data[3];
             _bau.memoryWriteLocalConfirm(ack, priority, hopType, tsap, data[1] & 0xf, address, data + 4, status);
             break;
-        }        
+        }
         case UserManufacturerInfoRead:
             _bau.userManufacturerInfoLocalConfirm(ack, priority, hopType, tsap, status);
             break;
@@ -787,4 +800,9 @@ void ApplicationLayer::individualSend(AckType ack, HopCountType hopType, Priorit
         _transportLayer->dataConnectedRequest(asap, priority, apdu);
     else
         _transportLayer->dataIndividualRequest(ack, hopType, priority, asap, apdu);
+}
+
+bool ApplicationLayer::isConnected()
+{
+    return (_connectedTsap >= 0);
 }
