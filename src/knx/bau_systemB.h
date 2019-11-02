@@ -1,17 +1,17 @@
 #pragma once
 
-#include "address_table_object.h"
-#include "application_layer.h"
-#include "application_program_object.h"
-#include "association_table_object.h"
 #include "bau.h"
 #include "device_object.h"
+#include "address_table_object.h"
+#include "association_table_object.h"
 #include "group_object_table_object.h"
-#include "memory.h"
-#include "network_layer.h"
-#include "platform.h"
-#include "tpuart_data_link_layer.h"
+#include "application_program_object.h"
+#include "application_layer.h"
 #include "transport_layer.h"
+#include "network_layer.h"
+#include "tpuart_data_link_layer.h"
+#include "platform.h"
+#include "memory.h"
 
 class BauSystemB : protected BusAccessUnit
 {

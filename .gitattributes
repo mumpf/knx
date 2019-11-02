@@ -1,10 +1,7 @@
 ###############################################################################
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
-# will force everything to be LF, except for Windows batch files that require CRLF
-#* text=auto eol=lf
-#*.{cmd,[cC][mM][dD]} text eol=crlf
-#*.{bat,[bB][aA][tT]} text eol=crlf
+text=auto
 
 ###############################################################################
 # Set default behavior for command prompt diff.

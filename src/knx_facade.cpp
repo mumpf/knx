@@ -15,15 +15,14 @@ KnxFacade<Esp32Platform, Bau57B0> knx;
 #endif
 
 #ifndef __linux__
-uint32_t lastpressed = 0;
+uint32_t lastpressed=0;
 #endif
 ICACHE_RAM_ATTR void buttonUp()
 {
-#ifndef __linux__
-    if (millis() - lastpressed > 200)
-    {
+    #ifndef __linux__
+    if (millis() - lastpressed > 200){
         knx._toogleProgMode = true;
         lastpressed = millis();
     }
-#endif
+    #endif
 }

@@ -3,8 +3,8 @@
 #include "knx/bits.h"
 
 #ifdef ARDUINO_ARCH_SAMD
-#include "knx/bau07B0.h"
 #include "samd_platform.h"
+#include "knx/bau07B0.h"
 #elif ARDUINO_ARCH_ESP8266
 #include "esp_platform.h"
 #include "knx/bau57B0.h"
@@ -13,26 +13,24 @@
 #include "esp32_platform.h"
 #include "knx/bau57B0.h"
 #else
-#include "knx/bau57B0.h"
 #include "linux_platform.h"
+#include "knx/bau57B0.h"
 #define LED_BUILTIN 0
 #endif
 
 void buttonUp();
 typedef uint8_t* (*saveRestoreCallback)(uint8_t* buffer);
 
-template <class P, class B>
-class KnxFacade : private SaveRestore
+template <class P, class B> class KnxFacade : private SaveRestore
 {
     friend void buttonUp();
 
   public:
-    KnxFacade()
-        : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr) 
-        {
-          manufacturerId(0xfa);
-          _bau.addSaveRestore(this);
-        }
+    KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
+    {
+        manufacturerId(0xfa);
+        _bau.addSaveRestore(this);
+    }
 
     virtual ~KnxFacade()
     {
@@ -43,8 +41,7 @@ class KnxFacade : private SaveRestore
             delete _platformPtr;
     }
 
-    KnxFacade(B& bau)
-        : _bau(bau)
+    KnxFacade(B& bau) : _bau(bau)
     {
         manufacturerId(0xfa);
         _bau.addSaveRestore(this);
