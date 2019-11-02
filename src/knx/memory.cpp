@@ -1,5 +1,7 @@
 #include "memory.h"
 
+#define BASE_ID     0xC0DE0000
+
 Memory::Memory(Platform & platform): _platform(platform)
 {
 }
@@ -16,33 +18,28 @@ bool Memory::isMemoryModified()
 
 void Memory::readMemory()
 {
-    _data = _platform.getEepromBuffer(512);
-
-    if (_data[0] != 0x00 || _data[1] != 0xAD || _data[2] != 0xAF || _data[3] != 0xFE)
-        return;
-
-    uint8_t* buffer = _data + 4;
-    int size = _saveCount;
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < _saveCount; i++)
     {
-        buffer = _saveRestores[i]->restore(buffer);
+        bool pointerAccess;
+        if(i<=2)
+            pointerAccess = true;
+        else
+            pointerAccess = false;
+        uint8_t* data = _platform.reloadNVMemory(BASE_ID+i, pointerAccess);
+        if(data == NULL)
+            continue;
+
+        _saveRestores[i]->restore(data);
     }
 }
 
 void Memory::writeMemory()
 {
-    _data[0] = 0x00;
-    _data[1] = 0xAD;
-    _data[2] = 0xAF;
-    _data[3] = 0xFE;
-
-    uint8_t* buffer = _data + 4;
-    int size = _saveCount;
-    for (int i = 0; i < size; i++)
-    {
-        buffer = _saveRestores[i]->save(buffer);
+    for (int i = 0; i < _saveCount; i++){
+        _saveRestores[i]->save();
     }
-    _platform.commitToEeprom();
+
+    _platform.finishNVMemory();
     _modified = false;
 }
 
@@ -51,6 +48,7 @@ void Memory::addSaveRestore(SaveRestore * obj)
     if (_saveCount >= MAXSAVE - 1)
         return;
 
+    obj->memoryID(BASE_ID + _saveCount);
     _saveRestores[_saveCount] = obj;
     _saveCount += 1;
 }

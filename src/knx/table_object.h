@@ -25,8 +25,9 @@ public:
      * This method returns the ::LoadState of the interface object.
      */
     LoadState loadState();
-    virtual uint8_t* save(uint8_t* buffer);
-    virtual uint8_t* restore(uint8_t* buffer);
+    virtual void save();
+    virtual void restore(uint8_t* startAddr);
+    virtual uint32_t size();
 protected:
     /**
      * This method is called before the interface object enters a new ::LoadState.
@@ -40,15 +41,17 @@ protected:
      * must not be freed.
      */
     uint8_t* data();
+    uint32_t sizeMetadata();
     /**
      * returns the size of the internal data of the interface object int byte.
      */
-    uint32_t size();
+  //  uint32_t size();
     /**
      * Set the reason for a state change failure.
      */
     void errorCode(ErrorCode errorCode);
 
+    Platform& _platform;
   private:
     uint32_t tableReference();
     bool allocTable(uint32_t size, bool doFill, uint8_t fillByte);
@@ -67,7 +70,6 @@ protected:
      */
     void loadState(LoadState newState);
     LoadState _state = LS_UNLOADED;
-    Platform& _platform;
     uint8_t *_data = 0;
     uint32_t _size = 0;
     ErrorCode _errorCode = E_NO_FAULT;

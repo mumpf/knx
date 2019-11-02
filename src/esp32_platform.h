@@ -3,6 +3,13 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
+#define MAX_MEMORY_BLOCKS   6
+
+typedef struct{
+    uint32_t ID;
+    size_t  size;
+    uint8_t* data;
+}MemoryBlock_t;
 
 class Esp32Platform : public ArduinoPlatform
 {
@@ -28,10 +35,17 @@ public:
     int readBytes(uint8_t* buffer, uint16_t maxLen) override;
     
     //memory
-    uint8_t* getEepromBuffer(uint16_t size);
-    void commitToEeprom();
+    bool writeNVMemory(uint8_t* addr,uint8_t data);
+    uint8_t readNVMemory(uint8_t* addr);
+    uint8_t* allocNVMemory(size_t size,uint32_t ID);
+    uint8_t* reloadNVMemory(uint32_t ID, bool pointerAccess);
+    void finishNVMemory();
+    void freeNVMemory(uint32_t ID);
 private:
     WiFiUDP _udp;
+    void initNVMemory();
+    MemoryBlock_t _memoryBlocks[MAX_MEMORY_BLOCKS];
+    bool _MemoryInitialized = false;
 };
 
 #endif

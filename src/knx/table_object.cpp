@@ -3,6 +3,8 @@
 #include "table_object.h"
 #include "bits.h"
 
+#define METADATA_SIZE     (sizeof(_state)+sizeof(_errorCode)+sizeof(_size))
+
 TableObject::TableObject(Platform& platform): _platform(platform)
 {
 
@@ -81,52 +83,41 @@ void TableObject::loadState(LoadState newState)
     _state = newState;
 }
 
-
-uint8_t* TableObject::save(uint8_t* buffer)
+void TableObject::save()
 {
-    buffer = pushByte(_state, buffer);
-    buffer = pushByte(_errorCode, buffer);
-    buffer = pushInt(_size, buffer);
-    buffer = pushByteArray(_data, _size, buffer);
+    if(_data == NULL)
+        return;
 
-    return buffer;
+    uint8_t* addr =_data - METADATA_SIZE;
+
+    _platform.pushNVMemoryByte(_state, &addr);
+    _platform.pushNVMemoryByte(_errorCode, &addr);
+    _platform.pushNVMemoryInt(_size, &addr);
 }
 
-
-uint8_t* TableObject::restore(uint8_t* buffer)
+void TableObject::restore(uint8_t* startAddr)
 {
-    uint8_t state = 0;
-    uint8_t errorCode = 0;
-    buffer = popByte(state, buffer);
-    buffer = popByte(errorCode, buffer);
-    _state = (LoadState)state;
-    _errorCode = (ErrorCode)errorCode;
-
-    buffer = popInt(_size, buffer);
-
-    if (_data)
-        _platform.freeMemory(_data);
+    uint8_t* addr = startAddr;
+    _state = (LoadState)_platform.popNVMemoryByte(&addr);
+    _errorCode = (ErrorCode)_platform.popNVMemoryByte(&addr);
+    _size = _platform.popNVMemoryInt(&addr);
 
     if (_size > 0)
-        _data = _platform.allocMemory(_size);
+        _data = addr;
     else
         _data = 0;
-
-    buffer = popByteArray(_data, _size, buffer);
-
-    return buffer;
 }
 
 uint32_t TableObject::tableReference()
 {
-    return (uint32_t)(_data - _platform.memoryReference());
+    return (uint32_t)(_data - _platform.referenceNVMemory());
 }
 
 bool TableObject::allocTable(uint32_t size, bool doFill, uint8_t fillByte)
 {
     if (_data)
     {
-        _platform.freeMemory(_data);
+        _platform.freeNVMemory(_ID);
         _data = 0;
         _size = 0;
     }
@@ -134,15 +125,14 @@ bool TableObject::allocTable(uint32_t size, bool doFill, uint8_t fillByte)
     if (size == 0)
         return true;
     
-    _data = _platform.allocMemory(size);
-    if (!_data)
-        return false;
-
+    _data = _platform.allocNVMemory(size+this->size(), _ID);
+    _data = _data + this->size();  //skip metadata
     _size = size;
-
-    if (doFill)
-        memset(_data, fillByte, size);
-
+    if (doFill){
+        uint8_t* addr = _data;
+        for(size_t i=0; i<_size;i++)
+            _platform.writeNVMemory(addr++, fillByte);
+    }
     return true;
 }
 
@@ -279,7 +269,12 @@ uint8_t* TableObject::data()
 
 uint32_t TableObject::size()
 {
-    return _size;
+    return _size + METADATA_SIZE;
+}
+
+uint32_t TableObject::sizeMetadata()
+{
+    return METADATA_SIZE;
 }
 
 void TableObject::errorCode(ErrorCode errorCode)

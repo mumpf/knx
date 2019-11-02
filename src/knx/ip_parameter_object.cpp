@@ -5,6 +5,15 @@
 
 //224.0.23.12
 #define DEFAULT_MULTICAST_ADDR 0xE000170C
+#define METADATA_SIZE     ( sizeof(_projectInstallationId)  \
+                            +sizeof(_ipAssignmentMethod)    \
+                            +sizeof(_ipCapabilities)        \
+                            +sizeof(_ipAddress)             \
+                            +sizeof(_subnetMask)            \
+                            +sizeof(_defaultGateway)        \
+                            +sizeof(_multicastAddress)      \
+                            +sizeof(_ttl)                   \
+                            +sizeof(_friendlyName))
 
 IpParameterObject::IpParameterObject(DeviceObject& deviceObject, Platform& platform): _deviceObject(deviceObject),
     _platform(platform)
@@ -146,35 +155,38 @@ uint8_t IpParameterObject::propertySize(PropertyID id)
     }
     return 0;
 }
-
-uint8_t* IpParameterObject::save(uint8_t* buffer)
-{
-    buffer = pushWord(_projectInstallationId, buffer);
-    buffer = pushByte(_ipAssignmentMethod, buffer);
-    buffer = pushByte(_ipCapabilities, buffer);
-    buffer = pushInt(_ipAddress, buffer);
-    buffer = pushInt(_subnetMask, buffer);
-    buffer = pushInt(_defaultGateway, buffer);
-    buffer = pushInt(_multicastAddress, buffer);
-    buffer = pushByte(_ttl, buffer);
-    buffer = pushByteArray((uint8_t*)_friendlyName, 30, buffer);
-
-    return buffer;
+uint32_t IpParameterObject::size(){
+    return METADATA_SIZE;
 }
 
-uint8_t* IpParameterObject::restore(uint8_t* buffer)
+void IpParameterObject::save()
 {
-    buffer = popWord(_projectInstallationId, buffer);
-    buffer = popByte(_ipAssignmentMethod, buffer);
-    buffer = popByte(_ipCapabilities, buffer);
-    buffer = popInt(_ipAddress, buffer);
-    buffer = popInt(_subnetMask, buffer);
-    buffer = popInt(_defaultGateway, buffer);
-    buffer = popInt(_multicastAddress, buffer);
-    buffer = popByte(_ttl, buffer);
-    buffer = popByteArray((uint8_t*)_friendlyName, 30, buffer);
+    _platform.freeNVMemory(_ID);
+    uint8_t* addr = _platform.allocNVMemory(METADATA_SIZE, _ID);
 
-    return buffer;
+    _platform.pushNVMemoryWord(_projectInstallationId, &addr);
+    _platform.pushNVMemoryByte(_ipAssignmentMethod, &addr);
+    _platform.pushNVMemoryByte(_ipCapabilities, &addr);
+    _platform.pushNVMemoryInt(_ipAddress, &addr);
+    _platform.pushNVMemoryInt(_subnetMask, &addr);
+    _platform.pushNVMemoryInt(_defaultGateway, &addr);
+    _platform.pushNVMemoryInt(_multicastAddress, &addr);
+    _platform.pushNVMemoryByte(_ttl, &addr);
+    _platform.pushNVMemoryArray((uint8_t*)_friendlyName, &addr, sizeof(_friendlyName));
+}
+
+void IpParameterObject::restore(uint8_t* startAddr)
+{
+    uint8_t* addr = startAddr;
+    _projectInstallationId = _platform.popNVMemoryWord(&addr);
+    _ipAssignmentMethod = _platform.popNVMemoryByte(&addr);
+    _ipCapabilities = _platform.popNVMemoryByte(&addr);
+    _ipAddress = _platform.popNVMemoryInt(&addr);
+    _subnetMask = _platform.popNVMemoryInt(&addr);
+    _defaultGateway = _platform.popNVMemoryInt(&addr);
+    _multicastAddress = _platform.popNVMemoryInt(&addr);
+    _ttl =  _platform.popNVMemoryByte(&addr);
+    _platform.popNVMemoryArray((uint8_t*)_friendlyName, &addr, sizeof(_friendlyName));
 }
 
 uint32_t IpParameterObject::multicastAddress() const

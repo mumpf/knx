@@ -2,6 +2,15 @@
 #include "device_object.h"
 #include "bits.h"
 
+#define METADATA_SIZE     (sizeof(_deviceControl)+sizeof(_routingCount)+sizeof(_ownAddress))
+
+DeviceObject::DeviceObject(Platform& platform): _platform(platform)
+{
+    for(int i = 0; i < 10; ++i)
+        _orderNumber[i] = 0;
+    for(int i = 0; i < 6; ++i)
+        _hardwareType[i] = 0;
+}
 void DeviceObject::readProperty(PropertyID propertyId, uint32_t start, uint32_t& count, uint8_t* data)
 {
     switch (propertyId)
@@ -106,21 +115,27 @@ uint8_t DeviceObject::propertySize(PropertyID id)
     return 0;
 }
 
-uint8_t* DeviceObject::save(uint8_t* buffer)
-{
-    buffer = pushByte(_deviceControl, buffer);
-    buffer = pushByte(_routingCount, buffer);
-    buffer = pushWord(_ownAddress, buffer);
-    return buffer;
+uint32_t DeviceObject::size(){
+    return METADATA_SIZE;
 }
 
-uint8_t* DeviceObject::restore(uint8_t* buffer)
+void DeviceObject::save()
 {
-    buffer = popByte(_deviceControl, buffer);
-    buffer = popByte(_routingCount, buffer);
-    buffer = popWord(_ownAddress, buffer);
+    _platform.freeNVMemory(_ID);
+    uint8_t* addr = _platform.allocNVMemory(METADATA_SIZE, _ID);
+
+    _platform.pushNVMemoryByte(_deviceControl, &addr);
+    _platform.pushNVMemoryByte(_routingCount, &addr);
+    _platform.pushNVMemoryWord(_ownAddress, &addr);
+}
+
+void DeviceObject::restore(uint8_t* startAddr)
+{
+    uint8_t* addr = startAddr;
+    _deviceControl = _platform.popNVMemoryByte(&addr);
+    _routingCount = _platform.popNVMemoryByte(&addr);
+    _ownAddress = _platform.popNVMemoryWord(&addr);
     _prgMode = 0;
-    return buffer;
 }
 
 uint16_t DeviceObject::induvidualAddress()

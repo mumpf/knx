@@ -61,31 +61,41 @@ uint8_t * ApplicationProgramObject::data(uint32_t addr)
 
 uint8_t ApplicationProgramObject::getByte(uint32_t addr)
 {
-    return *(TableObject::data() + addr);
+    uint8_t* paddr = TableObject::data()+addr;
+    return _platform.popNVMemoryByte(&paddr);
 }
 
 uint16_t ApplicationProgramObject::getWord(uint32_t addr)
 {
-    return ::getWord(TableObject::data() + addr);
+    uint8_t* paddr = TableObject::data()+addr;
+    return _platform.popNVMemoryWord(&paddr);
 }
 
 uint32_t ApplicationProgramObject::getInt(uint32_t addr)
 {
-    return ::getInt(TableObject::data() + addr);
+    uint8_t* paddr = TableObject::data()+addr;
+    return _platform.popNVMemoryInt(&paddr);
 }
 
-uint8_t* ApplicationProgramObject::save(uint8_t* buffer)
-{
-    buffer = pushByteArray(_programVersion, 5, buffer);
-
-    return TableObject::save(buffer);
+uint32_t ApplicationProgramObject::size(){
+    return sizeof(_programVersion)+TableObject::size();
 }
 
-uint8_t* ApplicationProgramObject::restore(uint8_t* buffer)
-{
-    buffer = popByteArray(_programVersion, 5, buffer);
 
-    return TableObject::restore(buffer);
+void ApplicationProgramObject::save()
+{
+    if(TableObject::data() == NULL)
+        return ;
+
+    uint8_t* addr =TableObject::data() - sizeof(_programVersion) - TableObject::sizeMetadata();
+    _platform.pushNVMemoryArray(_programVersion, &addr, sizeof(_programVersion));
+    TableObject::save();
+}
+
+void ApplicationProgramObject::restore(uint8_t* startAddr)
+{
+    _platform.popNVMemoryArray(_programVersion, &startAddr, sizeof(_programVersion));
+    TableObject::restore(startAddr);
 }
 
 static PropertyDescription _propertyDescriptions[] = 

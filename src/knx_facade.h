@@ -19,7 +19,7 @@
 #endif
 
 void buttonUp();
-typedef uint8_t* (*saveRestoreCallback)(uint8_t* buffer);
+typedef void (*saveRestoreCallback)(uint8_t* buffer, uint32_t* size);
 
 template <class P, class B> class KnxFacade : private SaveRestore
 {
@@ -276,23 +276,57 @@ template <class P, class B> class KnxFacade : private SaveRestore
     uint32_t _buttonPin = 0;
     saveRestoreCallback _saveCallback = 0;
     saveRestoreCallback _restoreCallback = 0;
+    uint32_t (*_sizeCallback)() = 0;
     bool _toogleProgMode = false;
     bool _progLedState = false;
 
-    uint8_t* save(uint8_t* buffer)
+    uint32_t size()
     {
-        if (_saveCallback != 0)
-            return _saveCallback(buffer);
+        if (_sizeCallback != 0)
+            return _sizeCallback();
 
-        return buffer;
+        return 0;
     }
 
-    uint8_t* restore(uint8_t* buffer)
+    void save()
     {
-        if (_restoreCallback != 0)
-            return _restoreCallback(buffer);
 
-        return buffer;
+        if (_saveCallback != 0)
+        {
+            uint8_t* buffer = NULL;
+            uint32_t size=0;
+            _saveCallback(buffer, &size);
+            if(buffer != NULL){
+                _platformPtr->freeNVMemory(_ID);
+                uint8_t* addr = _platformPtr->allocNVMemory(size+4, _ID);
+
+                //write size
+                _platformPtr->pushNVMemoryByte(((uint8_t*)&size)[0], &addr);
+                _platformPtr->pushNVMemoryByte(((uint8_t*)&size)[1], &addr);
+                _platformPtr->pushNVMemoryByte(((uint8_t*)&size)[2], &addr);
+                _platformPtr->pushNVMemoryByte(((uint8_t*)&size)[3], &addr);
+                for(uint32_t i=0;i<size;i++){
+                    _platformPtr->pushNVMemoryByte(buffer[i], &addr);
+                }
+                delete[] buffer;
+            }
+        }
+    }
+
+
+    void restore(uint8_t* startAddr)
+    {
+        uint32_t size=0;
+
+        //read size
+        ((uint8_t*)&size)[0] = _platformPtr->popNVMemoryByte(&startAddr);
+        ((uint8_t*)&size)[1] = _platformPtr->popNVMemoryByte(&startAddr);
+        ((uint8_t*)&size)[2] = _platformPtr->popNVMemoryByte(&startAddr);
+        ((uint8_t*)&size)[3] = _platformPtr->popNVMemoryByte(&startAddr);
+
+        if (_restoreCallback != 0)
+            _restoreCallback(startAddr, &size);
+
     }
 };
 
