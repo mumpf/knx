@@ -67,6 +67,13 @@ int32_t AssociationTableObject::translateAsap(uint16_t asap)
 
 void AssociationTableObject::beforeStateChange(LoadState& newState)
 {
+    print("AssociationTableObject::beforeStateChange - newState: ");
+    print(newState);
+    print("- callback: ");
+    println(_beforeUnload != 0);
+    TableObject::beforeStateChange(newState);
+    // if (_beforeUnload != 0)
+    //     _beforeUnload(*this, newState);
     if (newState != LS_LOADED)
         return;
 

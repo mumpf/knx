@@ -240,3 +240,8 @@ void BusAccessUnit::keyWriteAppLayerConfirm(Priority priority, HopCountType hopT
 void BusAccessUnit::connectConfirm(uint16_t destination) 
 {
 }
+
+ void addBeforeRestartCallback(beforeRestartCallback func)
+{
+}
+

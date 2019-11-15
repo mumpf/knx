@@ -85,9 +85,12 @@ void BauSystemB::updateGroupObject(GroupObject & go, uint8_t * data, uint8_t len
     memcpy(goData, data, length);
 
     go.commFlag(Updated);
+    GroupObject::processClassCallbacks(go);
+#ifndef SMALL_GROUPOBJECT
     GroupObjectUpdatedHandler handler = go.callback();
     if (handler)
         handler(go);
+#endif
 }
 
 void BauSystemB::readMemory()
@@ -166,6 +169,7 @@ void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopTyp
 {
     // Flush the EEPROM before resetting
     _memory.writeMemory();
+    if (_beforeRestart != 0) _beforeRestart();
     _platform.restart();
 }
 
@@ -362,4 +366,8 @@ void BauSystemB::nextRestartState()
         default:
             break;
     }
+}
+
+void BauSystemB::addBeforeRestartCallback(beforeRestartCallback func) {
+    _beforeRestart = func;
 }

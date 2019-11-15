@@ -3,6 +3,10 @@
 #include "interface_object.h"
 #include "platform.h"
 
+class TableObject;
+
+typedef void (*beforeTableUnloadCallback)(TableObject& tableObject, LoadState& newState);
+
 /**
  * This class provides common functionality for interface objects that are configured by ETS with MemorWrite.
  */
@@ -28,13 +32,16 @@ public:
     virtual void save();
     virtual void restore(uint8_t* startAddr);
     virtual uint32_t size();
-protected:
+
+    static void addBeforeTableUnloadCallback(beforeTableUnloadCallback func);
+
+  protected:
     /**
      * This method is called before the interface object enters a new ::LoadState.
      * If there is a error changing the state newState should be set to ::LS_ERROR and errorCode() 
      * to a reason for the failure.
      */
-    virtual void beforeStateChange(LoadState& newState) {}
+    virtual void beforeStateChange(LoadState& newState);
     
     /**
      * returns the internal data of the interface object. This pointer belongs to the TableObject class and 
@@ -52,7 +59,10 @@ protected:
     void errorCode(ErrorCode errorCode);
 
     Platform& _platform;
+
+    static beforeTableUnloadCallback _beforeUnload;
   private:
+
     uint32_t tableReference();
     bool allocTable(uint32_t size, bool doFill, uint8_t fillByte);
     void loadEvent(uint8_t* data);
@@ -73,4 +83,5 @@ protected:
     uint8_t *_data = 0;
     uint32_t _size = 0;
     ErrorCode _errorCode = E_NO_FAULT;
+    
 };

@@ -266,6 +266,11 @@ template <class P, class B> class KnxFacade : private SaveRestore
         _bau.restartRequest(individualAddress);
     }
 
+    void addBeforeRestartCallback(beforeRestartCallback func)
+    {
+        _bau.addBeforeRestartCallback(func);
+    }
+    
   private:
     P* _platformPtr = 0;
     B* _bauPtr = 0;

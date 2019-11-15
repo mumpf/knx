@@ -28,6 +28,7 @@ class BauSystemB : protected BusAccessUnit
     void writeMemory();
     void addSaveRestore(SaveRestore* obj);
     bool restartRequest(uint16_t asap);
+    void addBeforeRestartCallback(beforeRestartCallback func);
 
   protected:
     virtual DataLinkLayer& dataLinkLayer() = 0;
@@ -65,7 +66,6 @@ class BauSystemB : protected BusAccessUnit
     void updateGroupObject(GroupObject& go, uint8_t* data, uint8_t length);
     void nextRestartState();
 
-    DeviceObject _deviceObj;
     Memory _memory;
     AddressTableObject _addrTable;
     AssociationTableObject _assocTable;
@@ -75,8 +75,10 @@ class BauSystemB : protected BusAccessUnit
     ApplicationLayer _appLayer;
     TransportLayer _transLayer;
     NetworkLayer _netLayer;
+    DeviceObject _deviceObj; //get rid of -Wreorder
     bool _configured = true;
     uint8_t _restartState = 0;
     uint32_t _restartDelay = 0;
     uint16_t _restartDestination = -1;
+    beforeRestartCallback _beforeRestart = 0;
 };

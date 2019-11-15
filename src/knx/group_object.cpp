@@ -4,23 +4,31 @@
 #include "datapoint_types.h"
 #include "group_object_table_object.h"
 
+uint8_t GroupObject::_updateHandlerCount = 0;
+GroupObjectUpdatedHandler GroupObject::_updateHandlerList[5];
+GroupObjectTableObject* GroupObject::_table = 0;
+
 GroupObject::GroupObject()
 {
     _data = 0;
     _commFlag = Ok;
     _table = 0;
     _dataLength = 0;
+#ifndef SMALL_GROUPOBJECT
     _updateHandler = 0;
+#endif
 }
 
 GroupObject::GroupObject(const GroupObject& other)
 {
     _data = new uint8_t[other._dataLength];
     _commFlag = other._commFlag;
-    _table = other._table;
     _dataLength = other._dataLength;
     _asap = other._asap;
+#ifndef SMALL_GROUPOBJECT
+    _table = other._table;
     _updateHandler = other._updateHandler;
+#endif
     memcpy(_data, other._data, _dataLength);
 }
 
@@ -175,6 +183,26 @@ size_t GroupObject::sizeInTelegram()
     return asapValueSize(code);
 }
 
+void GroupObject::classCallback(GroupObjectUpdatedHandler handler) {
+    uint8_t index = 0;
+    for (; index < _updateHandlerCount; index++)
+    {
+        if (_updateHandlerList[index] == handler)
+            break;
+    }
+    if (index <= _updateHandlerCount) {
+        _updateHandlerList[_updateHandlerCount++] = handler;
+    }
+}
+void GroupObject::processClassCallbacks(GroupObject& ko) {
+    for (uint8_t index = 0; index < _updateHandlerCount; index++)
+    {
+        _updateHandlerList[index](ko);
+    }
+    
+}
+
+#ifndef SMALL_GROUPOBJECT
 void GroupObject::callback(GroupObjectUpdatedHandler handler)
 {
     _updateHandler = handler;
@@ -185,6 +213,7 @@ GroupObjectUpdatedHandler GroupObject::callback()
 {
     return _updateHandler;
 }
+#endif
 
 void GroupObject::value(const KNXValue& value, const Dpt& type)
 {
@@ -205,7 +234,7 @@ bool GroupObject::tryValue(KNXValue& value, const Dpt& type)
     return KNX_Decode_Value(_data, _dataLength, type, value);
 }
 
-
+#ifndef SMALL_GROUPOBJECT
 void GroupObject::dataPointType(Dpt value)
 {
     _datapointType = value;
@@ -240,7 +269,7 @@ void GroupObject::valueNoSend(const KNXValue& value)
 {
     valueNoSend(value, _datapointType);
 }
-
+#endif
 
 void GroupObject::valueNoSend(const KNXValue& value, const Dpt& type)
 {

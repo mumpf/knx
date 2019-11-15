@@ -5,7 +5,13 @@
 
 #define METADATA_SIZE     (sizeof(_state)+sizeof(_errorCode)+sizeof(_size))
 
-TableObject::TableObject(Platform& platform): _platform(platform)
+beforeTableUnloadCallback TableObject::_beforeUnload = 0;
+
+void TableObject::addBeforeTableUnloadCallback(beforeTableUnloadCallback func) {
+    _beforeUnload = func;
+}
+
+TableObject::TableObject(Platform& platform) : _platform(platform)
 {
 
 }
@@ -73,6 +79,16 @@ TableObject::~TableObject()
 LoadState TableObject::loadState()
 {
     return _state;
+}
+
+void TableObject::beforeStateChange(LoadState& newState)
+{
+    print("TableObject::beforeStateChange - newState: ");
+    print(newState);
+    print("- callback: ");
+    println(_beforeUnload != 0);
+    if (_beforeUnload != 0)
+        _beforeUnload(*this, newState);
 }
 
 void TableObject::loadState(LoadState newState)
