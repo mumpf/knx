@@ -83,12 +83,10 @@ LoadState TableObject::loadState()
 
 void TableObject::beforeStateChange(LoadState& newState)
 {
-    print("TableObject::beforeStateChange - newState: ");
-    print(newState);
-    print("- callback: ");
-    println(_beforeUnload != 0);
-    if (_beforeUnload != 0)
-        _beforeUnload(*this, newState);
+    if (newState == LS_UNLOADED) {
+        if (_beforeUnload != 0)
+            _beforeUnload(*this, newState);
+    }
 }
 
 void TableObject::loadState(LoadState newState)

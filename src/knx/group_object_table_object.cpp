@@ -83,13 +83,7 @@ void GroupObjectTableObject::groupObjects(GroupObject * objs, uint16_t size)
 
 void GroupObjectTableObject::beforeStateChange(LoadState& newState)
 {
-    print("GroupTableObject::beforeStateChange - newState: ");
-    print(newState);
-    print("- callback: ");
-    println(_beforeUnload != 0);
     TableObject::beforeStateChange(newState);
-    // if (_beforeUnload != 0)
-    //     _beforeUnload(*this, newState);
     if (newState != LS_LOADED)
         return;
 
