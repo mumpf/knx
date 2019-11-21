@@ -125,6 +125,8 @@ class GroupObject
      * (in german "KO-Nr")
      */
     uint16_t asap();
+
+#ifndef SMALL_GROUPOBJECT
     /**
      * register a callback for this group object. The registered callback will be called if the group object was changed from the bus.
      */
@@ -133,16 +135,12 @@ class GroupObject
      * returns the registered callback
      */
     GroupObjectUpdatedHandler callback();
+#endif
     /**
      * return the current value of the group object.
      * @param type the datapoint type used for the conversion. If this doesn't fit to the group object the returned value is invalid.
      */
     KNXValue value(const Dpt& type);
-    /**
-     * return the current value of the group object. The datapoint type must be set with dataPointType(). Otherwise the returned
-     * value is invalid.
-     */
-    KNXValue value();
     /**
      * set the current value of the group object and changes the state of the group object to ::WriteRequest.
      * @param value the value the group object is set to
@@ -151,13 +149,6 @@ class GroupObject
      * The parameters must fit the group object. Otherwise it will stay unchanged.
      */
     void value(const KNXValue& value, const Dpt& type);
-    /**
-     * set the current value of the group object and changes the state of the group object to ::WriteRequest.
-     * @param value the value the group object is set to
-     * 
-     * The parameters must fit the group object and dhe datapoint type must be set with dataPointType(). Otherwise it will stay unchanged.
-     */
-    void value(const KNXValue& value);
     /**
      * set the current value of the group object.
      * @param value the value the group object is set to
@@ -169,13 +160,6 @@ class GroupObject
     /**
      * set the current value of the group object.
      * @param value the value the group object is set to
-     * 
-     * The parameters must fit the group object and dhe datapoint type must be set with dataPointType(). Otherwise it will stay unchanged.
-     */
-    void valueNoSend(const KNXValue& value);
-    /**
-     * set the current value of the group object.
-     * @param value the value the group object is set to
      * @param type the datapoint type used for the conversion.
      * 
      * The parameters must fit the group object. Otherwise it will stay unchanged.
@@ -183,6 +167,27 @@ class GroupObject
      * @returns true if the value of the group object was changed successfully.
      */
     bool tryValue(KNXValue& value, const Dpt& type);
+
+#ifndef SMALL_GROUPOBJECT
+    /**
+     * return the current value of the group object. The datapoint type must be set with dataPointType(). Otherwise the returned
+     * value is invalid.
+     */
+    KNXValue value();
+    /**
+     * set the current value of the group object and changes the state of the group object to ::WriteRequest.
+     * @param value the value the group object is set to
+     * 
+     * The parameters must fit the group object and dhe datapoint type must be set with dataPointType(). Otherwise it will stay unchanged.
+     */
+    void value(const KNXValue& value);
+    /**
+     * set the current value of the group object.
+     * @param value the value the group object is set to
+     * 
+     * The parameters must fit the group object and dhe datapoint type must be set with dataPointType(). Otherwise it will stay unchanged.
+     */
+    void valueNoSend(const KNXValue& value);
     /**
      * set the current value of the group object.
      * @param value the value the group object is set to
@@ -201,15 +206,28 @@ class GroupObject
      * sets the datapoint type of the group object.
      */
     void dataPointType(Dpt value);
+#endif
+
+    /**
+     * Alternative callback processing: register one callback for any group object. The registered callbacks will be called if any group object was changed from the bus.
+     */
+    static GroupObjectUpdatedHandler classCallback();
+    static void classCallback(GroupObjectUpdatedHandler handler);
+    static void processClassCallback(GroupObject& ko);
 
   private:
+    // class members
+    static GroupObjectTableObject* _table;
+    static GroupObjectUpdatedHandler _updateHandlerStatic;
+
     size_t asapValueSize(uint8_t code);
-    GroupObjectUpdatedHandler _updateHandler;
     size_t goSize();
     uint16_t _asap = 0;
     ComFlag _commFlag = Ok;
     uint8_t* _data = 0;
     uint8_t _dataLength = 0;
-    GroupObjectTableObject* _table = 0;
+#ifndef SMALL_GROUPOBJECT
+    GroupObjectUpdatedHandler _updateHandler;
     Dpt _datapointType;
+#endif
 };
