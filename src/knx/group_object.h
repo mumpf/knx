@@ -211,14 +211,14 @@ class GroupObject
     /**
      * Alternative callback processing: register one callback for any group object. The registered callbacks will be called if any group object was changed from the bus.
      */
+    static GroupObjectUpdatedHandler classCallback();
     static void classCallback(GroupObjectUpdatedHandler handler);
-    static void processClassCallbacks(GroupObject& ko);
+    static void processClassCallback(GroupObject& ko);
 
   private:
     // class members
     static GroupObjectTableObject* _table;
-    static uint8_t _updateHandlerCount;
-    static GroupObjectUpdatedHandler _updateHandlerList[5];
+    static GroupObjectUpdatedHandler _updateHandlerStatic;
 
     size_t asapValueSize(uint8_t code);
     size_t goSize();

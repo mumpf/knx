@@ -4,15 +4,13 @@
 #include "datapoint_types.h"
 #include "group_object_table_object.h"
 
-uint8_t GroupObject::_updateHandlerCount = 0;
-GroupObjectUpdatedHandler GroupObject::_updateHandlerList[5];
+GroupObjectUpdatedHandler GroupObject::_updateHandlerStatic = 0;
 GroupObjectTableObject* GroupObject::_table = 0;
 
 GroupObject::GroupObject()
 {
     _data = 0;
     _commFlag = Ok;
-    _table = 0;
     _dataLength = 0;
 #ifndef SMALL_GROUPOBJECT
     _updateHandler = 0;
@@ -26,7 +24,6 @@ GroupObject::GroupObject(const GroupObject& other)
     _dataLength = other._dataLength;
     _asap = other._asap;
 #ifndef SMALL_GROUPOBJECT
-    _table = other._table;
     _updateHandler = other._updateHandler;
 #endif
     memcpy(_data, other._data, _dataLength);
@@ -183,23 +180,17 @@ size_t GroupObject::sizeInTelegram()
     return asapValueSize(code);
 }
 
-void GroupObject::classCallback(GroupObjectUpdatedHandler handler) {
-    uint8_t index = 0;
-    for (; index < _updateHandlerCount; index++)
-    {
-        if (_updateHandlerList[index] == handler)
-            break;
-    }
-    if (index <= _updateHandlerCount) {
-        _updateHandlerList[_updateHandlerCount++] = handler;
-    }
+GroupObjectUpdatedHandler GroupObject::classCallback() {
+    return _updateHandlerStatic;
 }
-void GroupObject::processClassCallbacks(GroupObject& ko) {
-    for (uint8_t index = 0; index < _updateHandlerCount; index++)
-    {
-        _updateHandlerList[index](ko);
-    }
-    
+
+void GroupObject::classCallback(GroupObjectUpdatedHandler handler) {
+    _updateHandlerStatic = handler;
+}
+
+void GroupObject::processClassCallback(GroupObject& ko) {
+    if (_updateHandlerStatic != 0)
+        _updateHandlerStatic(ko);
 }
 
 #ifndef SMALL_GROUPOBJECT

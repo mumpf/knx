@@ -85,7 +85,7 @@ void BauSystemB::updateGroupObject(GroupObject & go, uint8_t * data, uint8_t len
     memcpy(goData, data, length);
 
     go.commFlag(Updated);
-    GroupObject::processClassCallbacks(go);
+    GroupObject::processClassCallback(go);
 #ifndef SMALL_GROUPOBJECT
     GroupObjectUpdatedHandler handler = go.callback();
     if (handler)
