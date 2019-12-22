@@ -112,4 +112,5 @@ class BusAccessUnit
     virtual void keyWriteAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, uint8_t level);
     virtual void connectConfirm(uint16_t destination);
     virtual void addBeforeRestartCallback(beforeRestartCallback func);
+    virtual beforeRestartCallback getBeforeRestartCallback();
 };

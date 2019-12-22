@@ -7,11 +7,18 @@
 
 beforeTableUnloadCallback TableObject::_beforeUnload = 0;
 
-void TableObject::addBeforeTableUnloadCallback(beforeTableUnloadCallback func) {
+void TableObject::addBeforeTableUnloadCallback(beforeTableUnloadCallback func)
+{
     _beforeUnload = func;
 }
 
-TableObject::TableObject(Platform& platform) : _platform(platform)
+beforeTableUnloadCallback TableObject::getBeforeTableUnloadCallback()
+{
+    return _beforeUnload;
+}
+
+TableObject::TableObject(Platform& platform)
+    : _platform(platform)
 {
 
 }

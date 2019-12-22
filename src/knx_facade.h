@@ -271,6 +271,10 @@ template <class P, class B> class KnxFacade : private SaveRestore
         _bau.addBeforeRestartCallback(func);
     }
     
+    beforeRestartCallback getBeforeRestartCallback() {
+        return _bau.getBeforeRestartCallback();
+    }
+    
   private:
     P* _platformPtr = 0;
     B* _bauPtr = 0;

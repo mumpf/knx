@@ -29,6 +29,7 @@ class BauSystemB : protected BusAccessUnit
     void addSaveRestore(SaveRestore* obj);
     bool restartRequest(uint16_t asap);
     void addBeforeRestartCallback(beforeRestartCallback func);
+    beforeRestartCallback getBeforeRestartCallback();
 
   protected:
     virtual DataLinkLayer& dataLinkLayer() = 0;

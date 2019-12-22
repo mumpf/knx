@@ -241,7 +241,10 @@ void BusAccessUnit::connectConfirm(uint16_t destination)
 {
 }
 
- void addBeforeRestartCallback(beforeRestartCallback func)
+void addBeforeRestartCallback(beforeRestartCallback func)
 {
 }
 
+beforeRestartCallback getBeforeRestartCallback()
+{
+}

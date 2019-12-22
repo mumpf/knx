@@ -34,6 +34,7 @@ public:
     virtual uint32_t size();
 
     static void addBeforeTableUnloadCallback(beforeTableUnloadCallback func);
+    static beforeTableUnloadCallback getBeforeTableUnloadCallback();
 
   protected:
     /**

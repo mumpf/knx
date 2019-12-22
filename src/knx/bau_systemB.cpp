@@ -371,3 +371,7 @@ void BauSystemB::nextRestartState()
 void BauSystemB::addBeforeRestartCallback(beforeRestartCallback func) {
     _beforeRestart = func;
 }
+
+beforeRestartCallback BauSystemB::getBeforeRestartCallback() {
+    return _beforeRestart;
+}
