@@ -45,7 +45,7 @@ private:
     uint8_t _deviceControl = 0;
     uint8_t _routingCount = 0;
     uint8_t _prgMode = 0;
-    uint16_t _ownAddress = 0;
+    uint16_t _ownAddress = 0xFFFF;
     uint16_t _manufacturerId = 0xfa; //Default to KNXA
     uint32_t _bauNumber = 0;
     char _orderNumber[10];
