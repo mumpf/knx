@@ -43,14 +43,14 @@ uint16_t AddressTableObject::getGroupAddress(uint16_t tsap)
 uint16_t AddressTableObject::getTsap(uint16_t addr)
 {
     uint16_t size = entryCount();
+    uint16_t lAddr = ntohs(addr);
     for (uint16_t i = 1; i <= size; i++)
-        if (ntohs(_groupAddresses[i]) == addr)
+        if (_groupAddresses[i] == lAddr)
             return i;
     return 0;
 }
 
 #pragma region SaveRestore
-
 
 void AddressTableObject::restore(uint8_t* startAddr)
 {
@@ -63,12 +63,15 @@ void AddressTableObject::restore(uint8_t* startAddr)
 
 bool AddressTableObject::contains(uint16_t addr)
 {
-    uint16_t size = entryCount();
-    for (uint16_t i = 1; i <= size; i++)
-        if (ntohs(_groupAddresses[i]) == addr)
-            return true;
-
-    return false;
+#ifdef DEBUG_TIMING
+    uint32_t lMicros = micros();
+#endif
+    uint16_t lTsap = getTsap(addr);
+#ifdef DEBUG_TIMING
+    print("getTsap: ");
+    println(micros() - lMicros);
+#endif
+    return (lTsap > 0);
 }
 
 void AddressTableObject::beforeStateChange(LoadState& newState)

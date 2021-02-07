@@ -155,6 +155,37 @@ template <class P, class B> class KnxFacade : private SaveRestore
 
     void loop()
     {
+#ifdef DEBUG_TIMING
+        static uint32_t lMinT = 100000;
+        static uint32_t lMaxT = 0;
+        static uint32_t lSumT = 0;
+        static uint32_t lCntT = 0;
+        static uint32_t lMillis = millis();
+        static uint32_t lMicros;
+
+        if (millis() - lMillis > 1000)
+        {
+            print("DeltaT: Min: ");
+            print(lMinT);
+            print(", Max: ");
+            print(lMaxT);
+            print(", Avg: ");
+            println(lSumT / lCntT);
+            lMinT = 100000;
+            lMaxT = 0;
+            lSumT = 0;
+            lCntT = 0;
+            lMillis = millis();
+        }
+
+        uint32_t lT = micros() - lMicros;
+        lSumT += lT;
+        lCntT += 1;
+        if (lMinT > lT)
+            lMinT = lT;
+        if (lMaxT < lT)
+            lMaxT = lT;
+#endif
         if (progMode() != _progLedState)
         {
             _progLedState = progMode();
@@ -175,6 +206,9 @@ template <class P, class B> class KnxFacade : private SaveRestore
             _toogleProgMode = false;
         }
         _bau.loop();
+#ifdef DEBUG_TIMING
+        lMicros = micros();
+#endif
     }
 
     void manufacturerId(uint16_t value)
