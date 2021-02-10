@@ -93,6 +93,16 @@ void TpUartDataLinkLayer::loop()
     uint8_t rxByte;
 
     if (!_enabled)
+    {
+        if (millis() - _lastResetChipTime > 1000)
+        {
+            //reset chip every 1 seconds
+            _lastResetChipTime = millis();
+            _enabled = resetChip();
+        }
+    }
+
+    if (!_enabled)
         return;
 
     do {
@@ -236,13 +246,13 @@ void TpUartDataLinkLayer::loop()
                     //Destination Address + payload available
                     _xorSum ^= rxByte;
                     //check if echo
-                    _isEcho = false;
-                    if(_sendBuffer != NULL)
+                    if (_sendBuffer != nullptr && (!((buffer[0] ^ _sendBuffer[0]) & ~0x20) && !memcmp(buffer + _convert + 1, _sendBuffer + 1, 5)))
+                    { //ignore repeated bit of control byte
+                        _isEcho = true;
+                    }
+                    else
                     {
-                        if (!((buffer[0] ^ _sendBuffer[0]) & ~0x20) && !memcmp(buffer + _convert + 1, _sendBuffer + 1, 5)) //ignore repeated bit of control byte
-                        {
-                            _isEcho = true;
-                        }
+                        _isEcho = false;
                     }
 
                     //convert into Extended.ind
@@ -256,21 +266,30 @@ void TpUartDataLinkLayer::loop()
                     if (!_isEcho)
                     {
                         uint8_t c = 0x10;
-                        //ceck if individual or group address
-                        if ((buffer[1] & 0x80) == 0)
+
+                        // take newest coding from current stack
+                        //check if individual or group address
+                        bool isGroupAddress = (buffer[1] & 0x80) != 0;
+                        uint16_t addr = getWord(buffer + 4);
+
+                        if (isGroupAddress)
                         {
-                            //individual
-                            if (_deviceObject.induvidualAddress() == getWord(buffer + 4))
+                            //check if group address exists, invest in binary search, if this is too slow
+                            if (addr == 0 || _groupAddressTable.contains(addr))
                             {
                                 c |= 0x01;
                             }
                         }
                         else
                         {
-                            //check if group address exists, invest in binary search, if this is too slow
-                            if (getWord(buffer + 4) == 0 || _groupAddressTable.contains(getWord(buffer + 4)))
+                            //individual
+                            if (_deviceObject.induvidualAddress() == addr)
                             {
                                 c |= 0x01;
+                            }
+                            else if (addr == 0)
+                            {
+                                println("Invalid broadcast detected: destination address is 0, but address type is \"individual\"");
                             }
                         }
                         _platform.writeUart(c);
@@ -371,7 +390,10 @@ void TpUartDataLinkLayer::loop()
 bool TpUartDataLinkLayer::sendFrame(CemiFrame& frame)
 {
     if (!_enabled)
+    {
+        dataConReceived(frame, false);
         return false;
+    }
 
     addFrameTxQueue(frame);
     return true;
@@ -433,12 +455,14 @@ void TpUartDataLinkLayer::enabled(bool value)
     {
         _platform.setupUart();
 
-        if (resetChip()){
+        if (resetChip())
+        {
             _enabled = true;
             print("ownaddr ");
             println(_deviceObject.induvidualAddress(), HEX);
         }
-        else{
+        else
+        {
         	_enabled = false;
         	println("ERROR, TPUART not responding");
         }
