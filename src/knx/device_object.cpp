@@ -44,7 +44,7 @@ void DeviceObject::readProperty(PropertyID propertyId, uint32_t start, uint32_t&
             *data = _prgMode;
             break;
         case PID_MAX_APDU_LENGTH:
-            pushWord(254, data);
+            pushWord(56, data);
             break;
         case PID_SUBNET_ADDR:
             *data = ((_ownAddress >> 8) & 0xff);
