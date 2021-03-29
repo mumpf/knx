@@ -35,6 +35,7 @@ public:
 
     static void addBeforeTableUnloadCallback(beforeTableUnloadCallback func);
     static beforeTableUnloadCallback getBeforeTableUnloadCallback();
+    static uint16_t Crc16Citt(uint8_t* data, uint16_t length);
 
   protected:
     /**
@@ -43,7 +44,7 @@ public:
      * to a reason for the failure.
      */
     virtual void beforeStateChange(LoadState& newState);
-    
+
     /**
      * returns the internal data of the interface object. This pointer belongs to the TableObject class and 
      * must not be freed.
