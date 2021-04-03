@@ -3,7 +3,7 @@
 #include "table_object.h"
 #include "bits.h"
 
-#define METADATA_SIZE     (sizeof(_state)+sizeof(_errorCode)+sizeof(_size))
+#define METADATA_SIZE     (sizeof(_state)+sizeof(_errorCode)+sizeof(_size)+sizeof(_crc))
 
 beforeTableUnloadCallback TableObject::_beforeUnload = 0;
 
@@ -40,7 +40,10 @@ void TableObject::readProperty(PropertyID id, uint32_t start, uint32_t& count, u
             data = pushInt(_size, data); // segment size
             data = pushByte(0x00, data);  // CRC Control Byte
             data = pushByte(0xFF, data);  // ReadAccess/WrtiteAccess
-            pushWord(Crc16Citt(_data, _size), data);
+            // pushWord(Crc16Citt(_data, _size), data);
+            // print("Send CRC to ETS: ");
+            // println(_crc);
+            pushWord(_crc, data);
             // pushWord(tableReference() & 0xFFFF, data);
             break;
         case PID_ERROR_CODE:
@@ -141,6 +144,7 @@ void TableObject::save()
     _platform.pushNVMemoryByte(_state, &addr);
     _platform.pushNVMemoryByte(_errorCode, &addr);
     _platform.pushNVMemoryInt(_size, &addr);
+    _platform.pushNVMemoryWord(_crc, &addr);
 }
 
 void TableObject::restore(uint8_t* startAddr)
@@ -149,11 +153,14 @@ void TableObject::restore(uint8_t* startAddr)
     _state = (LoadState)_platform.popNVMemoryByte(&addr);
     _errorCode = (ErrorCode)_platform.popNVMemoryByte(&addr);
     _size = _platform.popNVMemoryInt(&addr);
+    _crc = _platform.popNVMemoryWord(&addr);
 
     if (_size > 0)
         _data = addr;
-    else
+    else {
         _data = 0;
+        _crc = 0;
+    }
 }
 
 uint32_t TableObject::tableReference()
@@ -168,6 +175,7 @@ bool TableObject::allocTable(uint32_t size, bool doFill, uint8_t fillByte)
         _platform.freeNVMemory(_ID);
         _data = 0;
         _size = 0;
+        _crc = 0;
     }
 
     if (size == 0)
@@ -234,6 +242,9 @@ void TableObject::loadEventLoading(uint8_t* data)
         case LE_START_LOADING:
             break;
         case LE_LOAD_COMPLETED:
+            _crc = Crc16Citt(_data, _size);
+            // print("Calculate CRC: ");
+            // println(_crc);
             loadState(LS_LOADED);
             break;
         case LE_UNLOAD:

@@ -84,6 +84,7 @@ public:
     LoadState _state = LS_UNLOADED;
     uint8_t *_data = 0;
     uint32_t _size = 0;
+    uint16_t _crc = 0;
     ErrorCode _errorCode = E_NO_FAULT;
     
 };
