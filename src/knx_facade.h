@@ -170,7 +170,9 @@ template <class P, class B> class KnxFacade : private SaveRestore
             print(", Max: ");
             print(lMaxT);
             print(", Avg: ");
-            println(lSumT / lCntT);
+            print(lSumT / lCntT);
+            print(", Cnt: ");
+            println(lCntT);
             lMinT = 100000;
             lMaxT = 0;
             lSumT = 0;

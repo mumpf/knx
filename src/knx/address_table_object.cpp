@@ -63,11 +63,11 @@ void AddressTableObject::restore(uint8_t* startAddr)
 
 bool AddressTableObject::contains(uint16_t addr)
 {
-#ifdef DEBUG_TIMING
+#if DEBUG_TIMING > 128
     uint32_t lMicros = micros();
 #endif
     uint16_t lTsap = getTsap(addr);
-#ifdef DEBUG_TIMING
+#if DEBUG_TIMING > 128 
     print("getTsap: ");
     println(micros() - lMicros);
 #endif
