@@ -26,7 +26,7 @@ void AddressTableObject::readProperty(PropertyID id, uint32_t start, uint32_t& c
 
 uint16_t AddressTableObject::entryCount()
 {
-    if (loadState() != LS_LOADED)
+    if (loadState() != LS_LOADED || _groupAddresses[0] == 0xFFFF)
         return 0;
 
     return ntohs(_groupAddresses[0]);
